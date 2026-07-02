@@ -13,10 +13,10 @@
  * A lower-layer package must never import a higher-layer package.
  */
 
-import { readFileSync, readdirSync, statSync } from 'node:fs'
-import { join, relative } from 'node:path'
+import { readFileSync, readdirSync, statSync } from "node:fs";
+import { join, relative } from "node:path";
 
-const root = new URL('..', import.meta.url).pathname
+const root = new URL("..", import.meta.url).pathname;
 
 /**
  * Forbidden import directions.
@@ -24,61 +24,61 @@ const root = new URL('..', import.meta.url).pathname
  */
 const FORBIDDEN_CROSS_LAYER = [
   // Runtime must not import Application or Agent layers
-  { layer: 'packages/runtime', forbidden: ['@ocs/app-', '@ocs/agents'] },
-  { layer: 'packages/gateway', forbidden: ['@ocs/app-', '@ocs/agents', '@ocs/runtime'] },
-  { layer: 'packages/knowledge', forbidden: ['@ocs/app-', '@ocs/agents', '@ocs/runtime'] },
+  { layer: "packages/runtime", forbidden: ["@ocs/app-", "@ocs/agents"] },
+  { layer: "packages/gateway", forbidden: ["@ocs/app-", "@ocs/agents", "@ocs/runtime"] },
+  { layer: "packages/knowledge", forbidden: ["@ocs/app-", "@ocs/agents", "@ocs/runtime"] },
   // Common (platform services) must not import anything above it
   {
-    layer: 'packages/common',
-    forbidden: ['@ocs/runtime', '@ocs/gateway', '@ocs/knowledge', '@ocs/agents', '@ocs/app-']
+    layer: "packages/common",
+    forbidden: ["@ocs/runtime", "@ocs/gateway", "@ocs/knowledge", "@ocs/agents", "@ocs/app-"]
   }
-]
+];
 
 /**
  * Recursively collect all .ts and .tsx files under a directory.
  */
 function collectFiles(dir, files = []) {
-  let entries
+  let entries;
   try {
-    entries = readdirSync(dir)
+    entries = readdirSync(dir);
   } catch {
-    return files
+    return files;
   }
   for (const entry of entries) {
-    const full = join(dir, entry)
-    const stat = statSync(full)
-    if (stat.isDirectory() && entry !== 'node_modules' && entry !== 'dist') {
-      collectFiles(full, files)
-    } else if (stat.isFile() && (entry.endsWith('.ts') || entry.endsWith('.tsx'))) {
-      files.push(full)
+    const full = join(dir, entry);
+    const stat = statSync(full);
+    if (stat.isDirectory() && entry !== "node_modules" && entry !== "dist") {
+      collectFiles(full, files);
+    } else if (stat.isFile() && (entry.endsWith(".ts") || entry.endsWith(".tsx"))) {
+      files.push(full);
     }
   }
-  return files
+  return files;
 }
 
 /**
  * Extract all @ocs/* imports from a source file.
  */
 function extractOcsImports(filePath) {
-  const content = readFileSync(filePath, 'utf8')
-  const matches = content.matchAll(/from\s+['"](@ocs\/[^'"]+)['"]/g)
-  return [...matches].map((m) => m[1])
+  const content = readFileSync(filePath, "utf8");
+  const matches = content.matchAll(/from\s+['"](@ocs\/[^'"]+)['"]/g);
+  return [...matches].map((m) => m[1]);
 }
 
-const failures = []
+const failures = [];
 
 for (const rule of FORBIDDEN_CROSS_LAYER) {
-  const layerDir = join(root, rule.layer)
-  const files = collectFiles(layerDir)
+  const layerDir = join(root, rule.layer);
+  const files = collectFiles(layerDir);
 
   for (const file of files) {
-    const imports = extractOcsImports(file)
+    const imports = extractOcsImports(file);
     for (const imp of imports) {
       for (const forbidden of rule.forbidden) {
         if (imp.startsWith(forbidden)) {
           failures.push(
             `  ${relative(root, file)}\n    imports ${imp}\n    (forbidden: ${rule.layer} must not import ${forbidden}*)`
-          )
+          );
         }
       }
     }
@@ -86,11 +86,11 @@ for (const rule of FORBIDDEN_CROSS_LAYER) {
 }
 
 if (failures.length > 0) {
-  console.error('Dependency check failed — cross-layer import violations:\n')
+  console.error("Dependency check failed — cross-layer import violations:\n");
   for (const failure of failures) {
-    console.error(failure)
+    console.error(failure);
   }
-  process.exit(1)
+  process.exit(1);
 }
 
-console.log('Dependency check passed.')
+console.log("Dependency check passed.");

@@ -4,15 +4,21 @@
     "electron.vite.config.*",
     "src/main/**/*",
     "src/preload/**/*",
-    "src/shared/**/*"
+    "src/shared/**/*",
+    "../../packages/common/**/*",
+    "../../packages/workspace/**/*"
   ],
   "compilerOptions": {
     "composite": true,
     "outDir": "dist/main",
     "baseUrl": ".",
+    "rootDir": "../..",
     "paths": {
       "@ocs/common": ["../../packages/common/src/index.ts"],
-      "@ocs/common/*": ["../../packages/common/*/src/index.ts"]
+      "@ocs/common/*": ["../../packages/common/*/src/index.ts"],
+      "@ocs/workspace": ["../../packages/workspace/src/index.ts"],
+      "@ocs/workspace/*": ["../../packages/workspace/*/src/index.ts"]
     }
-  }
+  },
+  "exclude": ["../../packages/**/tests/**/*"]
 }

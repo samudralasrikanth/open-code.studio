@@ -8,6 +8,7 @@ export default tseslint.config(
       "**/dist/**",
       "**/coverage/**",
       "**/.turbo/**",
+      "**/out/**",
       "node_modules/**",
       "commitlint.config.cjs"
     ]

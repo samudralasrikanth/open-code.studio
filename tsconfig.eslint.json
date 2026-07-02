@@ -12,11 +12,12 @@
   },
   "include": [
     "**/*.ts",
+    "**/*.tsx",
     "**/*.js",
     "**/*.mjs",
     "eslint.config.js",
     "vitest.config.ts",
     "scripts/**/*.mjs"
   ],
-  "exclude": ["dist", "coverage", ".turbo", "node_modules"]
+  "exclude": ["dist", "out", "coverage", ".turbo", "node_modules"]
 }

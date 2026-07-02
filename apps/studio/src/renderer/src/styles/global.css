@@ -1,5 +1,5 @@
 /* ── Fonts ───────────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
 
 /* ============================================================
    Open-Code.Studio — Global Stylesheet
@@ -18,83 +18,84 @@
 
 /* ── Design Tokens — Dark Theme (default) ────────────────── */
 :root,
-[data-theme='dark'] {
-  --color-bg-primary:    #0d0d0d;
-  --color-bg-secondary:  #141414;
-  --color-bg-tertiary:   #1c1c1c;
-  --color-bg-hover:      #252525;
-  --color-bg-active:     #2d2d2d;
+[data-theme="dark"] {
+  --color-bg-primary: #0d0d0d;
+  --color-bg-secondary: #141414;
+  --color-bg-tertiary: #1c1c1c;
+  --color-bg-hover: #252525;
+  --color-bg-active: #2d2d2d;
 
-  --color-border:        #2a2a2a;
+  --color-border: #2a2a2a;
   --color-border-strong: #3a3a3a;
 
-  --color-text-primary:  #f0f0f0;
-  --color-text-secondary:#9a9a9a;
-  --color-text-muted:    #5a5a5a;
+  --color-text-primary: #f0f0f0;
+  --color-text-secondary: #9a9a9a;
+  --color-text-muted: #5a5a5a;
 
-  --color-accent:        #7c6af7;
-  --color-accent-hover:  #6b59e6;
-  --color-accent-muted:  rgba(124, 106, 247, 0.12);
+  --color-accent: #7c6af7;
+  --color-accent-hover: #6b59e6;
+  --color-accent-muted: rgba(124, 106, 247, 0.12);
 
-  --color-success:       #4ade80;
-  --color-warning:       #fbbf24;
-  --color-error:         #f87171;
-  --color-info:          #60a5fa;
+  --color-success: #4ade80;
+  --color-warning: #fbbf24;
+  --color-error: #f87171;
+  --color-info: #60a5fa;
 
-  --shadow-sm:  0 1px 3px rgba(0,0,0,0.4);
-  --shadow-md:  0 4px 16px rgba(0,0,0,0.5);
-  --shadow-lg:  0 8px 32px rgba(0,0,0,0.6);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
   --shadow-glow: 0 0 32px rgba(124, 106, 247, 0.2);
 }
 
 /* ── Design Tokens — Light Theme ────────────────────────── */
-[data-theme='light'] {
-  --color-bg-primary:    #ffffff;
-  --color-bg-secondary:  #f5f5f5;
-  --color-bg-tertiary:   #ebebeb;
-  --color-bg-hover:      #e0e0e0;
-  --color-bg-active:     #d6d6d6;
+[data-theme="light"] {
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f5f5f5;
+  --color-bg-tertiary: #ebebeb;
+  --color-bg-hover: #e0e0e0;
+  --color-bg-active: #d6d6d6;
 
-  --color-border:        #e0e0e0;
+  --color-border: #e0e0e0;
   --color-border-strong: #c8c8c8;
 
-  --color-text-primary:  #111111;
-  --color-text-secondary:#555555;
-  --color-text-muted:    #aaaaaa;
+  --color-text-primary: #111111;
+  --color-text-secondary: #555555;
+  --color-text-muted: #aaaaaa;
 
-  --color-accent:        #6050e0;
-  --color-accent-hover:  #4e40ca;
-  --color-accent-muted:  rgba(96, 80, 224, 0.10);
+  --color-accent: #6050e0;
+  --color-accent-hover: #4e40ca;
+  --color-accent-muted: rgba(96, 80, 224, 0.1);
 
-  --color-success:       #16a34a;
-  --color-warning:       #d97706;
-  --color-error:         #dc2626;
-  --color-info:          #2563eb;
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-error: #dc2626;
+  --color-info: #2563eb;
 
-  --shadow-sm:  0 1px 3px rgba(0,0,0,0.08);
-  --shadow-md:  0 4px 16px rgba(0,0,0,0.12);
-  --shadow-lg:  0 8px 32px rgba(0,0,0,0.16);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
   --shadow-glow: 0 0 24px rgba(96, 80, 224, 0.15);
 }
 
 /* ── Shared Tokens ───────────────────────────────────────── */
 :root {
-  --font-sans:  'Inter', system-ui, -apple-system, sans-serif;
-  --font-mono:  'JetBrains Mono', 'Fira Code', monospace;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
 
-  --radius-sm:  4px;
-  --radius-md:  8px;
-  --radius-lg:  12px;
-  --radius-xl:  16px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
   --radius-full: 9999px;
 
-  --transition-fast:  100ms ease;
-  --transition-base:  200ms ease;
-  --transition-slow:  350ms ease;
+  --transition-fast: 100ms ease;
+  --transition-base: 200ms ease;
+  --transition-slow: 350ms ease;
 }
 
 /* ── Base ────────────────────────────────────────────────── */
-html, body {
+html,
+body {
   height: 100%;
   overflow: hidden; /* Electron window — no OS scrollbar */
 }
@@ -117,13 +118,20 @@ body {
 }
 
 /* ── Scrollbars ──────────────────────────────────────────── */
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
 ::-webkit-scrollbar-thumb {
   background: var(--color-border-strong);
   border-radius: var(--radius-full);
 }
-::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
 
 /* ── Focus ───────────────────────────────────────────────── */
 :focus-visible {
@@ -134,15 +142,28 @@ body {
 
 /* ── Animations ──────────────────────────────────────────── */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }

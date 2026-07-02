@@ -1,0 +1,30 @@
+{
+  "name": "@ocs/explorer",
+  "version": "0.1.0",
+  "description": "Explorer Platform for Open-Code.Studio",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@ocs/common": "workspace:*",
+    "@ocs/workspace": "workspace:*",
+    "@parcel/watcher": "^2.4.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.0",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

@@ -8,7 +8,9 @@
   position: relative;
   opacity: 0;
   transform: translateY(12px);
-  transition: opacity 400ms ease, transform 400ms ease;
+  transition:
+    opacity 400ms ease,
+    transform 400ms ease;
 }
 
 .root.visible {
@@ -38,20 +40,28 @@
 .orb2 {
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(96, 165, 250, 0.10) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(96, 165, 250, 0.1) 0%, transparent 70%);
   bottom: -100px;
   left: -80px;
   animation: driftB 16s ease-in-out infinite alternate;
 }
 
 @keyframes driftA {
-  from { transform: translate(0, 0) scale(1); }
-  to   { transform: translate(-40px, 30px) scale(1.05); }
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(-40px, 30px) scale(1.05);
+  }
 }
 
 @keyframes driftB {
-  from { transform: translate(0, 0) scale(1); }
-  to   { transform: translate(30px, -20px) scale(1.08); }
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(30px, -20px) scale(1.08);
+  }
 }
 
 /* ── Top bar ───────────────────────────────────────────────── */
@@ -99,7 +109,9 @@
   padding: 6px 10px;
   border-radius: var(--radius-md);
   font-size: 1rem;
-  transition: background var(--transition-fast), border-color var(--transition-fast);
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast);
 }
 
 .iconButton:hover {
@@ -173,8 +185,11 @@
   padding: 24px 32px;
   cursor: pointer;
   min-width: 160px;
-  transition: background var(--transition-base), border-color var(--transition-base),
-    transform var(--transition-base), box-shadow var(--transition-base);
+  transition:
+    background var(--transition-base),
+    border-color var(--transition-base),
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
 }
 
 .card:not(:disabled):hover {
@@ -185,7 +200,7 @@
 }
 
 .card:disabled,
-.card[aria-disabled='true'] {
+.card[aria-disabled="true"] {
   opacity: 0.45;
   cursor: not-allowed;
 }

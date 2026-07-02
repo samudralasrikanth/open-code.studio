@@ -86,11 +86,11 @@ Dependencies flow strictly downward. No lower layer may import from a higher lay
 
 ## Status
 
-| Epic | Name | Status |
-|------|------|--------|
+| Epic      | Name                  | Status      |
+| --------- | --------------------- | ----------- |
 | EPIC-0001 | Repository Foundation | ✅ Complete |
-| EPIC-0002 | Core Platform | ✅ Complete |
-| EPIC-0003 | Desktop Bootstrap | ✅ Complete |
-| EPIC-0004 | Workspace Management | 🔜 Next |
+| EPIC-0002 | Core Platform         | ✅ Complete |
+| EPIC-0003 | Desktop Bootstrap     | ✅ Complete |
+| EPIC-0004 | Workspace Management  | 🔜 Next     |
 
 AI runtime and product features beyond Phase 0 are intentionally out of scope for this phase.

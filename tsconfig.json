@@ -22,6 +22,8 @@
     { "path": "./packages/sdk-workflow" },
     { "path": "./packages/ui" },
     { "path": "./packages/common" },
+    { "path": "./packages/workspace" },
+    { "path": "./packages/explorer" },
     { "path": "./services/indexing" },
     { "path": "./services/model-manager" },
     { "path": "./services/update-service" },

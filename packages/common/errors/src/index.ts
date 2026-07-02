@@ -6,6 +6,7 @@ export type PlatformErrorCategory =
   | "logging"
   | "telemetry"
   | "validation"
+  | "workspace"
   | "unknown";
 
 export interface PlatformErrorOptions {

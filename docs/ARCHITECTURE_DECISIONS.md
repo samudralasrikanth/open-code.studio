@@ -8,20 +8,22 @@ New decisions are added in chronological order. Decisions are never deleted — 
 
 ## Decision Table
 
-| ID | Title | Status | Phase |
-|----|-------|--------|-------|
-| [ADR-001](#adr-001) | Electron for the desktop shell | Accepted | Phase 0 |
-| [ADR-002](#adr-002) | PNPM + Turborepo for the monorepo | Accepted | Phase 0 |
-| [ADR-003](#adr-003) | Event bus for inter-package communication | Accepted | Phase 0 |
-| [ADR-004](#adr-004) | React renderer separated from Desktop Host | Accepted | Phase 0 |
-| [ADR-005](#adr-005) | Strict top-down layer dependency rule | Accepted | Phase 0 |
-| [ADR-006](#adr-006) | Single public entry point per package | Accepted | Phase 0 |
+| ID                  | Title                                               | Status   | Phase   |
+| ------------------- | --------------------------------------------------- | -------- | ------- |
+| [ADR-001](#adr-001) | Electron for the desktop shell                      | Accepted | Phase 0 |
+| [ADR-002](#adr-002) | PNPM + Turborepo for the monorepo                   | Accepted | Phase 0 |
+| [ADR-003](#adr-003) | Event bus for inter-package communication           | Accepted | Phase 0 |
+| [ADR-004](#adr-004) | React renderer separated from Desktop Host          | Accepted | Phase 0 |
+| [ADR-005](#adr-005) | Strict top-down layer dependency rule               | Accepted | Phase 0 |
+| [ADR-006](#adr-006) | Single public entry point per package               | Accepted | Phase 0 |
 | [ADR-007](#adr-007) | TypeScript composite builds with project references | Accepted | Phase 0 |
-| [ADR-008](#adr-008) | contextBridge as the sole IPC surface | Accepted | Phase 0 |
-| [ADR-009](#adr-009) | Typed IPC channel registry | Accepted | Phase 0 |
-| [ADR-010](#adr-010) | CSS custom properties for theming | Accepted | Phase 0 |
-| [ADR-011](#adr-011) | Defer packages/common split to EPIC-0015 | Deferred | Phase 0 |
-| [ADR-012](#adr-012) | Workspace packages bundled into Electron main | Accepted | Phase 0 |
+| [ADR-008](#adr-008) | contextBridge as the sole IPC surface               | Accepted | Phase 0 |
+| [ADR-009](#adr-009) | Typed IPC channel registry                          | Accepted | Phase 0 |
+| [ADR-010](#adr-010) | CSS custom properties for theming                   | Accepted | Phase 0 |
+| [ADR-011](#adr-011) | Defer packages/common split to EPIC-0015            | Deferred | Phase 0 |
+| [ADR-012](#adr-012) | Workspace packages bundled into Electron main       | Accepted | Phase 0 |
+| [ADR-013](#adr-013) | Workspace URI abstraction                           | Accepted | Phase 1 |
+| [ADR-014](#adr-014) | Atomic Workspace Persistence Pattern                | Accepted | Phase 1 |
 
 ---
 
@@ -50,11 +52,11 @@ Open-Code.Studio uses [Electron](https://www.electronjs.org/) as the desktop app
 
 **Rejected alternatives**
 
-| Alternative | Reason rejected |
-|-------------|-----------------|
-| Tauri | Smaller runtime footprint but Rust backend increases team language surface. WebView behavior differs across OS versions, creating platform-specific CSS/JS bugs. |
-| Native per-platform UI (SwiftUI, WinUI, Qt) | Prohibitively expensive to maintain three separate implementations for a small team. |
-| Web browser only | Cannot access local file system, GPU drivers, local model inference, or native system integration without OS-level permissions not available to browser pages. |
+| Alternative                                 | Reason rejected                                                                                                                                                  |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Tauri                                       | Smaller runtime footprint but Rust backend increases team language surface. WebView behavior differs across OS versions, creating platform-specific CSS/JS bugs. |
+| Native per-platform UI (SwiftUI, WinUI, Qt) | Prohibitively expensive to maintain three separate implementations for a small team.                                                                             |
+| Web browser only                            | Cannot access local file system, GPU drivers, local model inference, or native system integration without OS-level permissions not available to browser pages.   |
 
 ---
 
@@ -80,11 +82,11 @@ The repository uses [PNPM](https://pnpm.io/) for package management and [Turbore
 
 **Rejected alternatives**
 
-| Alternative | Reason rejected |
-|-------------|-----------------|
-| npm workspaces | No task orchestration, no caching, slower installs. |
-| Yarn + Nx | Nx is more complex to configure and has a steeper learning curve for contributors. Yarn PnP creates compatibility issues with Electron's native module loading. |
-| Lerna | No longer actively maintained as a standalone tool; functionality absorbed by Turborepo and Nx. |
+| Alternative    | Reason rejected                                                                                                                                                 |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| npm workspaces | No task orchestration, no caching, slower installs.                                                                                                             |
+| Yarn + Nx      | Nx is more complex to configure and has a steeper learning curve for contributors. Yarn PnP creates compatibility issues with Electron's native module loading. |
+| Lerna          | No longer actively maintained as a standalone tool; functionality absorbed by Turborepo and Nx.                                                                 |
 
 ---
 
@@ -320,3 +322,42 @@ When `packages/common` accumulates responsibilities that clearly belong to diffe
 **Implementation**
 
 `externalizeDepsPlugin({ exclude: ['@ocs/common'] })` in `electron.vite.config.ts`, combined with a path alias pointing directly to the TypeScript source.
+
+---
+
+### ADR-013
+
+**Workspace URI abstraction**
+
+**Status:** Accepted  
+**Date:** 2026-07-02  
+**Epic:** EPIC-0004
+
+**Decision**
+
+All paths in the Workspace domain must use a branded `WorkspaceUri` string rather than raw file paths. The system provides `uriFromPath` and `uriToPath` converters.
+
+**Reason**
+
+- By abstracting paths to URIs (e.g. `file:///path`), the IDE can seamlessly support future remote workspaces like `ssh://`, `docker://`, or `cloud://` without changing the domain logic.
+- A branded type prevents accidental mixing of raw strings and verified URIs in the type system.
+
+---
+
+### ADR-014
+
+**Atomic Workspace Persistence Pattern**
+
+**Status:** Accepted  
+**Date:** 2026-07-02  
+**Epic:** EPIC-0004
+
+**Decision**
+
+Persistence for workspace configurations and recent registries uses an atomic write-then-rename pattern via `IStorageAdapter`, writing to a `.tmp` file and then executing `fs.rename`.
+
+**Reason**
+
+- Node.js `fs.writeFile` is not atomic. If the IDE crashes or loses power during a write, a partially written JSON file corrupts the user's workspace history.
+- The POSIX `rename` operation (and its Windows equivalent via `MoveFileEx`) guarantees atomic replacement of the target file.
+- The IDE will silently recreate state if the file does not exist, but failing due to a corrupted file from a non-atomic write creates a bad user experience.

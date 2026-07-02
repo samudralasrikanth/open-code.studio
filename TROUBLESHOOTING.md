@@ -80,4 +80,3 @@ Type `y` when prompted to recreate `node_modules`. Never edit `node_modules` dir
 - **IPC handler not found**: Ensure the handler is registered in `src/main/ipc/handlers.ts` before any `BrowserWindow` is created. IPC handlers registered after `app.whenReady()` may miss early renderer calls.
 - **Context bridge error**: If `window.ocs` is `undefined` in the renderer, confirm `contextIsolation: true` and that the preload path in `BrowserWindow.webPreferences.preload` is correct and pointing to the built `dist/preload/index.js`.
 - **Hot reload not working**: In dev mode, `electron-vite` uses Vite's HMR for the renderer and restarts Electron on main process changes. If neither is triggering, kill the dev process and restart with `pnpm dev:studio`.
-
