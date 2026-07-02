@@ -1,0 +1,25 @@
+{
+  "name": "@ocs/editor-monaco",
+  "version": "0.0.1",
+  "description": "Monaco editor adapter for Open-Code.Studio",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "tsc -b --clean",
+    "lint": "eslint \"src/**/*.ts\"",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@ocs/common": "workspace:*",
+    "@ocs/workspace": "workspace:*",
+    "@ocs/document": "workspace:*",
+    "@ocs/editor": "workspace:*",
+    "monaco-editor": "^0.47.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "vitest": "^1.4.0"
+  }
+}

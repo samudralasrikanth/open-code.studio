@@ -4,15 +4,17 @@ import { join } from "path";
 import { createContainer } from "@ocs/common";
 import { createLifecycleManager } from "@ocs/common";
 import { createLogger } from "@ocs/common";
-import {
-  createLocalFileSystem,
-  createJsonStorageAdapter,
-  WorkspaceSettingsRepository,
-  WorkspaceRegistry,
-  createWorkspaceService,
-  PersistedWorkspaceState
-} from "@ocs/workspace";
+import { WorkspaceSettingsRepository } from "../../../../packages/workspace/src/application/WorkspaceSettingsRepository.js";
+import { WorkspaceRegistry } from "../../../../packages/workspace/src/application/WorkspaceRegistry.js";
+import { createWorkspaceService } from "../../../../packages/workspace/src/application/WorkspaceService.js";
+import type { PersistedWorkspaceState } from "../../../../packages/workspace/src/application/WorkspaceSettingsRepository.js";
+import { createLocalFileSystem } from "../../../../packages/workspace/src/infrastructure/LocalFileSystem.js";
+import { createJsonStorageAdapter } from "../../../../packages/workspace/src/infrastructure/JsonStorageAdapter.js";
 import { ExplorerService, TreeModel, ExplorerEventBus, WorkspaceProvider } from "@ocs/explorer";
+import { DocumentService } from "../../../../packages/document/src/application/DocumentService.js";
+import { EditorService } from "../../../../packages/editor/src/application/EditorService.js";
+import { CommandRegistry } from "@ocs/common";
+import { SaveDocumentCommand } from "../../../../packages/document/src/application/SaveDocumentCommand.js";
 import { app, BrowserWindow, shell } from "electron";
 
 import { registerIpcHandlers } from "./ipc/handlers.js";
@@ -47,6 +49,13 @@ const explorerEventBus = new ExplorerEventBus();
 const treeModel = new TreeModel();
 const explorerService = new ExplorerService(treeModel, explorerEventBus);
 
+// ─── Document & Editor Infrastructure ──────────────────────────────────────────
+
+const documentService = new DocumentService(workspaceFs);
+const editorService = new EditorService();
+const commandRegistry = new CommandRegistry();
+commandRegistry.registerCommand(new SaveDocumentCommand(documentService));
+
 // ─── Application Lifecycle ────────────────────────────────────────────────────
 
 app.whenReady().then(async () => {
@@ -60,6 +69,9 @@ app.whenReady().then(async () => {
   container.singleton(Symbol.for("lifecycle"), () => lifecycle);
   container.singleton(Symbol.for("workspace"), () => workspaceService);
   container.singleton(Symbol.for("explorer"), () => explorerService);
+  container.singleton(Symbol.for("document"), () => documentService);
+  container.singleton(Symbol.for("editor"), () => editorService);
+  container.singleton(Symbol.for("commands"), () => commandRegistry);
 
   // Register providers (Workspace is the primary one)
   const workspaceProvider = new WorkspaceProvider(workspaceFs);

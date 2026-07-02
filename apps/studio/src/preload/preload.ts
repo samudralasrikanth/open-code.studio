@@ -1,6 +1,7 @@
 import { electronAPI } from "@electron-toolkit/preload";
 import type { VisibleNode } from "@ocs/explorer";
 import type { Workspace, RecentWorkspace } from "@ocs/workspace";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { contextBridge, ipcRenderer } from "electron";
 
 import { IpcChannels } from "../shared/ipc-channels.js";
@@ -95,6 +96,39 @@ const ocsAPI = {
       ipcRenderer.on(IpcChannels.EXPLORER_STATE_CHANGED, handler);
       return () => ipcRenderer.off(IpcChannels.EXPLORER_STATE_CHANGED, handler);
     }
+  },
+
+  // ── Document ────────────────────────────────────────────────────────────────
+  document: {
+    open: (uri: string): Promise<any> => ipcRenderer.invoke(IpcChannels.DOCUMENT_OPEN, uri),
+    close: (uri: string): Promise<void> => ipcRenderer.invoke(IpcChannels.DOCUMENT_CLOSE, uri),
+    save: (uri: string): Promise<void> => ipcRenderer.invoke(IpcChannels.DOCUMENT_SAVE, uri),
+    get: (uri: string): Promise<any> => ipcRenderer.invoke(IpcChannels.DOCUMENT_GET, uri),
+    onStateChanged: (callback: (payload: any) => void): (() => void) => {
+      const handler = (_: any, payload: any) => callback(payload);
+      ipcRenderer.on(IpcChannels.DOCUMENT_STATE_CHANGED, handler);
+      return () => ipcRenderer.off(IpcChannels.DOCUMENT_STATE_CHANGED, handler);
+    }
+  },
+
+  // ── Editor ──────────────────────────────────────────────────────────────────
+  editor: {
+    open: (input: any, options?: any): Promise<void> =>
+      ipcRenderer.invoke(IpcChannels.EDITOR_OPEN, input, options),
+    close: (input: any, groupId?: string): Promise<void> =>
+      ipcRenderer.invoke(IpcChannels.EDITOR_CLOSE, input, groupId),
+    getState: (): Promise<any> => ipcRenderer.invoke(IpcChannels.EDITOR_GET_STATE),
+    onStateChanged: (callback: (payload: any) => void): (() => void) => {
+      const handler = (_: any, payload: any) => callback(payload);
+      ipcRenderer.on(IpcChannels.EDITOR_STATE_CHANGED, handler);
+      return () => ipcRenderer.off(IpcChannels.EDITOR_STATE_CHANGED, handler);
+    }
+  },
+
+  // ── Commands ────────────────────────────────────────────────────────────────
+  commands: {
+    execute: (commandId: string, args?: any): Promise<any> =>
+      ipcRenderer.invoke(IpcChannels.COMMAND_EXECUTE, commandId, args)
   }
 };
 

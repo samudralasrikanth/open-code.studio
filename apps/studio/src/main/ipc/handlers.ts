@@ -135,4 +135,145 @@ export function registerIpcHandlers(container: Container): void {
       wc.send(IpcChannels.EXPLORER_STATE_CHANGED);
     });
   });
+
+  // ── Document ───────────────────────────────────────────────────────────────
+  const documentService = container.resolve<import("@ocs/document").DocumentService>(
+    Symbol.for("document")
+  );
+
+  const { uriFromString } = require("@ocs/workspace");
+
+  ipcMain.handle(IpcChannels.DOCUMENT_OPEN, async (_, uriStr: string) => {
+    const uri = uriFromString(uriStr);
+    const doc = await documentService.openDocument(uri);
+    return {
+      uri: doc.uri.toString(),
+      type: doc.type,
+      isDirty: doc.isDirty,
+      isReadonly: doc.isReadonly,
+      content: doc.type === "text" ? (doc as import("@ocs/document").ITextDocument).getText() : null
+    };
+  });
+
+  ipcMain.handle(IpcChannels.DOCUMENT_CLOSE, async (_, uriStr: string) => {
+    const uri = uriFromString(uriStr);
+    documentService.closeDocument(uri);
+  });
+
+  ipcMain.handle(IpcChannels.DOCUMENT_SAVE, async (_, uriStr: string) => {
+    const uri = uriFromString(uriStr);
+    await documentService.saveDocument(uri);
+  });
+
+  ipcMain.handle(IpcChannels.DOCUMENT_GET, async (_, uriStr: string) => {
+    const uri = uriFromString(uriStr);
+    // Ideally DocumentRegistry exposes a get method, DocumentCache has one
+    // We would use `DocumentCache.get` or keep track of open documents.
+    // For now we can just open it again since it retrieves from cache.
+    const doc = await documentService.openDocument(uri);
+    return {
+      uri: doc.uri.toString(),
+      type: doc.type,
+      isDirty: doc.isDirty,
+      isReadonly: doc.isReadonly,
+      content: doc.type === "text" ? (doc as import("@ocs/document").ITextDocument).getText() : null
+    };
+  });
+
+  // ── Editor ─────────────────────────────────────────────────────────────────
+  const editorService = container.resolve<import("@ocs/editor").EditorService>(
+    Symbol.for("editor")
+  );
+
+  ipcMain.handle(IpcChannels.EDITOR_OPEN, async (_, inputStr: string, options?: any) => {
+    // For now, assume inputStr is a URI and wrap it in DocumentEditorInput
+    const uri = uriFromString(inputStr);
+    const doc = await documentService.openDocument(uri);
+    const { DocumentEditorInput } = require("@ocs/editor");
+    editorService.openEditor(new DocumentEditorInput(doc), options);
+  });
+
+  ipcMain.handle(IpcChannels.EDITOR_CLOSE, async (_, inputStr: string, groupId?: string) => {
+    // Basic implementation for now
+    const uri = uriFromString(inputStr);
+    const group = groupId ? editorService.groups.find((g: any) => g.id === groupId) : undefined;
+
+    const performClose = async (input: any, g: any) => {
+      if (input.isDirty()) {
+        const { dialog } = await import("electron");
+        const result = await dialog.showMessageBox({
+          type: "warning",
+          buttons: ["Save", "Don't Save", "Cancel"],
+          title: "Save changes?",
+          message: `Do you want to save the changes you made to ${input.getName()}?`,
+          detail: "Your changes will be lost if you don't save them.",
+          cancelId: 2
+        });
+
+        if (result.response === 0) {
+          // Save
+          await documentService.saveDocument(uri);
+        } else if (result.response === 2) {
+          // Cancel
+          return;
+        }
+        // If "Don't Save" (1), just proceed to close.
+      }
+      editorService.closeEditor(input, g);
+    };
+
+    // Find the input in the group
+    if (group) {
+      const input = group.inputs.find((i: any) => i.id === uri.toString());
+      if (input) await performClose(input, group);
+    } else {
+      for (const g of editorService.groups) {
+        const input = (g as any).inputs.find((i: any) => i.id === uri.toString());
+        if (input) await performClose(input, g);
+      }
+    }
+  });
+
+  ipcMain.handle(IpcChannels.EDITOR_GET_STATE, () => {
+    return {
+      groups: editorService.groups.map((g: any) => ({
+        id: g.id,
+        inputs: g.inputs.map((i: any) => i.id),
+        activeInput: g.activeInput?.id,
+        previewInput: g.previewInput?.id
+      })),
+      activeGroup: editorService.activeGroup?.id
+    };
+  });
+
+  const broadcastEditorState = () => {
+    webContents.getAllWebContents().forEach((wc) => {
+      wc.send(IpcChannels.EDITOR_STATE_CHANGED, {
+        groups: editorService.groups.map((g: any) => ({
+          id: g.id,
+          inputs: g.inputs.map((i: any) => i.id),
+          activeInput: g.activeInput?.id,
+          previewInput: g.previewInput?.id
+        })),
+        activeGroup: editorService.activeGroup?.id
+      });
+    });
+  };
+
+  editorService.eventBus.on("editor.opened", broadcastEditorState);
+  editorService.eventBus.on("editor.closed", broadcastEditorState);
+  editorService.eventBus.on("editor.activeChanged", broadcastEditorState);
+
+  // ── Commands ───────────────────────────────────────────────────────────────
+  const commandRegistry = container.resolve<import("@ocs/common").CommandRegistry>(
+    Symbol.for("commands")
+  );
+
+  ipcMain.handle(IpcChannels.COMMAND_EXECUTE, async (_, commandId: string, args: any) => {
+    // If command is save document, we need to convert uri string to WorkspaceUri
+    if (commandId === "document.save" && args?.uri) {
+      args.uri = uriFromString(args.uri);
+    }
+    return commandRegistry.executeCommand(commandId, args);
+  });
 }

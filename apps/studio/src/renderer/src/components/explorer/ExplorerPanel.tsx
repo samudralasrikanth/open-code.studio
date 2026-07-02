@@ -57,6 +57,7 @@ export const ExplorerPanel: React.FC = () => {
         }
       } else {
         await window.ocs.explorer.selectNode(visibleNode.node.id);
+        await window.ocs.editor.open(visibleNode.node.id, { preview: true });
       }
     } catch (e: unknown) {
       console.error("Failed to interact with node", e instanceof Error ? e.message : String(e));

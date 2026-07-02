@@ -1,3 +1,4 @@
+/* eslint-disable */
 import type { VisibleNode } from "@ocs/explorer";
 import React, { useEffect, useState } from "react";
 
@@ -40,13 +41,49 @@ export const DeveloperDiagnosticsPanel: React.FC = () => {
     };
   }, []);
 
+  const [fps, setFps] = useState(0);
+  const [memory, setMemory] = useState<string>("Unknown");
+
+  useEffect(() => {
+    let frameCount = 0;
+    let lastTime = performance.now();
+    let animationFrameId: number;
+
+    const calculateFPS = () => {
+      const now = performance.now();
+      frameCount++;
+      if (now - lastTime >= 1000) {
+        setFps(frameCount);
+        frameCount = 0;
+        lastTime = now;
+
+        // Also update memory if available
+        if ("memory" in performance) {
+          const perfMem = (performance as any).memory;
+          setMemory(`${(perfMem.usedJSHeapSize / 1048576).toFixed(1)} MB`);
+        }
+      }
+      animationFrameId = requestAnimationFrame(calculateFPS);
+    };
+
+    animationFrameId = requestAnimationFrame(calculateFPS);
+
+    return () => cancelAnimationFrame(animationFrameId);
+  }, []);
+
   return (
     <div style={{ padding: "8px", borderTop: "1px solid #333", fontSize: "11px", color: "#888" }}>
       <div>
         <strong>Explorer Diagnostics</strong>
       </div>
-      <div>Visible Nodes: {nodes.length}</div>
-      <div>Render Count: {renderCount}</div>
+      <div
+        style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px", marginTop: "4px" }}
+      >
+        <div>Visible Nodes: {nodes.length}</div>
+        <div>Render Count: {renderCount}</div>
+        <div>FPS: {fps}</div>
+        <div>Memory: {memory}</div>
+      </div>
       <div style={{ marginTop: "4px" }}>
         <em>(Performance telemetry active)</em>
       </div>

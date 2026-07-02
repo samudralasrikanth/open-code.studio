@@ -8,7 +8,14 @@ import { defineConfig, externalizeDepsPlugin } from "electron-vite";
  * externalized) because they are TypeScript source-only and don't have a
  * built CJS dist that Electron can require() at runtime.
  */
-const WORKSPACE_PACKAGES = ["@ocs/common", "@ocs/workspace", "@ocs/explorer"];
+const WORKSPACE_PACKAGES = [
+  "@ocs/common",
+  "@ocs/workspace",
+  "@ocs/explorer",
+  "@ocs/document",
+  "@ocs/editor",
+  "@ocs/editor-monaco"
+];
 
 export default defineConfig({
   main: {
@@ -48,6 +55,7 @@ export default defineConfig({
     build: {
       outDir: "dist/main",
       rollupOptions: {
+        external: ["@parcel/watcher"],
         input: {
           index: resolve(__dirname, "src/main/main.ts")
         }
@@ -85,6 +93,30 @@ export default defineConfig({
         {
           find: "@ocs/explorer",
           replacement: resolve(__dirname, "../../packages/explorer/src/index.ts")
+        },
+        {
+          find: /^@ocs\/document\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/document/$1/src/index.ts")
+        },
+        {
+          find: "@ocs/document",
+          replacement: resolve(__dirname, "../../packages/document/src/index.ts")
+        },
+        {
+          find: /^@ocs\/editor\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/editor/$1/src/index.ts")
+        },
+        {
+          find: "@ocs/editor",
+          replacement: resolve(__dirname, "../../packages/editor/src/index.ts")
+        },
+        {
+          find: /^@ocs\/editor-monaco\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/editor-monaco/$1/src/index.ts")
+        },
+        {
+          find: "@ocs/editor-monaco",
+          replacement: resolve(__dirname, "../../packages/editor-monaco/src/index.ts")
         }
       ]
     },
@@ -103,9 +135,60 @@ export default defineConfig({
       outDir: "dist/renderer"
     },
     resolve: {
-      alias: {
-        "@renderer": resolve(__dirname, "src/renderer/src")
-      }
+      alias: [
+        {
+          find: "@renderer",
+          replacement: resolve(__dirname, "src/renderer/src")
+        },
+        {
+          find: /^@ocs\/common\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/common/$1/src/index.ts")
+        },
+        {
+          find: "@ocs/common",
+          replacement: resolve(__dirname, "../../packages/common/src/index.ts")
+        },
+        {
+          find: /^@ocs\/workspace\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/workspace/$1/src/index.ts")
+        },
+        {
+          find: "@ocs/workspace",
+          replacement: resolve(__dirname, "../../packages/workspace/src/index.ts")
+        },
+        {
+          find: /^@ocs\/explorer\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/explorer/$1/src/index.ts")
+        },
+        {
+          find: "@ocs/explorer",
+          replacement: resolve(__dirname, "../../packages/explorer/src/index.ts")
+        },
+        {
+          find: /^@ocs\/document\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/document/$1/src/index.ts")
+        },
+        {
+          find: "@ocs/document",
+          replacement: resolve(__dirname, "../../packages/document/src/index.ts")
+        },
+        {
+          find: /^@ocs\/editor\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/editor/$1/src/index.ts")
+        },
+        {
+          find: "@ocs/editor",
+          replacement: resolve(__dirname, "../../packages/editor/src/index.ts")
+        },
+        {
+          find: /^@ocs\/editor-monaco\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/editor-monaco/$1/src/index.ts")
+        },
+        {
+          find: "@ocs/editor-monaco",
+          replacement: resolve(__dirname, "../../packages/editor-monaco/src/index.ts")
+        }
+      ]
     },
     plugins: [react()]
   }

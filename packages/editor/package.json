@@ -1,0 +1,27 @@
+{
+  "name": "@ocs/editor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Editor Platform for Open-Code.Studio",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rm -rf dist *.tsbuildinfo",
+    "lint": "eslint src",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@ocs/common": "workspace:*",
+    "@ocs/workspace": "workspace:*",
+    "@ocs/document": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.2",
+    "vitest": "^2.1.8"
+  }
+}

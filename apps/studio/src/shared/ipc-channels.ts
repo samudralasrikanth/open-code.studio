@@ -35,7 +35,23 @@ export const IpcChannels = {
   EXPLORER_COLLAPSE_NODE: "explorer:collapse-node",
   EXPLORER_SELECT_NODE: "explorer:select-node",
   EXPLORER_EXECUTE_COMMAND: "explorer:execute-command",
-  EXPLORER_STATE_CHANGED: "explorer:state-changed" // main → renderer push event
+  EXPLORER_STATE_CHANGED: "explorer:state-changed", // main → renderer push event
+
+  // Document
+  DOCUMENT_OPEN: "document:open",
+  DOCUMENT_CLOSE: "document:close",
+  DOCUMENT_SAVE: "document:save",
+  DOCUMENT_GET: "document:get",
+  DOCUMENT_STATE_CHANGED: "document:state-changed",
+
+  // Editor
+  EDITOR_OPEN: "editor:open",
+  EDITOR_CLOSE: "editor:close",
+  EDITOR_GET_STATE: "editor:get-state",
+  EDITOR_STATE_CHANGED: "editor:state-changed",
+
+  // Commands
+  COMMAND_EXECUTE: "command:execute"
 } as const;
 
 export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels];

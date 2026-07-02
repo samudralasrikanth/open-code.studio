@@ -15,6 +15,12 @@ export {
   uriEquals
 } from "./domain/WorkspaceUri.js";
 
+export type {
+  IWorkspaceContentIndexer,
+  WorkspaceContentChangeEvent,
+  WorkspaceFileEvent
+} from "./domain/IWorkspaceContentIndexer.js";
+
 export type { WorkspaceStateValue } from "./domain/WorkspaceState.js";
 export { WorkspaceStateMachine } from "./domain/WorkspaceState.js";
 
@@ -42,18 +48,6 @@ export type {
 
 // Infrastructure
 export type { IFileSystem, StatResult } from "./infrastructure/IFileSystem.js";
-export { LocalFileSystem, createLocalFileSystem } from "./infrastructure/LocalFileSystem.js";
 export type { IStorageAdapter } from "./infrastructure/IStorageAdapter.js";
-export {
-  JsonStorageAdapter,
-  createJsonStorageAdapter
-} from "./infrastructure/JsonStorageAdapter.js";
 
-// Application
-export { WorkspaceConfiguration as WorkspaceConfigurationReader } from "./application/WorkspaceConfiguration.js";
-export { WorkspaceSettingsRepository } from "./application/WorkspaceSettingsRepository.js";
-export type { PersistedWorkspaceState } from "./application/WorkspaceSettingsRepository.js";
-export type { WorkspaceRegistryOptions } from "./application/WorkspaceRegistry.js";
-export { WorkspaceRegistry } from "./application/WorkspaceRegistry.js";
-export type { WorkspaceServiceOptions } from "./application/WorkspaceService.js";
-export { WorkspaceService, createWorkspaceService } from "./application/WorkspaceService.js";
+// Application (should be imported directly by main process)

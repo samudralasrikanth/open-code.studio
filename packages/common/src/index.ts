@@ -3,6 +3,7 @@ export * from "../di/src/index.js";
 export * from "../errors/src/index.js";
 export * from "../events/src/index.js";
 export * from "../lifecycle/src/index.js";
+export * from "./commands/CommandRegistry.js";
 export * from "../logger/src/index.js";
 export * from "../telemetry/src/index.js";
 
