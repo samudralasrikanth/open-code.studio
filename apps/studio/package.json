@@ -1,0 +1,36 @@
+{
+  "name": "@ocs/app-studio",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Open-Code.Studio desktop application shell.",
+  "main": "./dist/main/index.js",
+  "scripts": {
+    "build": "electron-vite build",
+    "clean": "rm -rf dist .vite coverage",
+    "dev": "electron-vite dev",
+    "preview": "electron-vite preview",
+    "lint": "eslint src",
+    "test": "vitest run --passWithNoTests",
+    "test:coverage": "vitest run --coverage --passWithNoTests",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ocs/common": "workspace:*",
+    "@electron-toolkit/preload": "^3.0.1",
+    "@electron-toolkit/utils": "^3.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.24.0"
+  },
+  "devDependencies": {
+    "@electron-toolkit/tsconfig": "^1.0.1",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "electron": "^31.0.2",
+    "electron-vite": "^2.3.0",
+    "typescript": "^5.5.2",
+    "vite": "^5.3.1",
+    "vitest": "^2.1.8"
+  }
+}

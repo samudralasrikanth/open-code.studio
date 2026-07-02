@@ -1,0 +1,57 @@
+{
+  "name": "@ocs/common",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared common types and utilities.",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    },
+    "./config": {
+      "types": "./dist/config/src/index.d.ts",
+      "import": "./dist/config/src/index.js"
+    },
+    "./di": {
+      "types": "./dist/di/src/index.d.ts",
+      "import": "./dist/di/src/index.js"
+    },
+    "./errors": {
+      "types": "./dist/errors/src/index.d.ts",
+      "import": "./dist/errors/src/index.js"
+    },
+    "./events": {
+      "types": "./dist/events/src/index.d.ts",
+      "import": "./dist/events/src/index.js"
+    },
+    "./lifecycle": {
+      "types": "./dist/lifecycle/src/index.d.ts",
+      "import": "./dist/lifecycle/src/index.js"
+    },
+    "./logger": {
+      "types": "./dist/logger/src/index.d.ts",
+      "import": "./dist/logger/src/index.js"
+    },
+    "./telemetry": {
+      "types": "./dist/telemetry/src/index.d.ts",
+      "import": "./dist/telemetry/src/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo coverage",
+    "dev": "tsc -b --watch",
+    "lint": "eslint .",
+    "test": "vitest run --passWithNoTests --coverage.enabled false",
+    "test:coverage": "vitest run --coverage --coverage.thresholds.lines 90 --coverage.thresholds.functions 90 --coverage.thresholds.branches 80 --coverage.thresholds.statements 90",
+    "typecheck": "tsc -b --pretty false"
+  }
+}

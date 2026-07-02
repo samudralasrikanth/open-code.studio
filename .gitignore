@@ -1,0 +1,48 @@
+# ── Dependencies ────────────────────────────────────────────────────────────────
+node_modules/
+
+# ── Build outputs ────────────────────────────────────────────────────────────────
+dist/
+out/
+coverage/
+*.tsbuildinfo
+
+# ── Turbo cache ──────────────────────────────────────────────────────────────────
+.turbo/
+
+# ── Electron-vite artifacts ──────────────────────────────────────────────────────
+# Packaged application bundles (produced by electron-builder)
+release/
+*.dmg
+*.exe
+*.deb
+*.rpm
+*.AppImage
+*.snap
+*.flatpak
+*.msi
+
+# ── Environment variables ────────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ── Logs ─────────────────────────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# ── OS artifacts ─────────────────────────────────────────────────────────────────
+.DS_Store
+__MACOSX/
+Thumbs.db
+desktop.ini
+
+# ── Editor artifacts ──────────────────────────────────────────────────────────────
+.vscode-test/
+*.vsix
+
+# ── Changeset pre-release state ─────────────────────────────────────────────────
+.changeset/*.md
+!.changeset/config.json
+!.changeset/README.md

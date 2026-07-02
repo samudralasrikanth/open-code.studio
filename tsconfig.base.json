@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "composite": true,
+    "incremental": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@ocs/common": ["packages/common/src/index.ts"],
+      "@ocs/configuration": ["packages/configuration/src/index.ts"],
+      "@ocs/event-bus": ["packages/event-bus/src/index.ts"],
+      "@ocs/gateway": ["packages/gateway/src/index.ts"],
+      "@ocs/knowledge": ["packages/knowledge/src/index.ts"],
+      "@ocs/runtime": ["packages/runtime/src/index.ts"],
+      "@ocs/workflow": ["packages/workflow/src/index.ts"]
+    }
+  }
+}
