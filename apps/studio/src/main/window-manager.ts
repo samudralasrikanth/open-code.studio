@@ -48,7 +48,7 @@ export function createWindowManager(logger: Logger): WindowManager {
       autoHideMenuBar: true,
       backgroundColor: "#0d0d0d", // Match dark theme background to prevent flash
       webPreferences: {
-        preload: join(__dirname, "../preload/preload.js"),
+        preload: join(__dirname, "../preload/index.js"),
         sandbox: false,
         nodeIntegration: false,
         contextIsolation: true
