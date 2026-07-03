@@ -53,9 +53,15 @@ export function useExplorer() {
     await window.ocs?.explorer.expandNode(providerId, id);
   }, []);
 
-  const executeCommand = useCallback(async (commandId: string, args?: unknown): Promise<void> => {
-    await window.ocs?.explorer.executeCommand(commandId, args);
-  }, []);
+  const executeCommand = useCallback(
+    async (
+      commandId: string,
+      args?: { uri?: string; targetUri?: string; isDirectory?: boolean }
+    ): Promise<void> => {
+      await window.ocs?.explorer.executeCommand(commandId, args);
+    },
+    []
+  );
 
   const revealInFinder = useCallback(async (uri: string): Promise<void> => {
     await window.ocs?.explorer.revealInFinder(uri);
