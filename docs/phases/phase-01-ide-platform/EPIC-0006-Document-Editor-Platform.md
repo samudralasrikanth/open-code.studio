@@ -1,328 +1,948 @@
 # EPIC-0006 — Document & Editor Platform
 
-**Phase:** Phase 0 — Foundation / Phase 1 — IDE Platform
-
-**Priority:** P0
-
-**Estimated Sprint:** Sprint 3
-
-**Status:** Completed
-
-**Owner:** Open-Code.Studio Core Team
-
-**Version:** 1.0
+| Property           | Value                          |
+| ------------------ | ------------------------------ |
+| Epic ID            | EPIC-0006                      |
+| Phase              | Phase 1 – IDE Platform         |
+| Status             | ✅ Completed                   |
+| Priority           | Critical                       |
+| Estimated Duration | 4 Weeks                        |
+| Dependencies       | EPIC-0005 Explorer Platform    |
+| Blocks             | EPIC-0007 Terminal Integration |
 
 ---
 
-# Executive Summary
+# Overview
 
-The Document & Editor Platform provides the core infrastructure for opening, editing, saving, and rendering files inside Open-Code.Studio.
+EPIC-0006 transforms Open-Code.Studio from a workspace browser into a true Integrated Development Environment (IDE) by introducing two independent but closely collaborating platforms:
 
-A primary design driver is the complete decoupling of **Document state** (source code content, dirty state, file system synchronization, encoding) from the **Editor view state** (rendering engine, cursor positions, selections, scroll positions). This architecture ensures that:
+- **Document Platform** — Owns document lifecycle, persistence, dirty tracking, save/revert, caching, and synchronization.
+- **Editor Platform** — Owns editor groups, tabs, layouts, preview tabs, split editors, navigation, and rendering adapters.
 
-1. Documents are not owned by editors and can exist without an active editor (e.g., for search indexing, diagnostic scans, or background AI refactoring).
-2. A single Document can be rendered simultaneously across multiple split editor groups, with modifications in one view propagating instantly to others.
-3. The UI components (built in React) and text rendering engine (Monaco Editor) do not run logic that mutations documents directly, instead issuing commands through an asynchronous command pipeline.
+A key architectural decision is that **documents are not editors**.
 
-This platform bridges the Electron main process (where core services and file system operations reside) and the renderer process (where React and Monaco editor instances are mounted) via a robust IPC channel architecture.
+Documents represent the source of truth.
 
----
+Editors represent views of those documents.
 
-# Goal
-
-Design and implement a robust, decoupled, and testable Document & Editor Platform consisting of:
-
-- A `DocumentService` managing document cache lifecycle, file-system resolution, and dirty state.
-- An `EditorService` managing multi-group split-layout trees, tab lifecycles (preview vs. pinned), and active view groups.
-- A `MonacoEditorAdapter` adapting Monaco instances to the platform contracts.
-- Typed IPC handlers facilitating thread-safe state synchronization and auto-flush editing behavior.
+Monaco is treated purely as an infrastructure adapter rather than the application's data model.
 
 ---
 
-# Business Value
+# Vision
 
-- **Robust Developer Experience**: Tab management, split editors, and preview states replicate the industry-standard developer ergonomics.
-- **Architectural Scalability**: Easy pluggability of new document/editor types (e.g., Image Viewers, Hex editors) without modifying Monaco or React views.
-- **AI Integration Foundation**: Decoupled documents allow AI agents to parse, analyze, and modify workspace files without forcing active visual tabs to open or flicker.
-- **Performance**: Keeps UI rendering separated from IO/OS disk operations, meeting strict responsiveness targets (<50ms editor switching).
+Build an editor platform capable of supporting:
+
+- Text editors
+- Image viewers
+- Markdown preview
+- PDF viewer
+- Diff editors
+- Settings editors
+- Notebook editors
+- AI editors
+- Future custom editors
+
+without changing the core Editor Platform.
+
+---
+
+# Objectives
+
+## Functional
+
+- Open files
+- Close files
+- Preview tabs
+- Pin tabs
+- Split editors
+- Dirty tracking
+- Save
+- Save As (future)
+- Revert
+- Restore session
+- Multiple editor groups
+- Monaco integration
+
+## Non-Functional
+
+- Editor independent from renderer
+- Document independent from Monaco
+- Zero keystroke IPC flooding
+- Event driven
+- Extensible editor types
+- Layout persistence
+- High performance
 
 ---
 
 # Scope
 
-## In Scope
+Included
 
-- **Document Platform**: Interfaces for Text and Binary documents, Registry, Cache, and FileSystemResolver.
-- **Editor Platform**: EditorInput base abstraction, EditorGroups, WorkbenchLayout management, and Session Restore (serialization/deserialization).
-- **Monaco Integration**: ModelManager caching `ITextModel` by URI, MonacoEditorAdapter wrapper, and change-flush debouncing strategies.
-- **Commands & Keybindings**: Core commands for opening, closing, pinning, and splitting editors.
-- **IPC Interface**: Synchronizing state changes and file content modifications between renderer and main processes.
+- Document Platform
+- Editor Platform
+- Monaco Adapter
+- Model Manager
+- Worker Loader
+- Command Integration
+- Dirty Tracking
+- Session Restore
+- Split Editors
+- Preview Tabs
 
-## Out of Scope
+Excluded
 
-- AI-assisted editor inline completions (EPIC-0022).
-- Git diff/decorations within Monaco gutter (EPIC-0011).
-- Custom non-text editor renderers (e.g., rich PDF viewer).
-- Multi-root workspace directory watching (EPIC-0004/0005).
-
----
-
-# Dependencies
-
-| Epic                                     | Required | Status   |
-| ---------------------------------------- | -------- | -------- |
-| EPIC-0002 — Core Platform (DI, EventBus) | ✅       | Complete |
-| EPIC-0004 — Workspace Platform           | ✅       | Complete |
-| EPIC-0005 — Explorer Platform            | ✅       | Complete |
+- Terminal
+- Git Diff
+- Merge Editor
+- Notebook
+- Custom Editors
+- Collaborative Editing
 
 ---
 
 # Architecture
 
-## High-Level Design
-
 ```
-                     +---------------------------------------+
-                     |            Renderer Process           |
-                     |                                       |
-                     |  +-----------------+                  |
-                     |  |  React App UI   |                  |
-                     |  +--------+--------+                  |
-                     |           | (calls hooks)             |
-                     |           v                  (IPC)    |
-                     |  +-----------------+        IpcChannels
-                     |  | MonacoEditorView| -------------->  |
-                     |  +--------+--------+                  |
-                     |           | (uses)                    |
-                     |           v                           |
-                     |  +-----------------+                  |
-                     |  |MonacoEditorAdpt |                  |
-                     |  +-----------------+                  |
-                     +-----------|---------------------------+
-                                 |
-                                 | (IPC call/send)
-                                 v
-                     +---------------------------------------+
-                     |             Main Process              |
-                     |                                       |
-                     |  +-----------------+                  |
-                     |  | registerHandlrs |                  |
-                     |  +--------+--------+                  |
-                     |           | (resolves)                |
-                     |           v                           |
-                     |  +-----------------+                  |
-                     |  |  EditorService  |                  |
-                     |  +--------+--------+                  |
-                     |           | (references)              |
-                     |           v                           |
-                     |  +-----------------+                  |
-                     |  | DocumentService |                  |
-                     |  +--------+--------+                  |
-                     |           | (synchronizes)            |
-                     |           v                           |
-                     |  +-----------------+                  |
-                     |  |   FileSystem    |                  |
-                     |  +--------+--------+                  |
-                     +---------------------------------------+
+Explorer
+
+↓
+
+Command Registry
+
+↓
+
+Editor Service
+
+↓
+
+Editor Groups
+
+↓
+
+Editor Inputs
+
+↓
+
+Document Service
+
+↓
+
+Document Registry
+
+↓
+
+Monaco Adapter
+
+↓
+
+Monaco Models
 ```
 
----
+Notice that Monaco exists at the bottom of the stack.
 
-## Packages
-
-The platform logic is structured across three core packages and one application package:
-
-1. **`packages/document`**: Implements logical document models, caching, resolvers, and the undo/redo stack.
-2. **`packages/editor`**: Implements editor groups, input wrappers, tree split-layouts, and history navigation.
-3. **`packages/editor-monaco`**: Wraps the Monaco Editor core library, implements the adapter interface, and tracks text models.
-4. **`apps/studio`**: Connects main and renderer processes through Electron IPC handlers, menus, and React UI layout.
+It is not the application's source of truth.
 
 ---
 
-## Public APIs
+# Package Structure
 
-### DocumentService
+```
+packages/
 
-- `openDocument(uri: WorkspaceUri): Promise<IDocument>`
-- `closeDocument(uri: WorkspaceUri): void`
-- `updateDocumentText(uri: WorkspaceUri, text: string): void`
-- `revertDocument(uri: WorkspaceUri): Promise<void>`
-- `saveDocument(uri: WorkspaceUri): Promise<void>`
+document/
 
-### EditorService
+domain/
+    Document
+    TextDocument
+    BinaryDocument
+    SaveState
 
-- `openEditor(input: EditorInput, options?: { preview?: boolean; active?: boolean; group?: EditorGroup | string }): void`
-- `closeEditor(input: EditorInput, group?: EditorGroup): void`
-- `splitActiveGroup(orientation: "horizontal" | "vertical", newGroupId: string): EditorGroup`
-- `restoreState(state: EditorState, inputResolver: (id: string) => Promise<EditorInput>): Promise<void>`
+application/
+    DocumentService
+    DocumentRegistry
+    DocumentCache
+    UndoRedoService
+
+editor/
+
+domain/
+    EditorInput
+    EditorGroup
+    EditorInputState
+    SplitNode
+
+application/
+    EditorService
+    EditorNavigationService
+    EditorCommands
+
+editor-monaco/
+
+ModelManager
+
+MonacoAdapter
+
+WorkerLoader
+```
 
 ---
 
-## Events
+# Platform Separation
 
-Cross-cutting updates are emitted through the platform's EventBus:
+## Document Platform
 
-| Event Type             | Publisher       | Subscribers             | Payload                                                   |
-| ---------------------- | --------------- | ----------------------- | --------------------------------------------------------- |
-| `document.opened`      | DocumentService | UI, Extension Host      | `{ uri: WorkspaceUri }`                                   |
-| `document.closed`      | DocumentService | UI, Cache Manager       | `{ uri: WorkspaceUri }`                                   |
-| `document.changed`     | DocumentService | UI tabs, File Watcher   | `{ uri: WorkspaceUri, isDirty: boolean }`                 |
-| `document.saved`       | DocumentService | Explorer, Git Subsystem | `{ uri: WorkspaceUri }`                                   |
-| `document.reverted`    | DocumentService | MonacoEditorAdapter, UI | `{ uri: WorkspaceUri }`                                   |
-| `editor.opened`        | EditorService   | LayoutManager, Tab view | `{ input: EditorInput, group: EditorGroup }`              |
-| `editor.closed`        | EditorService   | LayoutManager           | `{ input: EditorInput, group: EditorGroup }`              |
-| `editor.activeChanged` | EditorService   | Breadcrumbs, Status Bar | `{ input: EditorInput \| undefined, group: EditorGroup }` |
+Owns
+
+✓ Content
+
+✓ Dirty state
+
+✓ Save
+
+✓ Revert
+
+✓ Cache
+
+✓ Version
+
+✓ Encoding
+
+✓ Language
+
+Does NOT own
+
+✗ Tabs
+
+✗ Groups
+
+✗ Split layouts
+
+✗ Preview
 
 ---
 
-## Commands
+## Editor Platform
 
-Commands are mapped through the global application command registry:
+Owns
 
-- `editor.open`: Opens a document in the active/specified editor group.
-- `editor.close`: Closes an editor input and prompts to save if dirty.
-- `editor.pin`: Promotes a preview editor tab to a pinned state.
-- `editor.splitRight`: Splits the active editor group horizontally.
-- `editor.splitDown`: Splits the active editor group vertically.
-- `document.revert`: Reverts document text to its saved file-system state.
+✓ Tabs
+
+✓ Groups
+
+✓ Active editor
+
+✓ Preview tabs
+
+✓ Pinned tabs
+
+✓ Split views
+
+✓ Navigation history
+
+Does NOT own
+
+✗ File contents
+
+✗ Saving
+
+✗ Encoding
+
+✗ Dirty calculations
+
+---
+
+# Document Platform
+
+## Document
+
+```
+id
+
+uri
+
+language
+
+encoding
+
+version
+
+checksum
+
+saveState
+
+isReadonly
+```
+
+Future
+
+- Binary documents
+- Remote documents
+- Generated documents
+
+---
+
+## Document Registry
+
+Responsibilities
+
+- Open documents
+- Cache documents
+- Lookup by URI
+- Reuse existing models
+
+---
+
+## Document Cache
+
+Implementation
+
+```
+LRU Cache
+```
+
+Purpose
+
+Avoid keeping hundreds of inactive documents in memory.
+
+Future
+
+Adaptive cache sizing.
+
+---
+
+## Save State
+
+```
+Clean
+
+Dirty
+
+Saving
+
+SaveFailed
+```
+
+Every document exists in exactly one state.
+
+---
+
+## UndoRedo Service
+
+Current
+
+Stub implementation.
+
+Future
+
+Shared undo transactions across:
+
+- Editor
+- Refactoring
+- AI
+- Multi-file edits
+
+---
+
+# Editor Platform
+
+## Editor Input
+
+Represents anything that can appear inside an editor tab.
+
+Current
+
+```
+TextEditorInput
+```
+
+Future
+
+```
+ImageEditorInput
+
+MarkdownPreviewInput
+
+NotebookInput
+
+DiffInput
+
+SettingsInput
+
+CustomInput
+```
+
+---
+
+## Editor Group
+
+Responsibilities
+
+- Active input
+- Preview input
+- Pinned tabs
+- Tab ordering
+- Group state
+
+Supports
+
+```
+Single
+
+Split Right
+
+Split Down
+```
+
+Future
+
+Nested grid layout.
+
+---
+
+## Split Layout
+
+Current
+
+Recursive SplitNode
+
+```
+Root
+
+├── Left
+
+└── Right
+```
+
+Future
+
+Unlimited nesting.
+
+---
+
+## Navigation Service
+
+Tracks
+
+- Back
+- Forward
+- MRU (Most Recently Used)
+
+Future
+
+Jump history.
+
+---
+
+# Monaco Integration
+
+## Model Manager
+
+Responsibilities
+
+- Create models
+- Cache models
+- Dispose models
+- Language mapping
+
+One Monaco model exists per URI.
+
+---
+
+## Monaco Adapter
+
+Responsibilities
+
+- Render editor
+- Connect model
+- Listen to changes
+- Flush updates
+- Configure editor
+
+Contains no business logic.
+
+---
+
+## Worker Loader
+
+Responsible for
+
+- JSON worker
+- TypeScript worker
+- HTML worker
+- CSS worker
+
+Future
+
+Additional language workers.
+
+---
+
+# Flush Strategy
+
+Renderer updates immediately.
+
+Synchronization occurs:
+
+```
+Typing
+
+↓
+
+Renderer Model
+
+↓
+
+Idle (2s)
+
+↓
+
+Main Process
+```
+
+Immediate flush also occurs on:
+
+- Save
+- Blur
+- Tab switch
+- Editor disposal
+
+This prevents IPC flooding.
+
+---
+
+# Renderer Components
+
+```
+Workbench
+
+EditorArea
+
+SplitContainer
+
+EditorGroupView
+
+TabBar
+
+Tab
+
+MonacoEditorView
+```
+
+Hooks
+
+```
+useEditor()
+
+useDocument()
+```
+
+---
+
+# Commands
+
+Current
+
+```
+editor.open
+
+editor.close
+
+editor.pin
+
+editor.splitRight
+
+editor.splitDown
+
+document.save
+
+document.revert
+```
+
+Future
+
+```
+editor.moveGroup
+
+editor.duplicate
+
+editor.compare
+
+editor.reopenClosed
+
+editor.next
+
+editor.previous
+```
+
+---
+
+# Events
+
+Document Events
+
+```
+document.opened
+
+document.changed
+
+document.saved
+
+document.closed
+
+document.reverted
+```
+
+Editor Events
+
+```
+editor.opened
+
+editor.closed
+
+editor.groupChanged
+
+editor.activeChanged
+
+editor.layoutChanged
+```
+
+Workspace Event
+
+```
+workspace.opened
+```
+
+Triggers automatic layout restoration.
+
+---
+
+# IPC Contracts
+
+Renderer APIs
+
+```
+window.ocs.document
+
+open()
+
+update()
+
+save()
+
+revert()
+```
+
+```
+window.ocs.editor
+
+open()
+
+close()
+
+split()
+
+restore()
+```
+
+---
+
+# Session Restore
+
+Persisted
+
+```
+workspace.json
+
+layout
+
+groups
+
+activeGroup
+
+previewTabs
+
+sidebarWidth
+
+bottomPanelHeight
+```
+
+Automatically restored when:
+
+```
+workspace.opened
+```
+
+event is received.
+
+Workspace never directly calls EditorService.
 
 ---
 
 # Stories
 
----
+## STORY-0015
 
-## STORY-0006-001 — Document Domain & Service
+Document Platform
 
-### Goal
+Tasks
 
-Implement the core document models, dirty states, and lifecycle management.
-
-### Tasks
-
-- [x] Create `IDocument`, `ITextDocument`, and `IBinaryDocument` domain models.
-- [x] Implement `DocumentCache` with reference counting to prevent premature garbage collection.
-- [x] Implement `FileSystemDocumentResolver` to resolve WorkspaceUri paths into concrete Document instances using the platform FileSystem.
-- [x] Implement `DocumentService` exposing public APIs for opening, saving, updating, and reverting documents.
-- [x] Create `UndoRedoService` stub for future transaction/edit stack management.
-
-### Acceptance Criteria
-
-- Files can be read and resolved into memory cached documents.
-- Reference counting correctly prevents eviction of documents currently in use.
-- Saving a dirty text document writes contents back to the virtual file system.
+- Document models
+- Save state
+- Registry
+- Cache
 
 ---
 
-## STORY-0006-002 — Editor Domain & Layout Management
+## STORY-0016
 
-### Goal
+Editor Platform
 
-Implement editor input wrappers, multi-tab group managers, and split-editor layouts.
+Tasks
 
-### Tasks
-
-- [x] Define `EditorInput` and `DocumentEditorInput` abstractions to represent items open in editor tabs.
-- [x] Implement `EditorGroup` managing a list of active inputs, including the preview tab slot.
-- [x] Implement `WorkbenchLayout` supporting split node trees (horizontal/vertical) for split-screen layouts.
-- [x] Implement `EditorService` orchestrating commands like opening, closing, and splitting editors.
-- [x] Implement `EditorNavigationService` tracking back/forward navigation histories.
-
-### Acceptance Criteria
-
-- Splitting editor layout recursively creates horizontally/vertically nested EditorGroup nodes.
-- Pinned tabs are preserved, while preview tabs are replaced when opening new documents.
-- Editor service successfully serializes and restores layout and tab states.
+- Groups
+- Tabs
+- Preview
+- Split layouts
 
 ---
 
-## STORY-0006-003 — Monaco Editor Integration & Flush Strategy
+## STORY-0017
 
-### Goal
+Monaco Integration
 
-Integrate the Monaco Editor renderer adapter and configure synchronization strategies.
+Tasks
 
-### Tasks
-
-- [x] Implement `ModelManager` to construct and cache Monaco `ITextModel` instances mapping to URIs.
-- [x] Create `MonacoEditorAdapter` adapting editor commands (mount, unmount, openInput, focus) to standard Monaco APIs.
-- [x] Implement a debounced text-flush strategy that updates the document platform model on typing (300ms delay) and flushes immediately on editor blur.
-
-### Acceptance Criteria
-
-- Monaco Editor mounts correctly inside container divs.
-- Opening files updates Monaco model text and maps language highlightings correctly based on file extensions.
-- Focus-out (blur) events trigger immediate synchronization of text modifications to the main process document state.
+- Adapter
+- Model Manager
+- Worker Loader
 
 ---
 
-## STORY-0006-004 — IPC Handlers & Renderer Wiring
+## STORY-0018
 
-### Goal
+Commands
 
-Bridge main process services and renderer React UI components over Electron IPC handlers.
+Tasks
 
-### Tasks
-
-- [x] Register Electron main process IPC handlers for document actions (`DOCUMENT_OPEN`, `DOCUMENT_SAVE`, `DOCUMENT_UPDATE`, `DOCUMENT_REVERT`, `DOCUMENT_GET`).
-- [x] Register IPC handlers for editor layout serialization (`EDITOR_GET_STATE`) and events (`EDITOR_STATE_CHANGED`).
-- [x] Develop React workbench views (`EditorArea`, `MonacoEditorView`, `EditorInputTabs`) mapping state from `useEditor` and `useDocument` hooks.
-
-### Acceptance Criteria
-
-- React views render correct layout structures dynamically matching the serialized `WorkbenchLayout` state.
-- Tab bar buttons close tabs, double-clicking tabs pins them, and split buttons execute corresponding split commands.
-- Closing a dirty editor tab prompts the user with a native Electron dialog box (Save, Don't Save, Cancel).
+- Save
+- Revert
+- Split
+- Open
+- Close
 
 ---
 
-# Technical Requirements
+## STORY-0019
 
-## Performance
+Renderer
 
-- **Editor Switch Latency**: <50ms when switching between already resolved tabs.
-- **Debounce Threshold**: 300ms for background thread text flushes to minimize main-process IPC traffic.
-- **Eviction Overhead**: Memory caches should remain stable and clean when opening over 100 files sequentially.
+Tasks
 
-## Security
-
-- IPC validation: Path names received from the renderer must be converted and verified against active workspace bounds via `WorkspaceUri`.
-- No raw file system writes: All disk IO must pass through the `IFileSystem` wrapper with proper workspace permission checks.
+- Editor Area
+- Split Container
+- Tab Bar
+- Monaco View
 
 ---
 
-# Testing Strategy
+## STORY-0020
 
-## Unit & Integration Tests
+Session Restore
 
-All tests are implemented using `vitest` under:
+Tasks
 
-- `packages/document/tests/DocumentPlatform.test.ts` (Validates cache reference counts, concurrent updates, saving, and reverting).
-- `packages/editor/tests/EditorPlatform.test.ts` (Validates tab pinning, split layout trees, and state restoration).
-- `packages/editor-monaco/tests/MonacoIntegration.test.ts` (Validates model creation, caches, and Monaco mount/open lifecycles).
-
----
-
-# Definition of Done
-
-- All stories are complete and tested.
-- `pnpm validate` passes all formatting, linting, typechecking, and test steps.
-- Test coverage for core platform packages is maintained above 90%.
-- Walkthrough is updated to reflect execution.
+- Persist layout
+- Restore groups
+- Restore preview tabs
 
 ---
 
-# Post Implementation Summary
+# Complete Task Checklist
 
-## What Was Built
+## Document Platform
 
-We successfully built a decoupled, event-driven Document & Editor Platform that handles the lifecycle of open files in Open-Code.Studio. By decoupling document state from editor views, we have paved the way for robust multi-split screens and background AI model integration.
+- [x] DocumentService
+- [x] Registry
+- [x] Cache
+- [x] SaveState
+- [x] UndoRedo abstraction
 
-## Lessons Learned
+## Editor Platform
 
-- **Monaco Mocking**: Mocking Monaco APIs in a Node test environment requires strict isolation since Monaco is designed primarily for browser environments. Our virtual `mockModel` implementation correctly verifies adapter behaviors.
-- **IPC Frequency**: Debouncing edits at 300ms prevents IPC bottlenecks when typing rapidly in high-density source files.
+- [x] EditorService
+- [x] EditorGroup
+- [x] EditorInput
+- [x] SplitNode
 
-## Next Epic
+## Monaco
 
-`EPIC-0007 — Workbench Platform` (incorporating sidebar, bottoms panel, status bar, and activity bar with this Editor/Document area).
+- [x] Adapter
+- [x] ModelManager
+- [x] WorkerLoader
+
+## Commands
+
+- [x] Save
+- [x] Revert
+- [x] Split Right
+- [x] Split Down
+- [x] Pin
+- [x] Close
+
+## Renderer
+
+- [x] EditorArea
+- [x] SplitContainer
+- [x] TabBar
+- [x] MonacoEditorView
+
+## Validation
+
+- [x] Unit Tests
+- [x] Integration Tests
+- [x] pnpm validate
+
+---
+
+# Manual Verification
+
+✓ Open file from Explorer
+
+✓ Opens as preview tab
+
+✓ Double-click pins tab
+
+✓ Edit document
+
+✓ Dirty indicator appears
+
+✓ Save (Ctrl/Cmd+S)
+
+✓ Dirty indicator disappears
+
+✓ Split editor
+
+✓ Multiple groups render correctly
+
+✓ Restart IDE
+
+✓ Layout restores
+
+✓ Documents restore
+
+✓ Preview tabs restore
+
+---
+
+# Automated Verification
+
+```bash
+pnpm --filter @ocs/document test
+
+pnpm --filter @ocs/editor test
+
+pnpm --filter @ocs/editor-monaco test
+
+pnpm validate
+```
+
+Coverage Target
+
+```
+>=90%
+```
+
+---
+
+# Acceptance Criteria
+
+The Document & Editor Platform is complete when:
+
+- Documents are independent of editor views.
+- Monaco acts solely as a rendering adapter.
+- Dirty tracking is accurate.
+- Commands route through the CommandRegistry.
+- Split editor layouts function correctly.
+- Preview and pinned tabs behave correctly.
+- Session restore recreates the previous editor state.
+- No direct workspace-to-editor coupling exists.
+
+---
+
+# Risks
+
+| Risk                       | Mitigation                        |
+| -------------------------- | --------------------------------- |
+| Monaco model leaks         | ModelManager lifecycle management |
+| IPC flooding               | Deferred flush strategy           |
+| Editor/document coupling   | Strict platform separation        |
+| Complex layout restoration | Recursive SplitNode model         |
+| Future editor types        | EditorInput abstraction           |
+
+---
+
+# Future Enhancements
+
+EPIC-0007
+
+Integrated Terminal
+
+EPIC-0008
+
+Git Diff Editor
+
+EPIC-0010
+
+Search Results Editor
+
+Phase 6
+
+AI Review Editor
+
+Phase 9
+
+Custom Editors
+
+Phase 15
+
+Collaborative Editing
+
+---
+
+# Deliverables
+
+- Document Platform
+- Editor Platform
+- Monaco Integration
+- ModelManager
+- WorkerLoader
+- Editor Commands
+- Split Editor Layout
+- Session Restore
+- Dirty Tracking
+- Preview & Pinned Tabs
+
+---
+
+# Epic Completion Summary
+
+**Status:** ✅ Completed
+
+**Outcome**
+
+Open-Code.Studio now includes a fully decoupled Document and Editor Platform where documents own application state, editors manage presentation and layout, and Monaco functions purely as a rendering engine. This architecture enables future support for custom editors, advanced navigation, AI-assisted editing, and collaborative features without redesigning the platform.
+
+---
+
+# Changelog
+
+## v1.0.0
+
+- Introduced Document Platform with registry, cache, and save lifecycle.
+- Added Editor Platform with groups, preview tabs, and split layouts.
+- Integrated Monaco through ModelManager and Adapter.
+- Implemented command-driven editor interactions.
+- Added session persistence and automatic layout restoration.
+- Established event-driven synchronization between workspace, document, and editor platforms.
