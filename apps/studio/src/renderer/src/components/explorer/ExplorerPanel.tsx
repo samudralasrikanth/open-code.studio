@@ -1,4 +1,5 @@
 import type { VisibleNode } from "@ocs/explorer";
+import { FolderIcon, FolderOpenIcon, FileIcon } from "@ocs/ui";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import React, { useState, useRef } from "react";
 
@@ -27,8 +28,18 @@ export const ExplorerPanel: React.FC = () => {
     overscan: 5
   });
 
-  const handleSelectNode = async (visibleNode: VisibleNode): Promise<void> => {
+  const handleSelectNode = async (
+    visibleNode: VisibleNode,
+    preview: boolean = true
+  ): Promise<void> => {
     await selectNode(visibleNode.node.id);
+    if (!visibleNode.node.isDirectory && window.ocs?.commands?.execute) {
+      await window.ocs.commands.execute("editor.open", {
+        uri: visibleNode.node.id,
+        preview,
+        active: true
+      });
+    }
   };
 
   const toggleExpand = async (visibleNode: VisibleNode): Promise<void> => {
@@ -44,7 +55,13 @@ export const ExplorerPanel: React.FC = () => {
     if (visibleNode.node.isDirectory) {
       await toggleExpand(visibleNode);
     } else {
-      await handleSelectNode(visibleNode);
+      await handleSelectNode(visibleNode, true);
+    }
+  };
+
+  const handleNodeDoubleClick = async (visibleNode: VisibleNode): Promise<void> => {
+    if (!visibleNode.node.isDirectory) {
+      await handleSelectNode(visibleNode, false);
     }
   };
 
@@ -229,10 +246,13 @@ export const ExplorerPanel: React.FC = () => {
                   onClick={() => {
                     void handleNodeClick(visibleNode, virtualItem.index);
                   }}
+                  onDoubleClick={() => {
+                    void handleNodeDoubleClick(visibleNode);
+                  }}
                   onContextMenu={(e) => {
                     e.preventDefault();
                     setFocusedIndex(virtualItem.index);
-                    void handleSelectNode(visibleNode);
+                    void handleSelectNode(visibleNode, true);
                     setContextMenu({ x: e.clientX, y: e.clientY, node: visibleNode });
                   }}
                   onMouseEnter={(e) => {
@@ -261,14 +281,15 @@ export const ExplorerPanel: React.FC = () => {
                   )}
                   {!visibleNode.node.isDirectory && <span style={{ width: "16px" }} />}
 
-                  <span
-                    style={{
-                      marginRight: "6px",
-                      color: visibleNode.node.isDirectory ? "#dcb67a" : "#519aba"
-                    }}
-                  >
-                    {visibleNode.node.isDirectory ? "📁" : "📄"}
-                  </span>
+                  {visibleNode.node.isDirectory ? (
+                    visibleNode.isExpanded ? (
+                      <FolderOpenIcon size={16} style={{ marginRight: "6px", color: "#dcb67a" }} />
+                    ) : (
+                      <FolderIcon size={16} style={{ marginRight: "6px", color: "#dcb67a" }} />
+                    )
+                  ) : (
+                    <FileIcon size={16} style={{ marginRight: "6px", color: "#519aba" }} />
+                  )}
                   <span
                     style={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}
                   >

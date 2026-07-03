@@ -137,6 +137,13 @@ export function registerWorkspaceHandlers(container: Container): void {
   ipcMain.handle(IpcChannels.WORKSPACE_REMOVE_RECENT, async (_, id: string): Promise<void> =>
     workspaceService.removeRecent(id)
   );
+
+  ipcMain.handle(
+    IpcChannels.WORKSPACE_UPDATE_SETTINGS,
+    async (_, settings: Record<string, unknown>): Promise<void> => {
+      await workspaceService.updateSettings(settings);
+    }
+  );
 }
 
 /** Restore the last workspace on startup. */

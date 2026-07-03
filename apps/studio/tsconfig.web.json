@@ -9,7 +9,8 @@
     "../../packages/explorer/**/*",
     "../../packages/document/**/*",
     "../../packages/editor/**/*",
-    "../../packages/editor-monaco/**/*"
+    "../../packages/editor-monaco/**/*",
+    "../../packages/ui/**/*"
   ],
   "compilerOptions": {
     "composite": true,
@@ -29,7 +30,9 @@
       "@ocs/editor": ["../../packages/editor/src/index.ts"],
       "@ocs/editor/*": ["../../packages/editor/src/*/index.ts"],
       "@ocs/editor-monaco": ["../../packages/editor-monaco/src/index.ts"],
-      "@ocs/editor-monaco/*": ["../../packages/editor-monaco/src/*/index.ts"]
+      "@ocs/editor-monaco/*": ["../../packages/editor-monaco/src/*/index.ts"],
+      "@ocs/ui": ["../../packages/ui/src/index.ts"],
+      "@ocs/ui/*": ["../../packages/ui/src/*/index.ts"]
     }
   },
   "exclude": ["../../packages/**/tests/**/*"]

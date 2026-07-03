@@ -14,7 +14,8 @@ const WORKSPACE_PACKAGES = [
   "@ocs/explorer",
   "@ocs/document",
   "@ocs/editor",
-  "@ocs/editor-monaco"
+  "@ocs/editor-monaco",
+  "@ocs/ui"
 ];
 
 export default defineConfig({
@@ -73,6 +74,10 @@ export default defineConfig({
         {
           find: "@ocs/editor-monaco",
           replacement: resolve(__dirname, "../../packages/editor-monaco/src/index.ts")
+        },
+        {
+          find: "@ocs/ui",
+          replacement: resolve(__dirname, "../../packages/ui/src/index.ts")
         }
       ]
     },
@@ -141,6 +146,10 @@ export default defineConfig({
         {
           find: "@ocs/editor-monaco",
           replacement: resolve(__dirname, "../../packages/editor-monaco/src/index.ts")
+        },
+        {
+          find: "@ocs/ui",
+          replacement: resolve(__dirname, "../../packages/ui/src/index.ts")
         }
       ]
     },
@@ -211,6 +220,10 @@ export default defineConfig({
         {
           find: "@ocs/editor-monaco",
           replacement: resolve(__dirname, "../../packages/editor-monaco/src/index.ts")
+        },
+        {
+          find: "@ocs/ui",
+          replacement: resolve(__dirname, "../../packages/ui/src/index.ts")
         }
       ]
     },

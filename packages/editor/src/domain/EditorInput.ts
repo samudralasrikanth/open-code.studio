@@ -1,5 +1,12 @@
 import type { WorkspaceUri } from "@ocs/workspace";
 
+export interface EditorInputState {
+  active: boolean;
+  pinned: boolean;
+  preview: boolean;
+  dirty: boolean;
+}
+
 /**
  * Base abstract class for any content that can be opened in an Editor Group.
  * Examples: FileEditorInput, ImageEditorInput, SettingsEditorInput.

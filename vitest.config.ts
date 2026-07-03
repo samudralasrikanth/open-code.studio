@@ -7,6 +7,10 @@ export default defineConfig({
       reporter: ["text", "html", "lcov"]
     },
     globals: false,
-    include: ["{apps,packages,services,tooling}/**/*.test.ts", "tests/**/*.test.ts"]
+    include: ["{apps,packages,services,tooling}/**/*.test.ts", "tests/**/*.test.ts"],
+    alias: {
+      "monaco-editor": new URL("./packages/editor-monaco/tests/mock-monaco.ts", import.meta.url)
+        .pathname
+    }
   }
 });

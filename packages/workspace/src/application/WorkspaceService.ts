@@ -73,6 +73,26 @@ export class WorkspaceService {
     });
   }
 
+  public async updateSettings(settings: Record<string, unknown>): Promise<void> {
+    if (!this._workspace) return;
+    const current = this._workspace;
+    const newConfig = {
+      ...current.configuration,
+      settings: {
+        ...current.configuration.settings,
+        ...settings
+      }
+    };
+
+    const path = uriToPath(current.uri);
+    await this.wsConfig.write(path, newConfig);
+
+    this._workspace = {
+      ...current,
+      configuration: newConfig
+    };
+  }
+
   // ── Lifecycle ────────────────────────────────────────────────────────────────
 
   /**

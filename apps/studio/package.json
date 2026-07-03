@@ -1,5 +1,6 @@
 {
   "name": "@ocs/app-studio",
+  "productName": "Open-Code.Studio",
   "version": "0.1.0",
   "private": true,
   "description": "Open-Code.Studio desktop application shell.",
@@ -20,6 +21,10 @@
     "@ocs/common": "workspace:*",
     "@ocs/explorer": "workspace:^",
     "@ocs/workspace": "workspace:^",
+    "@ocs/editor": "workspace:*",
+    "@ocs/document": "workspace:*",
+    "@ocs/editor-monaco": "workspace:*",
+    "@ocs/ui": "workspace:*",
     "@parcel/watcher": "^2.4.1",
     "@tanstack/react-virtual": "^3.14.5",
     "react": "^18.3.1",

@@ -3,19 +3,17 @@ import type { IFileSystem } from "@ocs/workspace";
 import { uriFromPath } from "@ocs/workspace";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
-import type { DocumentCache } from "../src/application/DocumentCache.js";
-import { DocumentFactory } from "../src/application/DocumentFactory.js";
-import type { DocumentRegistry } from "../src/application/DocumentRegistry.js";
-import { FileSystemDocumentResolver } from "../src/application/DocumentResolver.js";
+import { SaveState } from "../src/domain/Document.js";
 import { DocumentService } from "../src/application/DocumentService.js";
 import type { ITextDocument } from "../src/domain/TextDocument.js";
 import { DocumentEventBus } from "../src/events/DocumentEventBus.js";
+import { DocumentEventTypes } from "../src/events/DocumentEvents.js";
+import { UndoRedoService } from "../src/application/UndoRedoService.js";
 
-describe("Document Platform Integration (Test 5)", () => {
+describe("Document Platform Integration (EPIC-0006 Milestone 1)", () => {
   let fileSystem: IFileSystem;
   let service: DocumentService;
-  let registry: DocumentRegistry;
-  let cache: DocumentCache;
+  let eventBus: DocumentEventBus;
 
   beforeEach(() => {
     fileSystem = {
@@ -28,10 +26,8 @@ describe("Document Platform Integration (Test 5)", () => {
       mkdir: vi.fn(),
       join: (...args: string[]) => args.join("/")
     };
-    const eventBus = new DocumentEventBus();
+    eventBus = new DocumentEventBus();
     service = new DocumentService(fileSystem, eventBus);
-    // Since DocumentService initializes its own cache/registry, we can use it directly.
-    // We will access them if needed or just test the service layer.
   });
 
   it("Test 5: Open same file twice -> 1 document, 1 model", async () => {
@@ -46,14 +42,10 @@ describe("Document Platform Integration (Test 5)", () => {
   });
 
   it("Test 6: Open 100 files -> stable memory", async () => {
-    // We'll simulate opening 100 documents and check cache size
     for (let i = 0; i < 100; i++) {
       const uri = uriFromPath(`/test-${i}.txt`);
       await service.openDocument(uri);
     }
-
-    // Since default cache policy removes least recently used after MAX_OPEN_DOCUMENTS (which is say 50),
-    // we just want to ensure it works without crashing.
     expect(fileSystem.readFile).toHaveBeenCalledTimes(100);
   });
 
@@ -61,13 +53,25 @@ describe("Document Platform Integration (Test 5)", () => {
     const uri = uriFromPath("/test.txt");
     const doc = (await service.openDocument(uri)) as ITextDocument;
 
-    // Simulate dirtiness
     doc.setText("new text");
     expect(doc.isDirty).toBe(true);
+    expect(doc.saveState).toBe(SaveState.Dirty);
+
+    let savedFired = false;
+    let changedFired = false;
+    eventBus.on(DocumentEventTypes.DOCUMENT_SAVED, () => {
+      savedFired = true;
+    });
+    eventBus.on(DocumentEventTypes.DOCUMENT_CHANGED, (payload) => {
+      if (!payload.isDirty) changedFired = true;
+    });
 
     await service.saveDocument(uri);
     expect(fileSystem.writeFile).toHaveBeenCalledWith("/test.txt", "new text");
     expect(doc.isDirty).toBe(false);
+    expect(doc.saveState).toBe(SaveState.Clean);
+    expect(savedFired).toBe(true);
+    expect(changedFired).toBe(true);
   });
 
   it("Test 8: Concurrent updates", async () => {
@@ -79,5 +83,68 @@ describe("Document Platform Integration (Test 5)", () => {
 
     doc1.setText("editor 1 update");
     expect(doc2.getText()).toBe("editor 1 update");
+  });
+
+  it("Test 9: updateDocumentText with event", async () => {
+    const uri = uriFromPath("/test.txt");
+    const doc = (await service.openDocument(uri)) as ITextDocument;
+
+    let changedEvent: any = null;
+    eventBus.on(DocumentEventTypes.DOCUMENT_CHANGED, (payload) => {
+      changedEvent = payload;
+    });
+
+    service.updateDocumentText(uri, "updated editor text");
+    expect(doc.getText()).toBe("updated editor text");
+    expect(doc.isDirty).toBe(true);
+    expect(doc.saveState).toBe(SaveState.Dirty);
+    expect(changedEvent).toEqual({ uri, isDirty: true });
+  });
+
+  it("Test 10: revertDocument with event", async () => {
+    const uri = uriFromPath("/test.txt");
+    const doc = (await service.openDocument(uri)) as ITextDocument;
+
+    doc.setText("unsaved modification");
+    expect(doc.isDirty).toBe(true);
+
+    let revertedFired = false;
+    let changedFired = false;
+    eventBus.on(DocumentEventTypes.DOCUMENT_REVERTED, () => {
+      revertedFired = true;
+    });
+    eventBus.on(DocumentEventTypes.DOCUMENT_CHANGED, (payload) => {
+      if (!payload.isDirty) changedFired = true;
+    });
+
+    await service.revertDocument(uri);
+    expect(doc.getText()).toBe("hello world"); // restored from disk
+    expect(doc.isDirty).toBe(false);
+    expect(doc.saveState).toBe(SaveState.Clean);
+    expect(revertedFired).toBe(true);
+    expect(changedFired).toBe(true);
+  });
+
+  it("Test 11: UndoRedoService stub stack operations", () => {
+    const service = new UndoRedoService();
+    const uri = uriFromPath("/test.txt");
+
+    expect(service.canUndo(uri)).toBe(false);
+    expect(service.canRedo(uri)).toBe(false);
+
+    service.pushEdit(uri, "edit-1");
+    expect(service.canUndo(uri)).toBe(true);
+    expect(service.canRedo(uri)).toBe(false);
+
+    service.undo(uri);
+    expect(service.canUndo(uri)).toBe(false);
+    expect(service.canRedo(uri)).toBe(true);
+
+    service.redo(uri);
+    expect(service.canUndo(uri)).toBe(true);
+    expect(service.canRedo(uri)).toBe(false);
+
+    service.clear(uri);
+    expect(service.canUndo(uri)).toBe(false);
   });
 });

@@ -67,6 +67,7 @@ export function registerEditorHandlers(container: Container): void {
   });
 
   ipcMain.handle(IpcChannels.EDITOR_GET_STATE, () => ({
+    layout: editorService.editorLayout,
     groups: editorService.groups.map(
       (g: {
         id: string;
@@ -86,6 +87,7 @@ export function registerEditorHandlers(container: Container): void {
   const broadcastEditorState = () => {
     webContents.getAllWebContents().forEach((wc) => {
       wc.send(IpcChannels.EDITOR_STATE_CHANGED, {
+        layout: editorService.editorLayout,
         groups: editorService.groups.map(
           (g: {
             id: string;

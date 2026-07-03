@@ -102,3 +102,48 @@ export function assertEventType(event: PlatformEvent, expectedType: string): voi
     });
   }
 }
+
+// strongly typed platforms events definitions
+
+export const DocumentEventTypes = {
+  DOCUMENT_OPENED: "document.opened",
+  DOCUMENT_CLOSED: "document.closed",
+  DOCUMENT_SAVED: "document.saved",
+  DOCUMENT_CHANGED: "document.changed",
+  DOCUMENT_REVERTED: "document.reverted"
+} as const;
+
+export type DocumentEventType = (typeof DocumentEventTypes)[keyof typeof DocumentEventTypes];
+
+export interface DocumentEventPayload {
+  uri: string;
+  version?: number;
+  isDirty?: boolean;
+  timestamp?: number;
+}
+
+export const WorkspaceEventTypes = {
+  WORKSPACE_OPENED: "workspace.opened",
+  WORKSPACE_CLOSED: "workspace.closed"
+} as const;
+
+export type WorkspaceEventType = (typeof WorkspaceEventTypes)[keyof typeof WorkspaceEventTypes];
+
+export interface WorkspaceEventPayload {
+  path: string;
+  workspaceId: string;
+  workspaceUri: string;
+}
+
+export const EditorEventTypes = {
+  EDITOR_OPENED: "editor.opened",
+  EDITOR_CLOSED: "editor.closed",
+  EDITOR_ACTIVE_CHANGED: "editor.active-changed"
+} as const;
+
+export type EditorEventType = (typeof EditorEventTypes)[keyof typeof EditorEventTypes];
+
+export interface EditorEventPayload {
+  inputId: string;
+  groupId: string;
+}

@@ -15,3 +15,4 @@ export * from "./providers/WorkspaceProvider.js";
 export * from "./commands/Command.js";
 export * from "./infrastructure/LocalVirtualFileSystem.js";
 export * from "./infrastructure/NodeWatcher.js";
+export * from "./domain/ExplorerIgnoreService.js";

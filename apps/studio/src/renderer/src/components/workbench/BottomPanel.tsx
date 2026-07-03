@@ -1,0 +1,107 @@
+import { Panel } from "@ocs/ui";
+import React, { useState } from "react";
+
+import { DeveloperDiagnosticsPanel } from "../explorer/DeveloperDiagnosticsPanel.js";
+
+interface BottomPanelProps {
+  height: number;
+  isResizing: boolean;
+}
+
+export const BottomPanel: React.FC<BottomPanelProps> = ({ height, isResizing }) => {
+  const [activeTab, setActiveTab] = useState<"problems" | "output" | "terminal" | "diagnostics">(
+    "diagnostics"
+  );
+
+  return (
+    <Panel
+      direction="column"
+      backgroundColor="#1a1a1a"
+      borderTop="1px solid #2d2d2d"
+      style={{
+        height: `${height}px`,
+        flexShrink: 0,
+        userSelect: isResizing ? "none" : "auto"
+      }}
+    >
+      {/* Bottom Panel Tab Header */}
+      <div
+        style={{
+          display: "flex",
+          backgroundColor: "#1e1e1e",
+          padding: "0 16px",
+          height: "30px",
+          alignItems: "center",
+          borderBottom: "1px solid #2d2d2d",
+          flexShrink: 0
+        }}
+      >
+        <div
+          style={{
+            fontSize: "11px",
+            fontWeight: "bold",
+            textTransform: "uppercase",
+            color: activeTab === "problems" ? "#fff" : "#858585",
+            borderBottom: activeTab === "problems" ? "2px solid #007acc" : "2px solid transparent",
+            padding: "8px 0",
+            marginRight: "20px",
+            cursor: "not-allowed",
+            opacity: 0.5
+          }}
+        >
+          Problems
+        </div>
+        <div
+          style={{
+            fontSize: "11px",
+            fontWeight: "bold",
+            textTransform: "uppercase",
+            color: activeTab === "output" ? "#fff" : "#858585",
+            borderBottom: activeTab === "output" ? "2px solid #007acc" : "2px solid transparent",
+            padding: "8px 0",
+            marginRight: "20px",
+            cursor: "not-allowed",
+            opacity: 0.5
+          }}
+        >
+          Output
+        </div>
+        <div
+          style={{
+            fontSize: "11px",
+            fontWeight: "bold",
+            textTransform: "uppercase",
+            color: activeTab === "terminal" ? "#fff" : "#858585",
+            borderBottom: activeTab === "terminal" ? "2px solid #007acc" : "2px solid transparent",
+            padding: "8px 0",
+            marginRight: "20px",
+            cursor: "not-allowed",
+            opacity: 0.5
+          }}
+        >
+          Terminal
+        </div>
+        <div
+          style={{
+            fontSize: "11px",
+            fontWeight: "bold",
+            textTransform: "uppercase",
+            color: activeTab === "diagnostics" ? "#fff" : "#858585",
+            borderBottom:
+              activeTab === "diagnostics" ? "2px solid #007acc" : "2px solid transparent",
+            padding: "8px 0",
+            cursor: "pointer"
+          }}
+          onClick={() => setActiveTab("diagnostics")}
+        >
+          Diagnostics
+        </div>
+      </div>
+
+      {/* Bottom Panel Content */}
+      <div style={{ flex: 1, overflow: "auto", display: "flex", backgroundColor: "#1e1e1e" }}>
+        {activeTab === "diagnostics" && <DeveloperDiagnosticsPanel />}
+      </div>
+    </Panel>
+  );
+};

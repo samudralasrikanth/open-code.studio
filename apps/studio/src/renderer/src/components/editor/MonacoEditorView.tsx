@@ -1,18 +1,23 @@
-/* eslint-disable */
 import type { EditorInput } from "@ocs/editor";
 import { MonacoEditorAdapter } from "@ocs/editor-monaco";
 import React, { useEffect, useRef, useState } from "react";
 
 import { useDocument } from "../../hooks/useDocument.js";
 
+interface DocumentContent {
+  uri: string;
+  content: string;
+  isReadonly: boolean;
+}
+
 interface MonacoEditorViewProps {
-  input: EditorInput;
+  input: { id: string };
 }
 
 export const MonacoEditorView: React.FC<MonacoEditorViewProps> = ({ input }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const adapterRef = useRef<MonacoEditorAdapter | null>(null);
-  const [docContent, setDocContent] = useState<any>(null);
+  const [docContent, setDocContent] = useState<DocumentContent | null>(null);
   const { get } = useDocument();
 
   useEffect(() => {
@@ -34,32 +39,31 @@ export const MonacoEditorView: React.FC<MonacoEditorViewProps> = ({ input }) => 
     // Fetch document from main process via IPC
     get(input.id)
       .then((doc) => {
-        setDocContent(doc);
+        setDocContent(doc as DocumentContent);
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.error("Failed to fetch document", err);
       });
   }, [input, get]);
 
   useEffect(() => {
     if (adapterRef.current && docContent) {
-      // Create a dummy EditorInput to pass to the adapter
-      // Since adapter expects a DocumentEditorInput which wraps an IDocument
-      // We will just patch the adapter directly for now, or mock an input
-      const { uriFromString } = require("@ocs/workspace");
-      const { DocumentEditorInput } = require("@ocs/editor");
-      const { TextDocumentImpl } = require("@ocs/document");
+      // Create a duck-typed EditorInput directly in the renderer
+      // to avoid dynamic require() or bundling Node.js modules (fs, path).
+      const mockDoc = {
+        getText: () => docContent.content,
+        setText: (text: string) => {
+          docContent.content = text;
+        },
+        uri: { toString: () => docContent.uri }
+      };
 
-      const doc = new TextDocumentImpl(
-        uriFromString(docContent.uri),
-        docContent.content,
-        "plaintext", // language doesn't matter much for now, adapter sets it
-        "utf-8",
-        docContent.isReadonly
-      );
-      const editorInput = new DocumentEditorInput(doc);
+      const mockInput = {
+        uri: { toString: () => docContent.uri },
+        document: mockDoc
+      };
 
-      adapterRef.current.openInput(editorInput).catch((err: any) => {
+      adapterRef.current.openInput(mockInput as unknown as EditorInput).catch((err: unknown) => {
         console.error("Failed to open input in Monaco:", err);
       });
     }

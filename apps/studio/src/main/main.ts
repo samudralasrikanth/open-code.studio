@@ -13,6 +13,9 @@ import {
 } from "./bootstrap/index.js";
 import { restoreLastWorkspace } from "./ipc/handlers/index.js";
 
+app.name = "Open-Code.Studio";
+app.setName("Open-Code.Studio");
+
 const container = createContainer();
 const lifecycle = createLifecycleManager();
 const logger = createLogger({ level: "info" });

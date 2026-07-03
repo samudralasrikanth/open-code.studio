@@ -68,9 +68,21 @@ importers:
       '@ocs/common':
         specifier: workspace:*
         version: link:../../packages/common
+      '@ocs/document':
+        specifier: workspace:*
+        version: link:../../packages/document
+      '@ocs/editor':
+        specifier: workspace:*
+        version: link:../../packages/editor
+      '@ocs/editor-monaco':
+        specifier: workspace:*
+        version: link:../../packages/editor-monaco
       '@ocs/explorer':
         specifier: workspace:^
         version: link:../../packages/explorer
+      '@ocs/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@ocs/workspace':
         specifier: workspace:^
         version: link:../../packages/workspace

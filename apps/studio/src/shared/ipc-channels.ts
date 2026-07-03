@@ -29,6 +29,7 @@ export const IpcChannels = {
   WORKSPACE_GET_RECENT: "workspace:get-recent",
   WORKSPACE_GET_LAST_OPENED: "workspace:get-last-opened",
   WORKSPACE_REMOVE_RECENT: "workspace:remove-recent",
+  WORKSPACE_UPDATE_SETTINGS: "workspace:update-settings",
 
   // Explorer
   EXPLORER_GET_VISIBLE_NODES: "explorer:get-visible-nodes",
@@ -48,6 +49,8 @@ export const IpcChannels = {
   DOCUMENT_CLOSE: "document:close",
   DOCUMENT_SAVE: "document:save",
   DOCUMENT_GET: "document:get",
+  DOCUMENT_UPDATE: "document:update",
+  DOCUMENT_REVERT: "document:revert",
   DOCUMENT_STATE_CHANGED: "document:state-changed",
 
   // Editor

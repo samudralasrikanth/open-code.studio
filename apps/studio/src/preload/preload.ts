@@ -101,7 +101,10 @@ const ocsAPI = {
       ipcRenderer.invoke(IpcChannels.WORKSPACE_GET_LAST_OPENED),
 
     removeRecent: (id: string): Promise<void> =>
-      ipcRenderer.invoke(IpcChannels.WORKSPACE_REMOVE_RECENT, id)
+      ipcRenderer.invoke(IpcChannels.WORKSPACE_REMOVE_RECENT, id),
+
+    updateSettings: (settings: Record<string, unknown>): Promise<void> =>
+      ipcRenderer.invoke(IpcChannels.WORKSPACE_UPDATE_SETTINGS, settings)
   },
 
   // ── Explorer ────────────────────────────────────────────────────────────────
@@ -146,6 +149,9 @@ const ocsAPI = {
     close: (uri: string): Promise<void> => ipcRenderer.invoke(IpcChannels.DOCUMENT_CLOSE, uri),
     save: (uri: string): Promise<void> => ipcRenderer.invoke(IpcChannels.DOCUMENT_SAVE, uri),
     get: (uri: string): Promise<any> => ipcRenderer.invoke(IpcChannels.DOCUMENT_GET, uri),
+    update: (uri: string, content: string): Promise<void> =>
+      ipcRenderer.invoke(IpcChannels.DOCUMENT_UPDATE, uri, content),
+    revert: (uri: string): Promise<void> => ipcRenderer.invoke(IpcChannels.DOCUMENT_REVERT, uri),
     onStateChanged: (callback: (payload: any) => void): (() => void) => {
       const handler = (_: any, payload: any) => callback(payload);
       ipcRenderer.on(IpcChannels.DOCUMENT_STATE_CHANGED, handler);

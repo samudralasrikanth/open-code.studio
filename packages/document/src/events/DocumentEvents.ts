@@ -4,7 +4,8 @@ export const DocumentEventTypes = {
   DOCUMENT_OPENED: "document.opened",
   DOCUMENT_CLOSED: "document.closed",
   DOCUMENT_SAVED: "document.saved",
-  DOCUMENT_CHANGED: "document.changed"
+  DOCUMENT_CHANGED: "document.changed",
+  DOCUMENT_REVERTED: "document.reverted"
 } as const;
 
 export type DocumentEventType = (typeof DocumentEventTypes)[keyof typeof DocumentEventTypes];
@@ -26,9 +27,14 @@ export interface DocumentChangedPayload {
   isDirty: boolean;
 }
 
+export interface DocumentRevertedPayload {
+  uri: WorkspaceUri;
+}
+
 export interface DocumentEvents {
   [DocumentEventTypes.DOCUMENT_OPENED]: DocumentOpenedPayload;
   [DocumentEventTypes.DOCUMENT_CLOSED]: DocumentClosedPayload;
   [DocumentEventTypes.DOCUMENT_SAVED]: DocumentSavedPayload;
   [DocumentEventTypes.DOCUMENT_CHANGED]: DocumentChangedPayload;
+  [DocumentEventTypes.DOCUMENT_REVERTED]: DocumentRevertedPayload;
 }

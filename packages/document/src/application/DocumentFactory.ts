@@ -1,11 +1,12 @@
 import type { WorkspaceUri } from "@ocs/workspace";
 
 import type { IBinaryDocument } from "../domain/BinaryDocument.js";
+import { SaveState } from "../domain/Document.js";
 import type { ITextDocument } from "../domain/TextDocument.js";
 
 export class TextDocumentImpl implements ITextDocument {
   public readonly type = "text";
-  public isDirty = false;
+  public saveState: SaveState = SaveState.Clean;
 
   constructor(
     public readonly id: string,
@@ -16,15 +17,24 @@ export class TextDocumentImpl implements ITextDocument {
     public readonly isReadonly: boolean = false
   ) {}
 
+  public get isDirty(): boolean {
+    return this.saveState === SaveState.Dirty;
+  }
+
   public getText(): string {
     return this.content;
+  }
+
+  public revertContent(content: string): void {
+    this.content = content;
+    this.saveState = SaveState.Clean;
   }
 
   public setText(text: string): void {
     if (this.isReadonly) throw new Error("Document is readonly");
     if (this.content !== text) {
       this.content = text;
-      this.isDirty = true;
+      this.saveState = SaveState.Dirty;
     }
   }
 
@@ -39,7 +49,7 @@ export class TextDocumentImpl implements ITextDocument {
 
 export class BinaryDocumentImpl implements IBinaryDocument {
   public readonly type = "binary";
-  public isDirty = false;
+  public saveState: SaveState = SaveState.Clean;
 
   constructor(
     public readonly id: string,
@@ -49,6 +59,10 @@ export class BinaryDocumentImpl implements IBinaryDocument {
     public readonly isReadonly: boolean = false
   ) {}
 
+  public get isDirty(): boolean {
+    return this.saveState === SaveState.Dirty;
+  }
+
   public getBuffer(): Uint8Array {
     return this.content;
   }
@@ -56,7 +70,7 @@ export class BinaryDocumentImpl implements IBinaryDocument {
   public setBuffer(buffer: Uint8Array): void {
     if (this.isReadonly) throw new Error("Document is readonly");
     this.content = buffer;
-    this.isDirty = true;
+    this.saveState = SaveState.Dirty;
   }
 
   public get size(): number {

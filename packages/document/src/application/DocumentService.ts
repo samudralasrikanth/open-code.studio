@@ -1,12 +1,12 @@
 import { uriToPath, type WorkspaceUri, type IFileSystem } from "@ocs/workspace";
 
+import { SaveState } from "../domain/Document.js";
 import type { IDocument } from "../domain/Document.js";
-import type { ITextDocument } from "../domain/TextDocument.js";
 import { DocumentEventBus } from "../events/DocumentEventBus.js";
 import { DocumentEventTypes } from "../events/DocumentEvents.js";
 
 import { DocumentCache } from "./DocumentCache.js";
-import { DocumentFactory } from "./DocumentFactory.js";
+import { DocumentFactory, TextDocumentImpl, BinaryDocumentImpl } from "./DocumentFactory.js";
 import { FileSystemDocumentResolver } from "./DocumentResolver.js";
 
 export class DocumentService {
@@ -55,6 +55,47 @@ export class DocumentService {
   }
 
   /**
+   * Updates the document text in the cache, marking it dirty.
+   */
+  public updateDocumentText(uri: WorkspaceUri, text: string): void {
+    const doc = this.documentCache.get(uri);
+    if (!doc) {
+      throw new Error(`Document not found in registry: ${uri.toString()}`);
+    }
+
+    if (doc instanceof TextDocumentImpl) {
+      if (doc.getText() !== text) {
+        doc.setText(text);
+        this.eventBus.emit(DocumentEventTypes.DOCUMENT_CHANGED, {
+          uri,
+          isDirty: true
+        });
+      }
+    }
+  }
+
+  /**
+   * Reverts a document to its state on disk.
+   */
+  public async revertDocument(uri: WorkspaceUri): Promise<void> {
+    const doc = this.documentCache.get(uri);
+    if (!doc) {
+      throw new Error(`Document not found in registry: ${uri.toString()}`);
+    }
+
+    if (doc instanceof TextDocumentImpl) {
+      const content = await this.fileSystem.readFile(uriToPath(uri));
+      doc.revertContent(content);
+
+      this.eventBus.emit(DocumentEventTypes.DOCUMENT_REVERTED, { uri });
+      this.eventBus.emit(DocumentEventTypes.DOCUMENT_CHANGED, {
+        uri,
+        isDirty: false
+      });
+    }
+  }
+
+  /**
    * Saves a document to its underlying storage (e.g. FileSystem).
    */
   public async saveDocument(uri: WorkspaceUri): Promise<void> {
@@ -63,21 +104,33 @@ export class DocumentService {
       throw new Error(`Document not found in registry: ${uri.toString()}`);
     }
 
-    if (!doc.isDirty) {
-      return; // Nothing to save
+    if (doc.saveState !== SaveState.Dirty) {
+      return; // Nothing to save or already saving/clean
     }
 
-    if (doc.type === "text") {
-      const textDoc = doc as ITextDocument;
-      await this.fileSystem.writeFile(uriToPath(uri), textDoc.getText());
-      (textDoc as { isDirty: boolean }).isDirty = false; // Internal cast for mutation
-    } else if (doc.type === "binary") {
-      // In a real implementation we would have writeFileBuffer on IFileSystem
-      // const binDoc = doc as IBinaryDocument;
-      // await this.fileSystem.writeFileBuffer(uri, binDoc.getBuffer());
-      throw new Error("Saving binary documents is not yet supported by FileSystem");
-    }
+    if (doc instanceof TextDocumentImpl) {
+      doc.saveState = SaveState.Saving;
+      try {
+        await this.fileSystem.writeFile(uriToPath(uri), doc.getText());
+        doc.saveState = SaveState.Clean;
 
-    this.eventBus.emit(DocumentEventTypes.DOCUMENT_SAVED, { uri });
+        this.eventBus.emit(DocumentEventTypes.DOCUMENT_SAVED, { uri });
+        this.eventBus.emit(DocumentEventTypes.DOCUMENT_CHANGED, {
+          uri,
+          isDirty: false
+        });
+      } catch (error) {
+        doc.saveState = SaveState.SaveFailed;
+        throw error;
+      }
+    } else if (doc instanceof BinaryDocumentImpl) {
+      doc.saveState = SaveState.Saving;
+      try {
+        throw new Error("Saving binary documents is not yet supported by FileSystem");
+      } catch (error) {
+        doc.saveState = SaveState.SaveFailed;
+        throw error;
+      }
+    }
   }
 }

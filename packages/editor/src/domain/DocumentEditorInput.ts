@@ -8,7 +8,7 @@ import { EditorInput } from "./EditorInput.js";
  * An EditorInput that wraps a Document.
  */
 export class DocumentEditorInput extends EditorInput {
-  constructor(private readonly document: IDocument) {
+  constructor(public readonly document: IDocument) {
     super();
   }
 

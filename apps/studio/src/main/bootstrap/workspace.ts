@@ -36,7 +36,14 @@ export async function bootstrapWorkspace(
   );
   const workspaceSettingsRepo = new WorkspaceSettingsRepository(workspaceStorage);
   const workspaceRegistry = new WorkspaceRegistry(workspaceSettingsRepo, workspaceFs);
-  const workspaceService = createWorkspaceService(workspaceRegistry, workspaceFs, { userDataPath });
+  const eventBus = new (await import("@ocs/common")).EventBus();
+  container.singleton(Symbol.for("events"), () => eventBus);
+  const workspaceService = createWorkspaceService(
+    workspaceRegistry,
+    workspaceFs,
+    { userDataPath },
+    eventBus
+  );
 
   await workspaceService.initialize();
 

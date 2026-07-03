@@ -1,9 +1,11 @@
 // Domain
 export { EditorInput } from "./domain/EditorInput.js";
+export type { EditorInputState } from "./domain/EditorInput.js";
 export { DocumentEditorInput } from "./domain/DocumentEditorInput.js";
 export { EditorGroup } from "./domain/EditorGroup.js";
 export type { EditorGroupState } from "./domain/EditorGroup.js";
 export { WorkbenchLayout } from "./domain/WorkbenchLayout.js";
+export type { SplitNode, EditorLayout } from "./domain/EditorLayout.js";
 
 // Application (should be imported directly by main process)
 

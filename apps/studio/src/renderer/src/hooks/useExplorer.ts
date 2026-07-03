@@ -6,7 +6,12 @@ import { useState, useEffect, useCallback } from "react";
  */
 export function useExplorer() {
   const [nodes, setNodes] = useState<VisibleNode[]>([]);
-  const [stats, setStats] = useState<{ totalNodes: number; visibleNodes: number } | null>(null);
+  const [stats, setStats] = useState<{
+    totalNodes: number;
+    visibleNodes: number;
+    expandedCount: number;
+    selectedNodeIds: readonly string[];
+  } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

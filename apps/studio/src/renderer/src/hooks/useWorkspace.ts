@@ -53,5 +53,12 @@ export function useWorkspace() {
     return window.ocs?.workspace.getActive() ?? null;
   }, []);
 
-  return { workspace, isLoading, open, getRecent, openFolderDialog, getActive };
+  const updateSettings = useCallback(async (settings: Record<string, unknown>): Promise<void> => {
+    if (!window.ocs) return;
+    await window.ocs.workspace.updateSettings(settings);
+    const ws = await window.ocs.workspace.getActive();
+    setWorkspace(ws);
+  }, []);
+
+  return { workspace, isLoading, open, getRecent, openFolderDialog, getActive, updateSettings };
 }

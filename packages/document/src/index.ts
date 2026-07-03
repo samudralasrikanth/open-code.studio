@@ -1,5 +1,6 @@
 // Domain
 export type { IDocument, DocumentType } from "./domain/Document.js";
+export { SaveState } from "./domain/Document.js";
 export type { ITextDocument } from "./domain/TextDocument.js";
 export type { IBinaryDocument } from "./domain/BinaryDocument.js";
 
@@ -13,6 +14,8 @@ export {
 export { FileSystemDocumentResolver } from "./application/DocumentResolver.js";
 export type { IDocumentResolver } from "./application/DocumentResolver.js";
 export type { SaveDocumentCommandArgs } from "./application/SaveDocumentCommand.js";
+export { UndoRedoService } from "./application/UndoRedoService.js";
+export type { IUndoRedoService } from "./application/UndoRedoService.js";
 
 // Events
 export { DocumentEventTypes } from "./events/DocumentEvents.js";

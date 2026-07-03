@@ -1,4 +1,4 @@
-import type { EditorInput } from "./EditorInput.js";
+import type { EditorInput, EditorInputState } from "./EditorInput.js";
 
 export interface EditorGroupState {
   inputs: EditorInput[];
@@ -96,5 +96,15 @@ export class EditorGroup {
     if (this.state.previewInput === input) {
       this.state.previewInput = undefined;
     }
+  }
+
+  public getInputState(input: EditorInput): EditorInputState | undefined {
+    if (!this.state.inputs.includes(input)) return undefined;
+    return {
+      active: this.state.activeInput === input,
+      preview: this.state.previewInput === input,
+      pinned: this.state.previewInput !== input,
+      dirty: input.isDirty()
+    };
   }
 }

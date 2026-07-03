@@ -39,4 +39,12 @@ export function registerDocumentHandlers(container: Container): void {
       content: doc.type === "text" ? (doc as import("@ocs/document").ITextDocument).getText() : null
     };
   });
+
+  ipcMain.handle(IpcChannels.DOCUMENT_UPDATE, async (_, uriStr: string, content: string) => {
+    await documentService.updateDocumentText(uriFromString(uriStr), content);
+  });
+
+  ipcMain.handle(IpcChannels.DOCUMENT_REVERT, async (_, uriStr: string) => {
+    await documentService.revertDocument(uriFromString(uriStr));
+  });
 }
