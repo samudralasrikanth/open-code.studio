@@ -31,7 +31,7 @@ export function correlationId(domain?: string): string {
  * Structured flow log for renderer-side operations.
  */
 export function flowLog(entry: FlowLogEntry): void {
-  if ((window as Record<string, unknown>).__OCS_FLOW_LOGS_DISABLED__) {
+  if ((window as unknown as Record<string, unknown>).__OCS_FLOW_LOGS_DISABLED__) {
     return;
   }
 

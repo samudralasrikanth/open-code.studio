@@ -15,8 +15,7 @@ class MockExplorerProvider implements ExplorerProvider {
         {
           id: "root-1",
           name: "root-1",
-          isDirectory: true,
-          metadata: {}
+          isDirectory: true
         }
       ];
     }
@@ -26,8 +25,7 @@ class MockExplorerProvider implements ExplorerProvider {
         {
           id: "child-1",
           name: "child-1.txt",
-          isDirectory: false,
-          metadata: {}
+          isDirectory: false
         }
       ];
     }
