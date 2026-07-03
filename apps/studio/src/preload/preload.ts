@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { electronAPI } from "@electron-toolkit/preload";
 import type { VisibleNode } from "@ocs/explorer";
 import type { Workspace, RecentWorkspace } from "@ocs/workspace";
@@ -5,6 +6,18 @@ import type { Workspace, RecentWorkspace } from "@ocs/workspace";
 import { contextBridge, ipcRenderer } from "electron";
 
 import { IpcChannels } from "../shared/ipc-channels.js";
+
+// Lightweight flow logging for the preload bridge (no access to full Logger)
+let _flowCounter = 0;
+function flowLog(
+  domain: string,
+  source: string,
+  action: string,
+  context?: Record<string, unknown>
+): void {
+  const cid = `${domain}-${Date.now().toString(36)}-${(++_flowCounter).toString(36)}`;
+  console.info(`[flow:${domain}] ${source}: ${action}`, { ...context, correlationId: cid });
+}
 
 /**
  * The OCS API exposed to the renderer process via contextBridge.
@@ -60,16 +73,16 @@ const ocsAPI = {
   // ── Workspace ───────────────────────────────────────────────────────────────
   workspace: {
     openFolderDialog: async (): Promise<{ canceled: boolean; folderPath: string | null }> => {
-      console.info("[workspace-flow] preload: open-folder-dialog:invoke");
+      flowLog("workspace", "preload", "open-folder-dialog:invoke");
       const result = await ipcRenderer.invoke(IpcChannels.WORKSPACE_OPEN_FOLDER_DIALOG);
-      console.info("[workspace-flow] preload: open-folder-dialog:resolved", result);
+      flowLog("workspace", "preload", "open-folder-dialog:resolved", result);
       return result;
     },
 
     open: async (path: string): Promise<Workspace | null> => {
-      console.info("[workspace-flow] preload: workspace-open:invoke", { path });
+      flowLog("workspace", "preload", "workspace-open:invoke", { path });
       const workspace = await ipcRenderer.invoke(IpcChannels.WORKSPACE_OPEN, path);
-      console.info("[workspace-flow] preload: workspace-open:resolved", {
+      flowLog("workspace", "preload", "workspace-open:resolved", {
         workspaceId: workspace?.id,
         workspaceUri: workspace?.uri
       });

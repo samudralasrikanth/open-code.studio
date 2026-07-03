@@ -1,40 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+
+import { useExplorer } from "../../hooks/useExplorer.js";
 
 interface StatusBarProps {
   workspaceName?: string;
 }
 
 export const StatusBar: React.FC<StatusBarProps> = ({ workspaceName }) => {
-  const [fileCount, setFileCount] = useState(0);
-  const [explorerReady, setExplorerReady] = useState(false);
+  const { stats, isLoading } = useExplorer();
 
-  useEffect(() => {
-    let mounted = true;
-
-    const refresh = async (): Promise<void> => {
-      try {
-        const stats = await window.ocs.explorer.getStats();
-        if (mounted) {
-          setFileCount(stats.totalNodes);
-          setExplorerReady(stats.totalNodes > 0);
-        }
-      } catch {
-        if (mounted) {
-          setExplorerReady(false);
-        }
-      }
-    };
-
-    void refresh();
-    const unsubscribe = window.ocs.explorer.onStateChanged(() => {
-      void refresh();
-    });
-
-    return () => {
-      mounted = false;
-      unsubscribe();
-    };
-  }, []);
+  const fileCount = stats?.totalNodes ?? 0;
+  const explorerReady = !isLoading && fileCount > 0;
 
   return (
     <footer

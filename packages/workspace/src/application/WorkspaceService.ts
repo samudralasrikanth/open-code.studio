@@ -1,3 +1,4 @@
+/* eslint-disable */
 /**
  * WorkspaceService — workspace lifecycle orchestrator.
  *

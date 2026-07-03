@@ -1,11 +1,13 @@
-import type { WorkspaceUri } from "@ocs/workspace";
-import { uriFromPath, uriToPath } from "@ocs/workspace";
 import * as path from "node:path";
 
+import type { WorkspaceUri } from "@ocs/workspace";
+import { uriFromPath, uriToPath } from "@ocs/workspace";
+
 import type { TreeModel, ExplorerNode } from "../domain/TreeModel.js";
-import type { FileWatchEvent } from "./FileWatcher.js";
 import type { IExplorerEventBus } from "../events/ExplorerEvents.js";
 import type { ExplorerProvider } from "../providers/ExplorerProvider.js";
+
+import type { FileWatchEvent } from "./FileWatcher.js";
 
 /**
  * ExplorerService coordinates the providers, the tree model, and the event bus.

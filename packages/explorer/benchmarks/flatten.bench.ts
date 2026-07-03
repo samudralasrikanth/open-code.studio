@@ -1,8 +1,8 @@
 import { uriFromString } from "@ocs/workspace";
 import { bench, describe } from "vitest";
 
-import { FileType } from "../src/domain/VirtualFileSystem.js";
 import { TreeModel, type ExplorerNode } from "../src/domain/TreeModel.js";
+import { FileType } from "../src/domain/VirtualFileSystem.js";
 
 function generateTree(depth: number, breadth: number, currentId = "root"): ExplorerNode {
   const node: ExplorerNode = {

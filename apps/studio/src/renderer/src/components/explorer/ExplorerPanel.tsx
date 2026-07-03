@@ -1,6 +1,8 @@
 import type { VisibleNode } from "@ocs/explorer";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import React, { useState, useRef } from "react";
+
+import { useExplorer } from "../../hooks/useExplorer.js";
 
 import { ExplorerContextMenu, type ContextMenuItem } from "./ExplorerContextMenu.js";
 
@@ -8,7 +10,7 @@ const PROVIDER_ID = "explorer.provider.workspace";
 const ROW_HEIGHT = 24;
 
 export const ExplorerPanel: React.FC = () => {
-  const [nodes, setNodes] = useState<VisibleNode[]>([]);
+  const { nodes } = useExplorer();
   const [focusedIndex, setFocusedIndex] = useState(0);
   const [contextMenu, setContextMenu] = useState<{
     x: number;
@@ -16,34 +18,6 @@ export const ExplorerPanel: React.FC = () => {
     node: VisibleNode;
   } | null>(null);
   const parentRef = useRef<HTMLDivElement>(null);
-
-  const fetchNodes = useCallback(async () => {
-    try {
-      const visibleNodes = await window.ocs.explorer.getVisibleNodes();
-      setNodes(visibleNodes);
-    } catch (e: unknown) {
-      console.error("Failed to fetch visible nodes", e instanceof Error ? e.message : String(e));
-    }
-  }, []);
-
-  useEffect(() => {
-    let mounted = true;
-
-    const load = async (): Promise<void> => {
-      await fetchNodes();
-    };
-
-    void load();
-
-    const unsubscribe = window.ocs.explorer.onStateChanged(() => {
-      if (mounted) void fetchNodes();
-    });
-
-    return () => {
-      mounted = false;
-      unsubscribe();
-    };
-  }, [fetchNodes]);
 
   const virtualizer = useVirtualizer({
     count: nodes.length,

@@ -1,37 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React from "react";
 
 import { EditorArea } from "../editor/EditorArea.js";
 import { DeveloperDiagnosticsPanel } from "../explorer/DeveloperDiagnosticsPanel.js";
 import { ExplorerPanel } from "../explorer/ExplorerPanel.js";
+
 import { StatusBar } from "./StatusBar.js";
 import { TitleBar } from "./TitleBar.js";
 
-export const Workbench: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  const [workspaceName, setWorkspaceName] = useState<string>("");
+interface WorkbenchProps {
+  workspaceName?: string;
+}
 
-  console.info("[workspace-flow] renderer: workbench:render", { routeWorkspaceId: id });
-
-  useEffect(() => {
-    console.info("[workspace-flow] renderer: workbench:get-active:start", { routeWorkspaceId: id });
-    window.ocs?.workspace
-      .getActive()
-      .then((ws) => {
-        console.info("[workspace-flow] renderer: workbench:get-active:done", {
-          routeWorkspaceId: id,
-          activeWorkspaceId: ws?.id,
-          activeWorkspaceUri: ws?.uri
-        });
-        if (ws) {
-          setWorkspaceName(ws.displayName || ws.id);
-        }
-      })
-      .catch((error) => {
-        console.error("[workspace-flow] renderer: workbench:get-active:failed", error);
-      });
-  }, [id]);
-
+export const Workbench: React.FC<WorkbenchProps> = ({ workspaceName }) => {
   return (
     <div
       style={{

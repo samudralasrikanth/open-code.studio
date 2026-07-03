@@ -1,119 +1,97 @@
 /* eslint-disable */
-import { join } from "path";
-
-import { createContainer } from "@ocs/common";
-import { createLifecycleManager } from "@ocs/common";
-import { createLogger } from "@ocs/common";
-import { WorkspaceSettingsRepository } from "@ocs/workspace/application";
-import { WorkspaceRegistry } from "@ocs/workspace/application";
-import { createWorkspaceService } from "@ocs/workspace/application";
-import type { PersistedWorkspaceState } from "@ocs/workspace/application";
-import { createJsonStorageAdapter, createLocalFileSystem } from "@ocs/workspace";
-import {
-  ExplorerService,
-  TreeModel,
-  ExplorerEventBus,
-  WorkspaceProvider,
-  LocalVirtualFileSystem
-} from "@ocs/explorer";
-import { DocumentService } from "@ocs/document/application";
-import { EditorService } from "@ocs/editor/application";
-import { CommandRegistry } from "@ocs/common";
-import { SaveDocumentCommand } from "@ocs/document/application";
 import { app, BrowserWindow, shell } from "electron";
+import { createContainer, createLifecycleManager, createLogger } from "@ocs/common";
 
-import { registerIpcHandlers, restoreLastWorkspace } from "./ipc/handlers.js";
-import { createApplicationMenu } from "./menu.js";
-import { createWindowManager } from "./window-manager.js";
-import type { WindowManager } from "./window-manager.js";
-
-// ─── Bootstrap ────────────────────────────────────────────────────────────────
+import {
+  bootstrapDesktop,
+  bootstrapDocument,
+  bootstrapExplorer,
+  bootstrapIpc,
+  bootstrapWorkspace,
+  wireExplorerProvider,
+  StartupCoordinator
+} from "./bootstrap/index.js";
+import { restoreLastWorkspace } from "./ipc/handlers/index.js";
 
 const container = createContainer();
 const lifecycle = createLifecycleManager();
 const logger = createLogger({ level: "info" });
+const coordinator = new StartupCoordinator(logger);
 
-let windowManager: WindowManager;
+container.singleton(Symbol.for("logger"), () => logger);
+container.singleton(Symbol.for("lifecycle"), () => lifecycle);
+container.singleton(Symbol.for("startup"), () => coordinator);
 
-// ─── Workspace Infrastructure ──────────────────────────────────────────────────
+// ─── Startup Phases ────────────────────────────────────────────────────────
 
-const userDataPath = app.getPath("userData");
-const workspaceFs = createLocalFileSystem();
-const workspaceStoragePath = join(userDataPath, "workspaces.json");
-const workspaceStorage = createJsonStorageAdapter<PersistedWorkspaceState>(
-  workspaceStoragePath,
-  workspaceFs
-);
-const workspaceSettingsRepo = new WorkspaceSettingsRepository(workspaceStorage);
-const workspaceRegistry = new WorkspaceRegistry(workspaceSettingsRepo, workspaceFs);
-const workspaceService = createWorkspaceService(workspaceRegistry, workspaceFs, { userDataPath });
+coordinator.register({
+  name: "desktop",
+  dependsOn: [],
+  execute: () => {
+    const windowManager = bootstrapDesktop(logger);
+    container.singleton(Symbol.for("windowManager"), () => windowManager);
 
-// ─── Explorer Infrastructure ───────────────────────────────────────────────────
+    app.on("activate", () => {
+      // macOS: re-create window when dock icon is clicked and no windows are open
+      if (BrowserWindow.getAllWindows().length === 0) {
+        windowManager.createMainWindow();
+      }
+    });
+  }
+});
 
-const explorerEventBus = new ExplorerEventBus();
-const treeModel = new TreeModel();
-const explorerService = new ExplorerService(treeModel, explorerEventBus);
-const explorerFs = new LocalVirtualFileSystem();
+coordinator.register({
+  name: "workspace",
+  dependsOn: ["desktop"],
+  execute: async () => {
+    const userDataPath = app.getPath("userData");
+    await bootstrapWorkspace(container, userDataPath, logger);
+  }
+});
 
-// ─── Document & Editor Infrastructure ──────────────────────────────────────────
+coordinator.register({
+  name: "explorer",
+  dependsOn: ["workspace"],
+  execute: () => {
+    bootstrapExplorer(container, logger);
+    // Wire the provider now that both Explorer and Workspace are ready
+    wireExplorerProvider(container, logger);
+  }
+});
 
-const documentService = new DocumentService(workspaceFs);
-const editorService = new EditorService();
-const commandRegistry = new CommandRegistry();
-commandRegistry.registerCommand(new SaveDocumentCommand(documentService));
+coordinator.register({
+  name: "document",
+  dependsOn: ["workspace"],
+  execute: () => {
+    bootstrapDocument(container, logger);
+  }
+});
 
-// ─── Application Lifecycle ────────────────────────────────────────────────────
+coordinator.register({
+  name: "ipc",
+  dependsOn: ["explorer", "document"],
+  execute: () => {
+    bootstrapIpc(container, logger);
+  }
+});
+
+coordinator.register({
+  name: "restore",
+  dependsOn: ["ipc"],
+  execute: async () => {
+    const restored = await restoreLastWorkspace(container);
+    if (restored) {
+      logger.info("Restored previous workspace session");
+    }
+  }
+});
+
+// ─── Application Lifecycle ──────────────────────────────────────────────────
 
 app.whenReady().then(async () => {
   logger.info("Open-Code.Studio starting", { version: app.getVersion() });
-
-  // Initialize workspace service (loads registry)
-  await workspaceService.initialize();
-
-  // Initialise platform services
-  container.singleton(Symbol.for("logger"), () => logger);
-  container.singleton(Symbol.for("lifecycle"), () => lifecycle);
-  container.singleton(Symbol.for("workspace.fs"), () => workspaceFs);
-  container.singleton(Symbol.for("explorer.fs"), () => explorerFs);
-  container.singleton(Symbol.for("explorer.events"), () => explorerEventBus);
-  container.singleton(Symbol.for("explorer.tree"), () => treeModel);
-  container.singleton(Symbol.for("workspace"), () => workspaceService);
-  container.singleton(Symbol.for("explorer"), () => explorerService);
-  container.singleton(Symbol.for("document"), () => documentService);
-  container.singleton(Symbol.for("editor"), () => editorService);
-  container.singleton(Symbol.for("commands"), () => commandRegistry);
-
-  // Register providers (Workspace is the primary one)
-  const workspaceProvider = new WorkspaceProvider(
-    container.resolve<LocalVirtualFileSystem>(Symbol.for("explorer.fs"))
-  );
-  container.singleton(Symbol.for("explorer.provider.workspace"), () => workspaceProvider);
-  explorerService.registerProvider(workspaceProvider);
-
-  // Register IPC handlers before any window opens
-  registerIpcHandlers(container);
-
-  // Restore previous workspace session if available
-  const restored = await restoreLastWorkspace(container);
-  if (restored) {
-    logger.info("Restored previous workspace session");
-  }
-
-  // Build native menu
-  createApplicationMenu();
-
-  // Create main window
-  windowManager = createWindowManager(logger);
-  windowManager.createMainWindow();
-
+  await coordinator.run();
   logger.info("Desktop host ready");
-
-  app.on("activate", () => {
-    // macOS: re-create window when dock icon is clicked and no windows are open
-    if (BrowserWindow.getAllWindows().length === 0) {
-      windowManager.createMainWindow();
-    }
-  });
 });
 
 app.on("window-all-closed", () => {

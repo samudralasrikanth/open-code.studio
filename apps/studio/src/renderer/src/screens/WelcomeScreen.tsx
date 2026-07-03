@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../theme/ThemeProvider.js";
+import { flowLog, correlationId } from "../utils/flow-log.js";
 import styles from "./WelcomeScreen.module.css";
 
 interface PlatformInfo {
@@ -39,17 +40,33 @@ export function WelcomeScreen(): React.ReactElement {
   }, []);
 
   const openWorkspace = async (path: string): Promise<void> => {
-    console.info("[workspace-flow] renderer: workspace.open:start", { path });
+    const cid = correlationId("workspace");
+    flowLog({
+      domain: "workspace",
+      source: "renderer",
+      action: "open:start",
+      correlationId: cid,
+      context: { path }
+    });
     const workspace = await window.ocs?.workspace.open(path);
-    console.info("[workspace-flow] renderer: workspace.open:done", {
-      workspaceId: workspace?.id,
-      workspaceUri: workspace?.uri
+    flowLog({
+      domain: "workspace",
+      source: "renderer",
+      action: "open:done",
+      correlationId: cid,
+      context: { workspaceId: workspace?.id, workspaceUri: workspace?.uri }
     });
     if (workspace) {
-      console.info("[workspace-flow] renderer: navigate:workspace", { workspaceId: workspace.id });
+      flowLog({
+        domain: "workspace",
+        source: "renderer",
+        action: "navigate:workspace",
+        correlationId: cid,
+        context: { workspaceId: workspace.id }
+      });
       navigate(`/workspace/${workspace.id}`, { replace: true });
     } else {
-      console.warn("[workspace-flow] renderer: workspace.open returned no workspace");
+      console.warn("[flow:workspace] renderer: workspace.open returned no workspace");
     }
   };
 
@@ -102,21 +119,30 @@ export function WelcomeScreen(): React.ReactElement {
             className={`${styles.card} ${styles.cardPrimary}`}
             onClick={async () => {
               try {
-                console.info("[workspace-flow] renderer: open-folder-dialog:start");
+                const cid = correlationId("workspace");
+                flowLog({
+                  domain: "workspace",
+                  source: "renderer",
+                  action: "open-folder-dialog:start",
+                  correlationId: cid
+                });
                 const { canceled, folderPath } =
                   (await window.ocs?.workspace.openFolderDialog()) ?? {
                     canceled: true,
                     folderPath: null
                   };
-                console.info("[workspace-flow] renderer: open-folder-dialog:done", {
-                  canceled,
-                  folderPath
+                flowLog({
+                  domain: "workspace",
+                  source: "renderer",
+                  action: "open-folder-dialog:done",
+                  correlationId: cid,
+                  context: { canceled, folderPath }
                 });
                 if (!canceled && folderPath) {
                   await openWorkspace(folderPath);
                 }
               } catch (err) {
-                console.error("[workspace-flow] renderer: open-folder:failed", err);
+                console.error("[flow:workspace] renderer: open-folder:failed", err);
               }
             }}
             title="Open a local folder as a workspace"
