@@ -37,6 +37,14 @@ describe("WorkspaceStateMachine", () => {
     expect(sm.value).toBe("closed");
   });
 
+  it("allows failed → opening (retry without an intermediate close)", () => {
+    const sm = new WorkspaceStateMachine();
+    sm.transition("opening");
+    sm.transition("failed");
+    expect(() => sm.transition("opening")).not.toThrow();
+    expect(sm.value).toBe("opening");
+  });
+
   it("allows the full open/close cycle", () => {
     const sm = new WorkspaceStateMachine();
     sm.transition("opening");

@@ -19,14 +19,18 @@ import { PlatformError } from "@ocs/common/errors";
 
 export type WorkspaceStateValue = "closed" | "opening" | "open" | "closing" | "failed";
 
-// ── Allowed transitions ───────────────────────────────────────────────────────
-
 const ALLOWED: Record<WorkspaceStateValue, readonly WorkspaceStateValue[]> = {
   closed: ["opening"],
   opening: ["open", "failed"],
   open: ["closing"],
   closing: ["closed"],
-  failed: ["closed"]
+  // "failed" must also allow a direct retry ("opening") — WorkspaceService.open()
+  // permits calling open() again from the "failed" state (see the guard at the
+  // top of that method), so the state machine must permit the same transition
+  // or every retry after a single failed open throws "Invalid workspace state
+  // transition: failed → opening" and Open Folder becomes permanently broken
+  // for the rest of the session.
+  failed: ["closed", "opening"]
 };
 
 // ── State machine ─────────────────────────────────────────────────────────────

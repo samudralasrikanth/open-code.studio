@@ -89,6 +89,22 @@ describe("WorkspaceService", () => {
       expect(service.isOpen()).toBe(false);
     });
 
+    it("allows retrying open() on a valid folder after a failed attempt", async () => {
+      const stat = vi
+        .fn()
+        .mockRejectedValueOnce(new Error("ENOENT"))
+        .mockResolvedValueOnce(DIR_STAT);
+      const { service } = makeService({ stat });
+      await service.initialize();
+
+      await expect(service.open(FOLDER)).rejects.toThrow();
+      expect(service.isOpen()).toBe(false);
+
+      const workspace = await service.open(FOLDER);
+      expect(workspace).toBeDefined();
+      expect(service.isOpen()).toBe(true);
+    });
+
     it("throws OCS-WS-003 when path is a file not a directory", async () => {
       const { service } = makeService({
         stat: vi.fn(() =>

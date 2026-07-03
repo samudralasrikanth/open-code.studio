@@ -14,6 +14,7 @@ export function WelcomeScreen(): React.ReactElement {
   const { getRecent, open, openFolderDialog } = useWorkspace();
   const [isReady, setIsReady] = useState(false);
   const [recent, setRecent] = useState<readonly import("@ocs/workspace").RecentWorkspace[]>([]);
+  const [openError, setOpenError] = useState<string | null>(null);
 
   useEffect(() => {
     getRecent()
@@ -54,7 +55,13 @@ export function WelcomeScreen(): React.ReactElement {
       });
       navigate(`/workspace/${workspace.id}`, { replace: true });
     } else {
-      console.warn("[flow:workspace] renderer: workspace.open returned no workspace");
+      flowLog({
+        domain: "workspace",
+        source: "renderer",
+        action: "open:no-workspace-returned",
+        correlationId: cid,
+        context: { path }
+      });
     }
   };
 
@@ -106,8 +113,9 @@ export function WelcomeScreen(): React.ReactElement {
           <button
             className={`${styles.card} ${styles.cardPrimary}`}
             onClick={async () => {
+              const cid = correlationId("workspace");
+              setOpenError(null);
               try {
-                const cid = correlationId("workspace");
                 flowLog({
                   domain: "workspace",
                   source: "renderer",
@@ -129,7 +137,15 @@ export function WelcomeScreen(): React.ReactElement {
                   await openWorkspace(folderPath);
                 }
               } catch (err) {
-                console.error("[flow:workspace] renderer: open-folder:failed", err);
+                const message = err instanceof Error ? err.message : String(err);
+                flowLog({
+                  domain: "workspace",
+                  source: "renderer",
+                  action: "open-folder:failed",
+                  correlationId: cid,
+                  context: { error: message }
+                });
+                setOpenError(`Couldn't open that folder: ${message}`);
               }
             }}
             title="Open a local folder as a workspace"
@@ -165,6 +181,25 @@ export function WelcomeScreen(): React.ReactElement {
             <span className={styles.cardHint}>Explore the docs</span>
           </button>
         </div>
+
+        {openError && (
+          <div
+            role="alert"
+            style={{
+              marginTop: "1rem",
+              padding: "0.75rem",
+              borderRadius: "6px",
+              border: "1px solid #f44336",
+              color: "#f44336",
+              fontSize: "13px",
+              maxWidth: "600px",
+              width: "100%",
+              boxSizing: "border-box"
+            }}
+          >
+            {openError}
+          </div>
+        )}
 
         {recent.length > 0 && (
           <div
@@ -209,10 +244,22 @@ export function WelcomeScreen(): React.ReactElement {
                       color: "var(--color-text)"
                     }}
                     onClick={async () => {
+                      const cid = correlationId("workspace");
+                      setOpenError(null);
                       try {
                         await openWorkspace(ws.uri.replace("file://", ""));
                       } catch (err) {
-                        console.error("Failed to open recent workspace", err);
+                        const message = err instanceof Error ? err.message : String(err);
+                        flowLog({
+                          domain: "workspace",
+                          source: "renderer",
+                          action: "open-recent:failed",
+                          correlationId: cid,
+                          context: { workspaceId: ws.id, error: message }
+                        });
+                        setOpenError(
+                          `Couldn't open "${ws.displayName || ws.id}" — it may have been moved or deleted.`
+                        );
                       }
                     }}
                   >

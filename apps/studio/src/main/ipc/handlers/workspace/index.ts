@@ -94,7 +94,19 @@ export function registerWorkspaceHandlers(container: Container): void {
       context: { workspaceId: workspace.id, workspaceUri: workspace.uri }
     });
     if (workspace) {
-      await setupWorkspaceExplorer(container, workspace, logger, cid);
+      try {
+        await setupWorkspaceExplorer(container, workspace, logger, cid);
+      } catch (error) {
+        // The workspace itself opened successfully. Don't let a secondary
+        // explorer-wiring failure reject this whole IPC call — that would
+        // leave WorkspaceService believing a workspace is open while the
+        // renderer never receives it and is stuck on the Welcome screen.
+        logger.warn("Explorer setup failed after workspace open — continuing without it", {
+          correlationId: cid,
+          workspaceId: workspace.id,
+          error: error instanceof Error ? error.message : String(error)
+        });
+      }
     }
 
     // We get visible nodes in setupWorkspaceExplorer, so we just log done here
