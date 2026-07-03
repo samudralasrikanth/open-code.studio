@@ -193,6 +193,33 @@ const ocsAPI = {
   commands: {
     execute: (commandId: string, args?: any): Promise<any> =>
       ipcRenderer.invoke(IpcChannels.COMMAND_EXECUTE, commandId, args)
+  },
+
+  // ── Terminal ────────────────────────────────────────────────────────────────
+  terminal: {
+    create: (options: {
+      shell?: string;
+      args?: string[];
+      cwd: string;
+      cols?: number;
+      rows?: number;
+    }): Promise<any> => ipcRenderer.invoke(IpcChannels.TERMINAL_CREATE, options),
+    close: (id: string): Promise<void> => ipcRenderer.invoke(IpcChannels.TERMINAL_CLOSE, id),
+    resize: (id: string, cols: number, rows: number): Promise<void> =>
+      ipcRenderer.invoke(IpcChannels.TERMINAL_RESIZE, id, cols, rows),
+    sendText: (id: string, text: string): Promise<void> =>
+      ipcRenderer.invoke(IpcChannels.TERMINAL_INPUT, id, text),
+    list: (): Promise<any[]> => ipcRenderer.invoke(IpcChannels.TERMINAL_LIST),
+    onOutput: (callback: (payload: { id: string; data: string }) => void): (() => void) => {
+      const handler = (_: any, payload: { id: string; data: string }) => callback(payload);
+      ipcRenderer.on(IpcChannels.TERMINAL_OUTPUT, handler);
+      return () => ipcRenderer.off(IpcChannels.TERMINAL_OUTPUT, handler);
+    },
+    onExit: (callback: (payload: { id: string; exitCode?: number }) => void): (() => void) => {
+      const handler = (_: any, payload: { id: string; exitCode?: number }) => callback(payload);
+      ipcRenderer.on(IpcChannels.TERMINAL_EXIT, handler);
+      return () => ipcRenderer.off(IpcChannels.TERMINAL_EXIT, handler);
+    }
   }
 };
 

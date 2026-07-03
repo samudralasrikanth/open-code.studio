@@ -1,50 +1,50 @@
-# EPIC-0102 — Backup and Restore
+# EPIC-0103 — Browser IDE
 
-| Property           | Value                            |
-| ------------------ | -------------------------------- |
-| Epic ID            | EPIC-0102                        |
-| Phase              | Phase 14 — Platform Operations   |
-| Status             | 📋 Planned                       |
-| Priority           | Critical                         |
-| Estimated Duration | 3 Weeks                          |
-| Dependencies       | Memory Platform, Workflow Engine |
-| Blocks             | Browser IDE, Remote Runtime      |
+| Property           | Value                                                                      |
+| ------------------ | -------------------------------------------------------------------------- |
+| Epic ID            | EPIC-0103                                                                  |
+| Phase              | Phase 15 — Platform Expansion                                              |
+| Status             | 📋 Planned                                                                 |
+| Priority           | High                                                                       |
+| Estimated Duration | 6 Weeks                                                                    |
+| Dependencies       | EPIC-0071 Plugin SDK, EPIC-0072 Extension Loader, EPIC-0105 Remote Runtime |
+| Blocks             | Public API, Enterprise Cloud                                               |
 
 ---
 
 # 1. Overview
 
-Backup and Restore protects user workspaces, AI memories, workflows, prompts, settings, extensions, and organizational data.
+The Browser IDE extends Open-Code.Studio into a fully browser-based development environment.
 
-Backups support local storage, encrypted archives, cloud synchronization, and disaster recovery.
+Developers can edit code, execute AI workflows, collaborate, manage repositories, and access remote runtimes directly from a web browser without installing the desktop application.
 
 ---
 
 # 2. Vision
 
-Allow complete platform recovery with minimal downtime.
+Provide an AI-native browser IDE comparable to GitHub Codespaces, VS Code Web, and Cursor while maintaining feature parity with the desktop platform.
 
-Backup Types
+Supported Features
 
-- Workspace
-- Settings
-- AI Memory
-- Prompts
+- Code Editing
+- AI Chat
+- AI Agents
+- Terminal
+- Git
+- Workflows
 - Extensions
-- Organization
-- Database
-- Full System
+- Collaboration
 
 ---
 
 # 3. Goals
 
-- Scheduled backups
-- Incremental backups
-- Encryption
-- Compression
-- Restore validation
-- Cloud sync
+- Browser editor
+- Remote execution
+- Workspace synchronization
+- Plugin support
+- AI integration
+- Responsive UI
 
 ---
 
@@ -52,14 +52,14 @@ Backup Types
 
 Included
 
-- Backup Engine
-- Restore Engine
-- Scheduler
-- Validation
+- Web IDE
+- Monaco Integration
+- Remote Workspace
+- Browser Authentication
 
 Excluded
 
-- Third-party cloud storage
+- Offline execution
 
 ---
 
@@ -68,49 +68,53 @@ Excluded
 ```mermaid
 flowchart LR
 
+Browser
+
+↓
+
+Web UI
+
+↓
+
+Gateway
+
+↓
+
+Remote Runtime
+
+↓
+
 Workspace
 
 ↓
 
-Backup Engine
-
-↓
-
-Encrypted Archive
-
-↓
-
-Restore Engine
-
-↓
-
-Recovery
+AI Platform
 ```
 
 ---
 
 # 6. Components
 
-- Backup Engine
-- Restore Engine
-- Archive Manager
-- Validation Service
-- Scheduler
+- Browser UI
+- Monaco Editor
+- Workspace Sync
+- Remote File System
+- Session Manager
 
 ---
 
-# 7. APIs
+# 7. Interfaces
 
 ```typescript
-backup();
+workspace();
 
-restore();
+editor();
 
-validate();
+terminal();
 
-archives();
+extensions();
 
-schedule();
+session();
 ```
 
 ---
@@ -118,9 +122,8 @@ schedule();
 # 8. IPC
 
 ```
-backup.start
-
-restore.start
+browser.workspace
+browser.editor
 ```
 
 ---
@@ -128,9 +131,9 @@ restore.start
 # 9. Commands
 
 ```
-backup.run
-restore.run
-backup.validate
+browser.open
+browser.sync
+browser.disconnect
 ```
 
 ---
@@ -138,79 +141,81 @@ backup.validate
 # 10. Events
 
 ```
-backup.completed
-restore.completed
-backup.failed
+browser.connected
+workspace.synced
+browser.disconnected
 ```
 
 ---
 
 # 11. Stories
 
-- Backup Engine
-- Restore
-- Validation
-- Scheduling
+- Browser IDE
+- Editor
+- Workspace Sync
+- Authentication
+- Extensions
 
 ---
 
 # 12. Tasks
 
-- [ ] Backup engine
-- [ ] Restore
-- [ ] Validation
-- [ ] Scheduler
+- [ ] Browser shell
+- [ ] Monaco integration
+- [ ] Workspace sync
+- [ ] Remote filesystem
 
 ---
 
-# 13. Performance
+# 13. Metrics
 
-| Metric             | Target |
-| ------------------ | ------ |
-| Incremental Backup | <2 min |
-| Restore            | <5 min |
+| Metric          | Target  |
+| --------------- | ------- |
+| IDE Startup     | <3 sec  |
+| File Open       | <150 ms |
+| Editor Response | <16 ms  |
 
 ---
 
-# 14. Definition of Done
+# 14. Verification
 
-- Backups reliable
-- Restore validated
-- Encryption enabled
+- Browser IDE operational
+- Workspace synchronized
+- AI integrated
 - Coverage ≥90%
 
 ---
 
 # 15. Acceptance Criteria
 
-- Data restored accurately
-- Archives encrypted
-- Validation passes
-- Scheduling operational
+- Projects editable
+- Extensions supported
+- AI available
+- Sessions persistent
 
 ---
 
 # 16. Risks
 
-- Archive corruption
-- Storage limitations
-- Restore conflicts
+- Browser limitations
+- Large repositories
+- Network latency
 
 ---
 
 # 17. Future
 
-- Cloud backup
-- Cross-device restore
-- Point-in-time recovery
+- Offline browser mode
+- PWA support
+- Edge compute runtimes
 
 ---
 
 # 18. Deliverables
 
-- Backup Engine
-- Restore Engine
-- Archive Manager
+- Browser IDE
+- Workspace Sync
+- Web Session Manager
 
 ---
 
@@ -218,11 +223,12 @@ backup.failed
 
 Requirements
 
-- REQ-OPS-007
+- REQ-EXP-001
+- REQ-EXP-002
 
 Related ADRs
 
-- ADR-151 Backup and Restore
+- ADR-152 Browser IDE
 
 ---
 

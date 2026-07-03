@@ -1,53 +1,50 @@
-# EPIC-0057 — Agent Metrics
+# EPIC-0058 — Workflow Core
 
-| Property           | Value                                           |
-| ------------------ | ----------------------------------------------- |
-| Epic ID            | EPIC-0057                                       |
-| Phase              | Phase 6 — Agent Platform                        |
-| Status             | 📋 Planned                                      |
-| Priority           | High                                            |
-| Estimated Duration | 2 Weeks                                         |
-| Dependencies       | EPIC-0049 Agent Registry, All Agent Epics       |
-| Blocks             | Phase 7 Workflow Engine, Phase 13 Observability |
+| Property           | Value                                                                |
+| ------------------ | -------------------------------------------------------------------- |
+| Epic ID            | EPIC-0058                                                            |
+| Phase              | Phase 7 — Workflow Engine                                            |
+| Status             | 📋 Planned                                                           |
+| Priority           | Critical                                                             |
+| Estimated Duration | 4 Weeks                                                              |
+| Dependencies       | Phase 6 Agent Platform                                               |
+| Blocks             | EPIC-0059 Scheduler, EPIC-0060 Task Engine, EPIC-0061 Approval Gates |
 
 ---
 
 # 1. Overview
 
-The Agent Metrics Platform measures the effectiveness, quality, performance, reliability, and operational health of every AI agent.
+Workflow Core is the orchestration engine that coordinates multiple AI agents into long-running software engineering workflows.
 
-It enables continuous optimization and provides visibility into agent behavior.
+Instead of invoking a single AI request, Workflow Core manages execution plans, task dependencies, retries, approvals, checkpoints, and resumable execution.
 
 ---
 
 # 2. Vision
 
-Create a comprehensive observability layer for autonomous AI agents.
+Provide enterprise-grade workflow orchestration comparable to Temporal, Argo Workflows, and GitHub Actions while optimized for AI-driven software engineering.
 
-Tracked Metrics
+Supported Workflows
 
-- Success Rate
-- Failure Rate
-- Execution Time
-- Cost
-- Token Usage
-- Accuracy
-- Confidence
-- User Feedback
-- Recovery Rate
+- Build Feature
+- Fix Bug
+- Code Review
+- Refactoring
+- Documentation
+- Release
+- Migration
+- Custom Workflows
 
 ---
 
 # 3. Goals
 
-## Functional
-
-- Agent metrics
-- Performance dashboards
-- Benchmarking
-- Health monitoring
-- Cost reporting
-- Quality scoring
+- Multi-agent orchestration
+- Long-running workflows
+- Checkpoints
+- Retry policies
+- Pause/Resume
+- Event-driven execution
 
 ---
 
@@ -55,15 +52,16 @@ Tracked Metrics
 
 Included
 
-- Metrics Collector
-- Agent Dashboard
-- Benchmarking
-- Reporting
+- Workflow Engine
+- State Machine
+- Execution Context
+- Checkpointing
+- Recovery
 
 Excluded
 
-- Workflow metrics
-- Enterprise analytics
+- Scheduling
+- Analytics
 
 ---
 
@@ -72,49 +70,63 @@ Excluded
 ```mermaid
 flowchart LR
 
-Agents
+User
 
 ↓
 
-Metrics Collector
+Workflow Core
 
 ↓
 
-Metrics Store
+Planner
 
 ↓
 
-Analytics
+Coding
 
 ↓
 
-Dashboard
+Review
+
+↓
+
+Testing
+
+↓
+
+Documentation
+
+↓
+
+Completed
 ```
 
 ---
 
 # 6. Components
 
-- Metrics Collector
-- Benchmark Engine
-- Dashboard
-- Reporting Engine
-- Health Monitor
+- Workflow Engine
+- State Machine
+- Context Manager
+- Execution Manager
+- Recovery Manager
 
 ---
 
-# 7. APIs
+# 7. Interfaces
 
 ```typescript
-metrics();
+start();
 
-benchmark();
+pause();
 
-health();
+resume();
 
-quality();
+cancel();
 
-statistics();
+status();
+
+history();
 ```
 
 ---
@@ -122,11 +134,10 @@ statistics();
 # 8. IPC
 
 ```
-agent.metrics
-
-agent.health
-
-agent.benchmark
+workflow.start
+workflow.pause
+workflow.resume
+workflow.status
 ```
 
 ---
@@ -134,10 +145,10 @@ agent.benchmark
 # 9. Commands
 
 ```
-agent.metrics
-agent.benchmark
-agent.report
-agent.health
+workflow.start
+workflow.cancel
+workflow.resume
+workflow.restart
 ```
 
 ---
@@ -145,87 +156,85 @@ agent.health
 # 10. Events
 
 ```
-agent.executionCompleted
-
-agent.metricRecorded
-
-agent.healthChanged
-
-agent.benchmarkCompleted
+workflow.started
+workflow.paused
+workflow.completed
+workflow.failed
+workflow.resumed
 ```
 
 ---
 
 # 11. Stories
 
-- Metrics Collection
-- Benchmarking
-- Health Monitoring
-- Reporting
+- Workflow Engine
+- State Machine
+- Recovery
+- Context
 - Dashboard
 
 ---
 
 # 12. Tasks
 
-- [ ] Metrics collector
+- [ ] Workflow runtime
+- [ ] State machine
+- [ ] Checkpoints
+- [ ] Recovery
 - [ ] Dashboard
-- [ ] Reports
-- [ ] Benchmark engine
 
 ---
 
-# 13. Performance
+# 13. Metrics
 
-| Metric             | Target     |
-| ------------------ | ---------- |
-| Metrics Collection | <5 ms      |
-| Dashboard Refresh  | <500 ms    |
-| Benchmark          | Background |
+| Metric          | Target  |
+| --------------- | ------- |
+| Workflow Start  | <500 ms |
+| Resume          | <300 ms |
+| Context Restore | <200 ms |
 
 ---
 
-# 14. Definition of Done
+# 14. Verification
 
-- Metrics collected
-- Dashboard operational
-- Benchmarks complete
+- Workflow execution operational
+- Recovery supported
+- Checkpoints implemented
 - Coverage ≥90%
 
 ---
 
 # 15. Acceptance Criteria
 
-- Agent metrics accurate
-- Health visible
-- Benchmarks reproducible
-- Reports generated
+- Workflows survive restart
+- State restored correctly
+- Multi-agent execution works
+- Recovery succeeds
 
 ---
 
 # 16. Risks
 
-- Metrics overhead
-- Excessive storage
-- Misleading KPIs
+- Workflow deadlocks
+- Lost state
+- Agent failures
 
 ---
 
 # 17. Future
 
-- AI self-optimization
-- Predictive health monitoring
-- Cross-workspace analytics
-- Fleet benchmarking
+- Distributed workflows
+- Cloud execution
+- Visual workflow designer
 
 ---
 
 # 18. Deliverables
 
-- Metrics Collector
-- Agent Dashboard
-- Benchmark Engine
-- Health Monitor
+- Workflow Engine
+- State Machine
+- Recovery Manager
+- Workflow Dashboard
 
 ---
 
@@ -233,11 +242,9 @@ agent.benchmarkCompleted
 
 Requirements
 
-- REQ-AGENT-009
+- REQ-WF-001
 
-Related ADRs
-
-- ADR-106 Agent Metrics
+ADR-107 Workflow Core
 
 ---
 

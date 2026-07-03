@@ -21,6 +21,8 @@
     "@ocs/common": "workspace:*",
     "@ocs/explorer": "workspace:^",
     "@ocs/workspace": "workspace:^",
+    "@ocs/terminal": "workspace:*",
+    "node-pty": "^1.1.0",
     "@ocs/editor": "workspace:*",
     "@ocs/document": "workspace:*",
     "@ocs/editor-monaco": "workspace:*",

@@ -1,52 +1,63 @@
 # EPIC-0049 — Agent Registry
 
-# EPIC-0048 — Organization Memory
-
-| Property           | Value                                                    |
-| ------------------ | -------------------------------------------------------- |
-| Epic ID            | EPIC-0048                                                |
-| Phase              | Phase 5 — Memory Platform                                |
-| Status             | 📋 Planned                                               |
-| Priority           | High                                                     |
-| Estimated Duration | 3 Weeks                                                  |
-| Dependencies       | EPIC-0044 Memory Store, EPIC-0047 Memory Retrieval       |
-| Blocks             | EPIC-0078 Organization Management, EPIC-0087 Team Memory |
+| Property           | Value                                                                               |
+| ------------------ | ----------------------------------------------------------------------------------- |
+| Epic ID            | EPIC-0049                                                                           |
+| Phase              | Phase 6 — Agent Platform                                                            |
+| Status             | 📋 Planned                                                                          |
+| Priority           | Critical                                                                            |
+| Estimated Duration | 3 Weeks                                                                             |
+| Dependencies       | Phase 2 Runtime, Phase 3 Gateway, Phase 4 Knowledge Engine, Phase 5 Memory Platform |
+| Blocks             | EPIC-0050 Planner Agent, EPIC-0051 Coding Agent, All Future Agents                  |
 
 ---
 
 # 1. Overview
 
-Organization Memory extends the Memory Platform beyond individual users by enabling secure, shared knowledge across teams and organizations.
+The Agent Registry is the central directory for every AI agent inside Open-Code.Studio.
 
-It stores architectural decisions, coding standards, design patterns, operational procedures, project conventions, and organizational best practices.
+Rather than hardcoding Planner, Coding, Review, Testing, or Documentation agents, every agent registers itself with the registry.
 
-Organization Memory becomes the institutional knowledge base for AI agents.
+The registry manages discovery, lifecycle, capabilities, permissions, health, metrics, and communication.
 
 ---
 
 # 2. Vision
 
-Provide a centralized, governed memory system that allows AI agents to consistently apply organizational standards while respecting permissions and privacy boundaries.
+Provide a plugin-based agent platform where new agents can be installed without changing the core platform.
 
-Memory Domains
+Supported Agent Types
 
-- Organization
-- Department
-- Team
-- Project
-- Workspace
-- User
+- Planner
+- Coding
+- Review
+- Testing
+- Documentation
+- Refactoring
+- Debugging
+- Custom Agents
 
 ---
 
 # 3. Goals
 
-- Shared memory
-- Access control
-- Versioning
-- Review workflow
-- Organization-wide search
-- Governance
+## Functional
+
+- Agent registration
+- Discovery
+- Lifecycle management
+- Health monitoring
+- Capability lookup
+- Version management
+- Agent permissions
+- Metrics collection
+
+## Non-Functional
+
+- Extensible
+- Event-driven
+- Fault tolerant
+- Provider independent
 
 ---
 
@@ -54,16 +65,16 @@ Memory Domains
 
 Included
 
-- Shared Memory
-- Permission Model
-- Version Control
-- Approval Workflow
-- Audit Trail
+- Agent Registry
+- Discovery
+- Registration
+- Health
+- Metrics
 
 Excluded
 
-- RBAC implementation
-- Team collaboration UI
+- Agent execution
+- Workflow scheduling
 
 ---
 
@@ -72,55 +83,55 @@ Excluded
 ```mermaid
 flowchart LR
 
-PersonalMemory
+Planner
 
-↓
+Coding
 
 Review
 
-↓
+Testing
 
-OrganizationMemory
-
-↓
-
-AccessControl
+Documentation
 
 ↓
 
-Agents
+Agent Registry
 
 ↓
 
-ContextBuilder
+Gateway
+
+↓
+
+Runtime
 ```
 
 ---
 
 # 6. Components
 
-- Organization Memory Store
-- Access Controller
-- Approval Manager
-- Version Manager
-- Audit Logger
+- Agent Registry
+- Agent Descriptor
+- Capability Registry
+- Lifecycle Manager
+- Health Manager
 
 ---
 
-# 7. APIs
+# 7. Interfaces
 
 ```typescript
-publish();
+register();
 
-approve();
+unregister();
 
-share();
+agents();
 
-search();
+capabilities();
 
-history();
+health();
 
-permissions();
+metrics();
 ```
 
 ---
@@ -128,9 +139,11 @@ permissions();
 # 8. IPC
 
 ```
-organization.memory
+agent.register
 
-organization.search
+agent.list
+
+agent.health
 ```
 
 ---
@@ -138,9 +151,10 @@ organization.search
 # 9. Commands
 
 ```
-org.memory.publish
-org.memory.search
-org.memory.approve
+agent.register
+agent.refresh
+agent.list
+agent.metrics
 ```
 
 ---
@@ -148,83 +162,82 @@ org.memory.approve
 # 10. Events
 
 ```
-organization.memoryPublished
-organization.memoryApproved
-organization.memoryUpdated
+agent.registered
+agent.removed
+agent.updated
+agent.healthChanged
 ```
 
 ---
 
 # 11. Stories
 
-- Shared Memory
-- Approval Workflow
-- Permissions
-- Search
-- Audit
+- Registry
+- Discovery
+- Lifecycle
+- Health
+- Metrics
 
 ---
 
 # 12. Tasks
 
-- [ ] Shared storage
-- [ ] Approval workflow
-- [ ] Version control
-- [ ] Audit logging
+- [ ] Registry
+- [ ] Discovery
+- [ ] Health
+- [ ] Metrics
 
 ---
 
-# 13. Performance
+# 13. Metrics
 
-| Metric           | Target  |
-| ---------------- | ------- |
-| Publish          | <100 ms |
-| Search           | <50 ms  |
-| Permission Check | <5 ms   |
+| Metric       | Target  |
+| ------------ | ------- |
+| Registration | <20 ms  |
+| Lookup       | <5 ms   |
+| Health Check | <100 ms |
 
 ---
 
-# 14. Definition of Done
+# 14. Verification
 
-- Shared memory operational
-- Permissions enforced
-- Approval workflow implemented
+- Registry operational
+- Dynamic registration
+- Health monitoring
 - Coverage ≥90%
 
 ---
 
 # 15. Acceptance Criteria
 
-- Memories shared securely
-- Version history maintained
-- Permissions respected
-- Organization search operational
+- Agents register automatically
+- Capabilities searchable
+- Health visible
+- Metrics collected
 
 ---
 
 # 16. Risks
 
-- Knowledge leakage
-- Permission errors
-- Duplicate organizational knowledge
+- Duplicate registrations
+- Version conflicts
+- Missing capabilities
 
 ---
 
 # 17. Future
 
-- Cross-organization federation
-- AI knowledge validation
-- Enterprise governance policies
-- Knowledge quality scoring
+- Remote agents
+- Marketplace agents
+- Distributed registry
 
 ---
 
 # 18. Deliverables
 
-- Organization Memory Store
-- Approval Workflow
-- Permission Layer
-- Audit Trail
+- Agent Registry
+- Capability Registry
+- Lifecycle Manager
 
 ---
 
@@ -232,10 +245,9 @@ organization.memoryUpdated
 
 Requirements
 
-- REQ-MEM-009
-- REQ-MEM-010
+- REQ-AGENT-001
 
-ADR-097 Organization Memory
+ADR-098 Agent Registry
 
 ---
 

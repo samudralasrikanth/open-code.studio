@@ -1,50 +1,50 @@
-# EPIC-0105 — Remote Runtime
+# EPIC-0106 — Mobile Companion
 
-| Property           | Value                                              |
-| ------------------ | -------------------------------------------------- |
-| Epic ID            | EPIC-0105                                          |
-| Phase              | Phase 15 — Platform Expansion                      |
-| Status             | 📋 Planned                                         |
-| Priority           | Critical                                           |
-| Estimated Duration | 5 Weeks                                            |
-| Dependencies       | EPIC-0058 Workflow Core, EPIC-0103 Browser IDE     |
-| Blocks             | Mobile Companion, Distributed Multi-Agent Platform |
+| Property           | Value                                                         |
+| ------------------ | ------------------------------------------------------------- |
+| Epic ID            | EPIC-0106                                                     |
+| Phase              | Phase 15 — Platform Expansion                                 |
+| Status             | 📋 Planned                                                    |
+| Priority           | High                                                          |
+| Estimated Duration | 4 Weeks                                                       |
+| Dependencies       | EPIC-0105 Remote Runtime, EPIC-0077 Enterprise Authentication |
+| Blocks             | Distributed Multi-Agent Platform                              |
 
 ---
 
 # 1. Overview
 
-The Remote Runtime enables Open-Code.Studio to execute AI agents, workflows, builds, terminals, debugging sessions, and development tasks on remote infrastructure.
+The Mobile Companion extends Open-Code.Studio to iOS and Android, enabling developers to monitor AI agents, review code, approve workflows, receive notifications, and interact with projects from anywhere.
 
-Execution environments can be local machines, remote servers, Kubernetes clusters, cloud VMs, or development containers.
+The mobile app complements—not replaces—the desktop IDE.
 
 ---
 
 # 2. Vision
 
-Support seamless execution across local and distributed environments without changing user workflows.
+Deliver a mobile-first companion comparable to GitHub Mobile while exposing AI-native engineering capabilities.
 
-Supported Runtimes
+Supported Features
 
-- Local
-- SSH
-- Docker
-- Kubernetes
-- Dev Containers
-- Cloud VM
-- WSL
-- Remote Desktop
+- AI Chat
+- Notifications
+- Workflow Monitoring
+- Code Review
+- Approval Requests
+- Build Status
+- Agent Status
+- Organization Dashboard
 
 ---
 
 # 3. Goals
 
-- Remote execution
-- Secure tunnels
-- Workspace synchronization
-- Container support
-- Runtime management
-- Resource monitoring
+- Remote monitoring
+- AI chat
+- Push notifications
+- Approval workflows
+- Project dashboards
+- Secure authentication
 
 ---
 
@@ -52,15 +52,15 @@ Supported Runtimes
 
 Included
 
-- Runtime Manager
-- Connection Manager
-- Remote Terminal
-- File Synchronization
-- Session Recovery
+- Mobile App
+- Notifications
+- AI Chat
+- Workflow Dashboard
+- Authentication
 
 Excluded
 
-- Multi-region orchestration
+- Full code editing
 
 ---
 
@@ -69,53 +69,45 @@ Excluded
 ```mermaid
 flowchart LR
 
-IDE
+Mobile App
 
 ↓
 
-Runtime Manager
+Gateway API
 
 ↓
 
-Connection Layer
+Platform Services
 
 ↓
 
-Remote Runtime
-
-↓
-
-Workspace
-
-↓
-
-Agents
+AI Platform
 ```
 
 ---
 
 # 6. Components
 
-- Runtime Manager
-- Connection Manager
-- File Sync
-- Terminal Gateway
-- Session Recovery
+- Mobile Client
+- Notification Service
+- Authentication
+- Dashboard
+- AI Chat
 
 ---
 
-# 7. APIs
+# 7. Interfaces
 
 ```typescript
-connect();
+notifications();
 
-disconnect();
+projects();
 
-runtime();
+workflows();
 
-sync();
+chat();
 
-status();
+approvals();
 ```
 
 ---
@@ -123,11 +115,8 @@ status();
 # 8. IPC
 
 ```
-runtime.connect
-
-runtime.sync
-
-runtime.status
+mobile.notifications
+mobile.chat
 ```
 
 ---
@@ -135,10 +124,9 @@ runtime.status
 # 9. Commands
 
 ```
-runtime.connect
-runtime.list
-runtime.stop
-runtime.sync
+mobile.login
+mobile.sync
+mobile.notifications
 ```
 
 ---
@@ -146,84 +134,81 @@ runtime.sync
 # 10. Events
 
 ```
-runtime.connected
-runtime.disconnected
-runtime.failed
-runtime.synced
+notification.received
+workflow.updated
+approval.requested
 ```
 
 ---
 
 # 11. Stories
 
-- Runtime Manager
-- Remote Connections
-- Synchronization
-- Recovery
-- Monitoring
+- Mobile Dashboard
+- AI Chat
+- Notifications
+- Approvals
+- Authentication
 
 ---
 
 # 12. Tasks
 
-- [ ] Runtime manager
-- [ ] SSH support
-- [ ] Container support
-- [ ] Sync engine
+- [ ] Mobile app
+- [ ] Push notifications
+- [ ] Dashboard
+- [ ] AI chat
 
 ---
 
-# 13. Performance
+# 13. Metrics
 
-| Metric          | Target  |
-| --------------- | ------- |
-| Connection      | <3 sec  |
-| File Sync       | <500 ms |
-| Command Latency | <100 ms |
+| Metric                | Target |
+| --------------------- | ------ |
+| App Startup           | <2 sec |
+| Notification Delivery | <5 sec |
+| Chat Response         | <2 sec |
 
 ---
 
-# 14. Definition of Done
+# 14. Verification
 
-- Remote execution operational
-- File synchronization reliable
-- Session recovery implemented
+- Mobile companion operational
+- Push notifications enabled
+- Authentication secure
 - Coverage ≥90%
 
 ---
 
 # 15. Acceptance Criteria
 
-- Remote runtimes connect
-- Files synchronized
-- Commands execute remotely
-- Sessions recover after interruption
+- Users receive notifications
+- AI chat works
+- Workflow approvals function
+- Dashboard synchronized
 
 ---
 
 # 16. Risks
 
-- Network instability
-- Authentication failures
-- Synchronization conflicts
+- Mobile connectivity
+- Authentication complexity
+- Notification delays
 
 ---
 
 # 17. Future
 
-- Multi-cloud runtimes
-- GPU clusters
-- Edge execution
-- Serverless runtimes
+- Offline mode
+- Mobile code review
+- Voice AI assistant
 
 ---
 
 # 18. Deliverables
 
-- Runtime Manager
-- Connection Manager
-- Sync Engine
-- Remote Terminal Gateway
+- Mobile App
+- Notification Service
+- Mobile Dashboard
 
 ---
 
@@ -231,12 +216,12 @@ runtime.synced
 
 Requirements
 
-- REQ-EXP-005
-- REQ-EXP-006
+- REQ-EXP-007
+- REQ-EXP-008
 
 Related ADRs
 
-- ADR-154 Remote Runtime
+- ADR-155 Mobile Companion
 
 ---
 

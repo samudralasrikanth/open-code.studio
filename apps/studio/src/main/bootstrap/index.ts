@@ -1,4 +1,5 @@
 export * from "./workspace.js";
+export * from "./terminal.js";
 export * from "./explorer.js";
 export * from "./document.js";
 export * from "./desktop.js";

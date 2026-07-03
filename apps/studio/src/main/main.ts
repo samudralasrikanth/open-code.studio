@@ -8,6 +8,7 @@ import {
   bootstrapExplorer,
   bootstrapIpc,
   bootstrapWorkspace,
+  bootstrapTerminal,
   wireExplorerProvider,
   StartupCoordinator
 } from "./bootstrap/index.js";
@@ -71,8 +72,16 @@ coordinator.register({
 });
 
 coordinator.register({
+  name: "terminal",
+  dependsOn: ["workspace"],
+  execute: () => {
+    bootstrapTerminal(container, logger);
+  }
+});
+
+coordinator.register({
   name: "ipc",
-  dependsOn: ["explorer", "document"],
+  dependsOn: ["explorer", "document", "terminal"],
   execute: () => {
     bootstrapIpc(container, logger);
   }

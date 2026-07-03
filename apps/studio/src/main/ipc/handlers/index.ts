@@ -6,6 +6,7 @@ import { registerExplorerHandlers } from "./explorer/index.js";
 import { registerDocumentHandlers } from "./document/index.js";
 import { registerEditorHandlers } from "./editor/index.js";
 import { registerCommandHandlers } from "./commands/index.js";
+import { registerTerminalHandlers } from "./terminal/index.js";
 
 /**
  * Register all IPC handlers for the main process.
@@ -17,6 +18,7 @@ export function registerIpcHandlers(container: Container): void {
   registerDocumentHandlers(container);
   registerEditorHandlers(container);
   registerCommandHandlers(container);
+  registerTerminalHandlers(container);
 }
 
 export { restoreLastWorkspace };

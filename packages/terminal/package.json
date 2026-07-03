@@ -1,0 +1,38 @@
+{
+  "name": "@ocs/terminal",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Terminal domain — session lifecycle, PTY orchestration, and execution.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo coverage",
+    "dev": "tsc -b --watch",
+    "lint": "eslint .",
+    "test": "vitest run --passWithNoTests --coverage.enabled false",
+    "test:coverage": "vitest run --coverage --coverage.thresholds.lines 85 --coverage.thresholds.functions 85 --coverage.thresholds.branches 80 --coverage.thresholds.statements 85",
+    "typecheck": "tsc -b --pretty false"
+  },
+  "dependencies": {
+    "@ocs/common": "workspace:*",
+    "@ocs/workspace": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.0",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

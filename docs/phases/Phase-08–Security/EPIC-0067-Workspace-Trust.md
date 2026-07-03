@@ -1,50 +1,47 @@
-# EPIC-0066 — RBAC (Role-Based Access Control)
+# EPIC-0067 — Workspace Trust
 
-| Property           | Value                                               |
-| ------------------ | --------------------------------------------------- |
-| Epic ID            | EPIC-0066                                           |
-| Phase              | Phase 8 — Security & Governance                     |
-| Status             | 📋 Planned                                          |
-| Priority           | Critical                                            |
-| Estimated Duration | 3 Weeks                                             |
-| Dependencies       | EPIC-0065 Policy Engine                             |
-| Blocks             | Workspace Trust, Enterprise Organization Management |
+| Property           | Value                                     |
+| ------------------ | ----------------------------------------- |
+| Epic ID            | EPIC-0067                                 |
+| Phase              | Phase 8 — Security & Governance           |
+| Status             | 📋 Planned                                |
+| Priority           | Critical                                  |
+| Estimated Duration | 2 Weeks                                   |
+| Dependencies       | EPIC-0065 Policy Engine, EPIC-0066 RBAC   |
+| Blocks             | Plugin Sandbox, Enterprise Authentication |
 
 ---
 
 # 1. Overview
 
-The RBAC system controls access to every protected resource within Open-Code.Studio.
+Workspace Trust determines whether a workspace is safe before allowing AI agents, plugins, workflows, terminal commands, and automation to execute.
 
-Permissions determine which users, AI agents, plugins, workflows, and organizations may perform specific operations.
+Every workspace is assigned a trust level that governs available capabilities.
 
 ---
 
 # 2. Vision
 
-Deliver enterprise-grade authorization supporting fine-grained permissions, custom roles, inheritance, and future attribute-based access control (ABAC).
+Prevent malicious repositories from automatically executing privileged operations while providing a smooth developer experience.
 
-Built-in Roles
+Trust Levels
 
-- Owner
-- Administrator
-- Maintainer
-- Developer
-- Reviewer
-- Tester
-- Viewer
-- Guest
+- Unknown
+- Untrusted
+- Trusted
+- Organization Trusted
+- Enterprise Trusted
 
 ---
 
 # 3. Goals
 
-- Role management
-- Permission management
-- Resource authorization
-- Role inheritance
-- Agent authorization
-- Audit integration
+- Workspace verification
+- Trust management
+- Trust inheritance
+- User approval
+- Risk evaluation
+- Security enforcement
 
 ---
 
@@ -52,15 +49,15 @@ Built-in Roles
 
 Included
 
-- RBAC Engine
-- Permission Store
-- Role Manager
-- Authorization Middleware
+- Trust Engine
+- Workspace Verification
+- Risk Analysis
+- Trust Policies
 
 Excluded
 
-- Authentication
-- SSO
+- Malware scanning
+- Secret management
 
 ---
 
@@ -69,53 +66,49 @@ Excluded
 ```mermaid
 flowchart LR
 
-User / Agent
+Workspace
 
 ↓
 
-Authentication
+Trust Engine
 
 ↓
 
-RBAC Engine
+Risk Analysis
 
 ↓
 
-Policy Engine
+Trust Decision
 
 ↓
 
-Authorization Decision
-
-↓
-
-Protected Resource
+Allowed Features
 ```
 
 ---
 
 # 6. Components
 
-- RBAC Engine
-- Role Manager
-- Permission Manager
-- Authorization Middleware
-- Audit Integration
+- Trust Engine
+- Risk Analyzer
+- Trust Database
+- Approval Manager
+- Verification Service
 
 ---
 
-# 7. APIs
+# 7. Interfaces
 
 ```typescript
-authorize();
+evaluate();
 
-roles();
+trust();
 
-permissions();
+revoke();
 
-assignRole();
+verify();
 
-revokeRole();
+status();
 ```
 
 ---
@@ -123,9 +116,8 @@ revokeRole();
 # 8. IPC
 
 ```
-rbac.roles
-
-rbac.permissions
+workspace.trust
+workspace.verify
 ```
 
 ---
@@ -133,9 +125,9 @@ rbac.permissions
 # 9. Commands
 
 ```
-rbac.assign
-rbac.revoke
-rbac.export
+workspace.trust
+workspace.untrust
+workspace.verify
 ```
 
 ---
@@ -143,84 +135,82 @@ rbac.export
 # 10. Events
 
 ```
-role.assigned
-role.revoked
-permission.updated
-authorization.denied
+workspace.trusted
+workspace.untrusted
+workspace.verified
+workspace.riskDetected
 ```
 
 ---
 
 # 11. Stories
 
-- Role Management
-- Permission Management
-- Authorization
-- Agent Permissions
-- Audit Integration
+- Trust Engine
+- Risk Analysis
+- Approval Flow
+- Trust Policies
+- Dashboard
 
 ---
 
 # 12. Tasks
 
-- [ ] RBAC engine
-- [ ] Role manager
-- [ ] Permission manager
-- [ ] Middleware
+- [ ] Trust engine
+- [ ] Verification
+- [ ] Risk analysis
+- [ ] Policy integration
 
 ---
 
-# 13. Performance
+# 13. Metrics
 
 | Metric           | Target |
 | ---------------- | ------ |
-| Authorization    | <3 ms  |
-| Role Lookup      | <2 ms  |
-| Permission Check | <5 ms  |
+| Trust Evaluation | <50 ms |
+| Verification     | <2 sec |
+| Policy Check     | <5 ms  |
 
 ---
 
-# 14. Definition of Done
+# 14. Verification
 
-- Authorization operational
-- Roles configurable
-- Permissions enforced
+- Workspace trust operational
+- Risk analysis enabled
+- Policies enforced
 - Coverage ≥90%
 
 ---
 
 # 15. Acceptance Criteria
 
-- Unauthorized access denied
-- Roles inherited correctly
-- Permissions auditable
-- Agent authorization enforced
+- Unknown workspaces restricted
+- Trusted workspaces execute normally
+- Risk alerts generated
+- Trust state persisted
 
 ---
 
 # 16. Risks
 
-- Privilege escalation
-- Role conflicts
-- Permission sprawl
+- False trust
+- User bypass
+- Trust escalation
 
 ---
 
 # 17. Future
 
-- Attribute-Based Access Control (ABAC)
-- Just-In-Time Access
-- Temporary Roles
-- Conditional Policies
+- Repository reputation
+- Organization trust federation
+- Signed workspaces
 
 ---
 
 # 18. Deliverables
 
-- RBAC Engine
-- Role Manager
-- Permission Manager
-- Authorization Middleware
+- Trust Engine
+- Verification Service
+- Risk Analyzer
 
 ---
 
@@ -228,12 +218,12 @@ authorization.denied
 
 Requirements
 
-- REQ-SEC-003
-- REQ-SEC-004
+- REQ-SEC-005
+- REQ-SEC-006
 
 Related ADRs
 
-- ADR-115 RBAC
+- ADR-116 Workspace Trust
 
 ---
 

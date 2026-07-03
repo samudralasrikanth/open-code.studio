@@ -60,7 +60,16 @@ export const IpcChannels = {
   EDITOR_STATE_CHANGED: "editor:state-changed",
 
   // Commands
-  COMMAND_EXECUTE: "command:execute"
+  COMMAND_EXECUTE: "command:execute",
+
+  // Terminal
+  TERMINAL_CREATE: "terminal:create",
+  TERMINAL_CLOSE: "terminal:close",
+  TERMINAL_RESIZE: "terminal:resize",
+  TERMINAL_INPUT: "terminal:input",
+  TERMINAL_LIST: "terminal:list",
+  TERMINAL_OUTPUT: "terminal:output",
+  TERMINAL_EXIT: "terminal:exit"
 } as const;
 
 export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels];

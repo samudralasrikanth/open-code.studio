@@ -1,46 +1,50 @@
-# EPIC-0075 — Theme Marketplace
+# EPIC-0076 — Workflow Marketplace
 
-| Property           | Value                         |
-| ------------------ | ----------------------------- |
-| Epic ID            | EPIC-0075                     |
-| Phase              | Phase 9 — Extension Ecosystem |
-| Status             | 📋 Planned                    |
-| Priority           | Medium                        |
-| Estimated Duration | 2 Weeks                       |
-| Dependencies       | EPIC-0073 Marketplace         |
-| Blocks             | UI Customization              |
+| Property           | Value                                       |
+| ------------------ | ------------------------------------------- |
+| Epic ID            | EPIC-0076                                   |
+| Phase              | Phase 9 — Extension Ecosystem               |
+| Status             | 📋 Planned                                  |
+| Priority           | High                                        |
+| Estimated Duration | 3 Weeks                                     |
+| Dependencies       | EPIC-0071 Plugin SDK, EPIC-0073 Marketplace |
+| Blocks             | Workflow Engine Templates                   |
 
 ---
 
 # 1. Overview
 
-The Theme Marketplace enables users to discover, install, manage, and share UI themes, icon packs, syntax highlighting themes, and editor customizations.
+The Workflow Marketplace enables developers and organizations to publish, discover, install, version, and share reusable workflow templates.
+
+Instead of rebuilding workflows from scratch, users can leverage community and enterprise workflows.
 
 ---
 
 # 2. Vision
 
-Create a modern customization ecosystem comparable to VS Code while supporting AI-aware interface themes.
+Build a reusable ecosystem of AI-powered software engineering workflows.
 
-Supported Assets
+Workflow Types
 
-- Color Themes
-- Icon Themes
-- Syntax Themes
-- Fonts
-- UI Layouts
-- Accessibility Themes
+- Feature Development
+- Bug Fixing
+- Refactoring
+- Code Review
+- Documentation
+- Security Audit
+- Release
+- CI/CD
 
 ---
 
 # 3. Goals
 
-- Theme discovery
+- Workflow publishing
 - Installation
-- Live preview
-- Ratings
 - Versioning
-- Updates
+- Validation
+- Reviews
+- Dependency management
 
 ---
 
@@ -48,14 +52,15 @@ Supported Assets
 
 Included
 
-- Theme Catalog
-- Preview
+- Workflow Catalog
+- Publishing
 - Installation
-- Theme Manager
+- Version Management
+- Reviews
 
 Excluded
 
-- Workflow assets
+- Billing
 
 ---
 
@@ -64,45 +69,45 @@ Excluded
 ```mermaid
 flowchart LR
 
+Workflow
+
+↓
+
 Marketplace
 
 ↓
 
-Theme Manager
+Workflow Loader
 
 ↓
 
-Preview
-
-↓
-
-UI Renderer
+Workflow Engine
 ```
 
 ---
 
 # 6. Components
 
-- Theme Manager
-- Preview Engine
+- Workflow Catalog
+- Workflow Registry
+- Version Manager
 - Installer
-- Update Manager
-- Theme Validator
+- Review Service
 
 ---
 
-# 7. APIs
+# 7. Interfaces
 
 ```typescript
-themes();
-
-preview();
+publish();
 
 install();
 
-remove();
+search();
 
-active();
+versions();
+
+reviews();
 ```
 
 ---
@@ -110,8 +115,8 @@ active();
 # 8. IPC
 
 ```
-theme.preview
-theme.install
+workflow.marketplace.search
+workflow.marketplace.install
 ```
 
 ---
@@ -119,9 +124,9 @@ theme.install
 # 9. Commands
 
 ```
-theme.install
-theme.preview
-theme.activate
+workflow.publish
+workflow.install
+workflow.update
 ```
 
 ---
@@ -129,89 +134,93 @@ theme.activate
 # 10. Events
 
 ```
-theme.installed
-theme.changed
-theme.removed
+workflow.published
+workflow.installed
+workflow.updated
 ```
 
 ---
 
 # 11. Stories
 
-- Theme Catalog
-- Preview
+- Workflow Catalog
+- Publishing
 - Installation
-- Updates
-- Validation
+- Reviews
+- Versioning
 
 ---
 
 # 12. Tasks
 
-- [ ] Catalog
-- [ ] Preview
-- [ ] Theme manager
+- [ ] Workflow registry
+- [ ] Publishing
 - [ ] Installer
+- [ ] Version manager
 
 ---
 
-# 13. Performance
+# 13. Metrics
 
-| Metric       | Target  |
-| ------------ | ------- |
-| Theme Switch | <100 ms |
-| Preview      | <50 ms  |
-| Install      | <2 sec  |
+| Metric  | Target  |
+| ------- | ------- |
+| Search  | <300 ms |
+| Install | <3 sec  |
 
 ---
 
-# 14. Definition of Done
+# 14. Verification
 
-- Theme installation operational
-- Preview functional
-- Updates supported
+- Marketplace operational
+- Workflow installation complete
+- Versioning implemented
 - Coverage ≥90%
 
 ---
 
 # 15. Acceptance Criteria
 
-- Themes install correctly
-- Live preview available
-- Theme switching immediate
-- Validation passes
+- Workflows install successfully
+- Dependencies resolved
+- Updates supported
+- Reviews visible
 
 ---
 
 # 16. Risks
 
-- Broken themes
-- Version incompatibility
-- UI regressions
+- Incompatible workflows
+- Dependency conflicts
+- Poor workflow quality
 
 ---
 
 # 17. Future
 
-- AI-generated themes
-- Organization theme packs
-- Dynamic themes
+- Enterprise workflow catalog
+- AI workflow recommendations
+- Certified workflows
 
 ---
 
 # 18. Deliverables
 
-- Theme Marketplace
-- Theme Manager
-- Preview Engine
+- Workflow Marketplace
+- Registry
+- Installer
+- Version Manager
 
 ---
 
 # 19. Traceability
 
-REQ-PLUGIN-006
+Requirements
 
-ADR-124 Theme Marketplace
+- REQ-PLUGIN-007
+
+Related ADRs
+
+- ADR-125 Workflow Marketplace
 
 ---
 

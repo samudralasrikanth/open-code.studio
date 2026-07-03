@@ -1,48 +1,50 @@
-# EPIC-0084 — Shared Workspaces
+# EPIC-0085 — Live Presence
 
-| Property           | Value                                                          |
-| ------------------ | -------------------------------------------------------------- |
-| Epic ID            | EPIC-0084                                                      |
-| Phase              | Phase 11 — Collaboration Platform                              |
-| Status             | 📋 Planned                                                     |
-| Priority           | Critical                                                       |
-| Estimated Duration | 3 Weeks                                                        |
-| Dependencies       | EPIC-0079 Team Management, EPIC-0077 Enterprise Authentication |
-| Blocks             | Live Presence, Shared Reviews                                  |
+| Property           | Value                             |
+| ------------------ | --------------------------------- |
+| Epic ID            | EPIC-0085                         |
+| Phase              | Phase 11 — Collaboration Platform |
+| Status             | 📋 Planned                        |
+| Priority           | High                              |
+| Estimated Duration | 3 Weeks                           |
+| Dependencies       | EPIC-0084 Shared Workspaces       |
+| Blocks             | Shared Reviews                    |
 
 ---
 
 # 1. Overview
 
-Shared Workspaces enable multiple developers to securely access, collaborate on, and manage the same development environment.
+Live Presence enables developers to see who is currently active within a workspace, what they are working on, and where collaboration is occurring in real time.
 
-Permissions, AI context, workflows, and workspace state are synchronized across collaborators.
+It provides awareness without requiring continuous communication.
 
 ---
 
 # 2. Vision
 
-Enable seamless collaborative development without sacrificing security or performance.
+Deliver real-time collaboration awareness similar to Figma and Google Docs while remaining optimized for software development.
 
-Supported Collaboration
+Presence Features
 
-- Shared Projects
-- Shared AI Context
-- Shared Terminals
-- Shared Workflows
-- Shared Debug Sessions
-- Shared Memory
+- Online Users
+- Active Files
+- Cursor Presence
+- AI Activity
+- Current Workflow
+- Current Branch
+- Terminal Sessions
+- Debug Sessions
 
 ---
 
 # 3. Goals
 
-- Workspace sharing
-- Permission synchronization
-- State synchronization
-- Access control
-- Collaboration history
-- Conflict detection
+- User presence
+- Activity tracking
+- Cursor sharing
+- AI presence
+- Session awareness
+- Notifications
 
 ---
 
@@ -50,14 +52,15 @@ Supported Collaboration
 
 Included
 
-- Shared Workspace Service
-- Synchronization
-- Permissions
-- Conflict Detection
+- Presence Service
+- Activity Broadcast
+- Session Tracking
+- Presence UI
 
 Excluded
 
-- Live editing
+- Voice presence
+- Video streaming
 
 ---
 
@@ -66,45 +69,49 @@ Excluded
 ```mermaid
 flowchart LR
 
+Client
+
+↓
+
+Presence Service
+
+↓
+
 Workspace
 
 ↓
 
-Synchronization
+Broadcast
 
 ↓
 
-Permission Layer
-
-↓
-
-Collaborators
+Connected Users
 ```
 
 ---
 
 # 6. Components
 
-- Workspace Manager
-- Sync Engine
-- Permission Manager
-- Conflict Detector
-- Activity Logger
+- Presence Service
+- Session Tracker
+- Broadcast Engine
+- Activity Monitor
+- Notification Service
 
 ---
 
-# 7. APIs
+# 7. Interfaces
 
 ```typescript
-share();
+presence();
 
-invite();
+status();
 
-members();
+activities();
 
-permissions();
+sessions();
 
-history();
+users();
 ```
 
 ---
@@ -112,9 +119,9 @@ history();
 # 8. IPC
 
 ```
-workspace.share
-
-workspace.members
+presence.update
+presence.list
+presence.subscribe
 ```
 
 ---
@@ -122,9 +129,9 @@ workspace.members
 # 9. Commands
 
 ```
-workspace.share
-workspace.invite
-workspace.leave
+presence.enable
+presence.disable
+presence.status
 ```
 
 ---
@@ -132,90 +139,95 @@ workspace.leave
 # 10. Events
 
 ```
-workspace.shared
-member.joined
-member.left
-workspace.updated
+user.joined
+user.left
+presence.updated
+activity.changed
 ```
 
 ---
 
 # 11. Stories
 
-- Workspace Sharing
-- Synchronization
-- Invitations
-- Permissions
-- Activity History
+- Presence Service
+- Activity Tracking
+- Session Tracking
+- Notifications
+- UI Indicators
 
 ---
 
 # 12. Tasks
 
-- [ ] Sharing
-- [ ] Synchronization
-- [ ] Permissions
-- [ ] Conflict detection
+- [ ] Presence engine
+- [ ] Session tracking
+- [ ] Broadcast service
+- [ ] UI indicators
 
 ---
 
-# 13. Performance
+# 13. Metrics
 
-| Metric         | Target  |
-| -------------- | ------- |
-| Invite         | <500 ms |
-| Sync           | <100 ms |
-| Join Workspace | <2 sec  |
+| Metric          | Target  |
+| --------------- | ------- |
+| Presence Update | <50 ms  |
+| User Join       | <200 ms |
+| Broadcast       | <20 ms  |
 
 ---
 
-# 14. Definition of Done
+# 14. Verification
 
-- Shared workspaces operational
-- Synchronization reliable
-- Permissions enforced
+- Presence operational
+- Activity synchronized
+- Notifications enabled
 - Coverage ≥90%
 
 ---
 
 # 15. Acceptance Criteria
 
-- Members collaborate successfully
-- State synchronized
-- Conflicts detected
-- Activity recorded
+- Users visible
+- Activities synchronized
+- Sessions tracked
+- Presence updates reliable
 
 ---
 
 # 16. Risks
 
-- Sync conflicts
-- Permission leaks
-- Large workspaces
+- Excessive network traffic
+- Privacy concerns
+- Large team scaling
 
 ---
 
 # 17. Future
 
-- Cloud workspaces
-- Remote pair programming
-- Workspace snapshots
+- Voice presence
+- AI presence avatars
+- Smart collaboration suggestions
 
 ---
 
 # 18. Deliverables
 
-- Shared Workspace Service
-- Sync Engine
-- Permission Manager
+- Presence Service
+- Session Tracker
+- Activity Broadcast
 
 ---
 
 # 19. Traceability
 
-REQ-COLLAB-001
+Requirements
 
-ADR-133 Shared Workspaces
+- REQ-COLLAB-002
+- REQ-COLLAB-003
+
+Related ADRs
+
+- ADR-134 Live Presence
 
 ---
 

@@ -1,50 +1,50 @@
-# EPIC-0072 — Extension Loader
+# EPIC-0073 — Marketplace
 
-| Property           | Value                         |
-| ------------------ | ----------------------------- |
-| Epic ID            | EPIC-0072                     |
-| Phase              | Phase 9 — Extension Ecosystem |
-| Status             | 📋 Planned                    |
-| Priority           | Critical                      |
-| Estimated Duration | 3 Weeks                       |
-| Dependencies       | EPIC-0071 Plugin SDK          |
-| Blocks             | Marketplace, Plugin Sandbox   |
+| Property           | Value                                                 |
+| ------------------ | ----------------------------------------------------- |
+| Epic ID            | EPIC-0073                                             |
+| Phase              | Phase 9 — Extension Ecosystem                         |
+| Status             | 📋 Planned                                            |
+| Priority           | Critical                                              |
+| Estimated Duration | 4 Weeks                                               |
+| Dependencies       | EPIC-0071 Plugin SDK, EPIC-0072 Extension Loader      |
+| Blocks             | EPIC-0074 Plugin Sandbox, EPIC-0075 Theme Marketplace |
 
 ---
 
 # 1. Overview
 
-The Extension Loader discovers, validates, installs, activates, updates, disables, and unloads plugins during runtime.
+The Marketplace is the official distribution platform for Open-Code.Studio extensions, AI agents, workflows, themes, language packs, and developer tools.
 
-It is responsible for the complete plugin lifecycle.
+It provides secure discovery, installation, updates, ratings, reviews, and version management.
 
 ---
 
 # 2. Vision
 
-Provide hot-loading and isolated execution comparable to VS Code while supporting AI-native extensions.
+Build an ecosystem comparable to the VS Code Marketplace while supporting AI-native assets.
 
-Lifecycle
+Supported Assets
 
-- Discover
-- Install
-- Validate
-- Activate
-- Execute
-- Update
-- Disable
-- Remove
+- Plugins
+- AI Agents
+- Workflows
+- Themes
+- Language Packs
+- Templates
+- Snippets
+- Tool Providers
 
 ---
 
 # 3. Goals
 
-- Dynamic loading
-- Hot reload
-- Version validation
-- Dependency resolution
-- Plugin lifecycle
-- Crash isolation
+- Asset discovery
+- Install/update
+- Ratings
+- Reviews
+- Versioning
+- Secure publishing
 
 ---
 
@@ -52,16 +52,16 @@ Lifecycle
 
 Included
 
-- Loader
-- Lifecycle
-- Dependency Resolution
-- Version Checks
-- Recovery
+- Marketplace API
+- Search
+- Categories
+- Downloads
+- Reviews
 
 Excluded
 
-- Marketplace
-- Sandboxing
+- Billing
+- Enterprise catalog
 
 ---
 
@@ -70,53 +70,45 @@ Excluded
 ```mermaid
 flowchart LR
 
-Plugin Package
+Developer
 
 ↓
 
-Loader
+Marketplace
 
 ↓
 
-Validator
+Extension Loader
 
 ↓
 
-Dependency Resolver
-
-↓
-
-Runtime
-
-↓
-
-Plugin APIs
+Plugin Runtime
 ```
 
 ---
 
 # 6. Components
 
-- Loader
-- Validator
-- Dependency Resolver
-- Lifecycle Manager
-- Recovery Manager
+- Marketplace Client
+- Search Engine
+- Download Manager
+- Review Service
+- Update Service
 
 ---
 
-# 7. APIs
+# 7. Interfaces
 
 ```typescript
-load();
+search();
 
-unload();
-
-reload();
+install();
 
 update();
 
-plugins();
+reviews();
+
+publish();
 ```
 
 ---
@@ -124,9 +116,9 @@ plugins();
 # 8. IPC
 
 ```
-extension.load
-
-extension.reload
+marketplace.search
+marketplace.install
+marketplace.update
 ```
 
 ---
@@ -134,10 +126,10 @@ extension.reload
 # 9. Commands
 
 ```
-extension.install
-extension.reload
-extension.disable
-extension.remove
+marketplace.install
+marketplace.search
+marketplace.publish
+marketplace.update
 ```
 
 ---
@@ -145,83 +137,81 @@ extension.remove
 # 10. Events
 
 ```
-extension.loaded
-extension.failed
-extension.updated
-extension.removed
+marketplace.installStarted
+marketplace.installCompleted
+marketplace.updated
 ```
 
 ---
 
 # 11. Stories
 
-- Loader
-- Validation
-- Lifecycle
-- Recovery
-- Diagnostics
+- Marketplace UI
+- Search
+- Reviews
+- Updates
+- Publishing
 
 ---
 
 # 12. Tasks
 
-- [ ] Loader
-- [ ] Validation
-- [ ] Dependency resolver
-- [ ] Diagnostics
+- [ ] Search
+- [ ] Downloads
+- [ ] Reviews
+- [ ] Updates
 
 ---
 
-# 13. Performance
+# 13. Metrics
 
-| Metric    | Target  |
-| --------- | ------- |
-| Load      | <500 ms |
-| Reload    | <200 ms |
-| Discovery | <100 ms |
+| Metric       | Target  |
+| ------------ | ------- |
+| Search       | <500 ms |
+| Install      | <5 sec  |
+| Update Check | <2 sec  |
 
 ---
 
-# 14. Definition of Done
+# 14. Verification
 
-- Dynamic loading operational
-- Lifecycle complete
-- Recovery implemented
+- Marketplace operational
+- Secure installation
+- Reviews functional
 - Coverage ≥90%
 
 ---
 
 # 15. Acceptance Criteria
 
-- Plugins load correctly
-- Failures isolated
-- Dependencies resolved
-- Hot reload works
+- Extensions discoverable
+- Secure installation
+- Updates available
+- Ratings visible
 
 ---
 
 # 16. Risks
 
-- Plugin crashes
-- Dependency conflicts
-- Startup slowdown
+- Malicious plugins
+- Fake reviews
+- Version conflicts
 
 ---
 
 # 17. Future
 
-- Lazy loading
-- Remote plugins
-- Distributed extensions
+- Paid extensions
+- Organization marketplace
+- AI recommendations
 
 ---
 
 # 18. Deliverables
 
-- Extension Loader
-- Lifecycle Manager
-- Dependency Resolver
-- Diagnostics
+- Marketplace
+- Search Service
+- Publishing Portal
 
 ---
 
@@ -229,12 +219,11 @@ extension.removed
 
 Requirements
 
-- REQ-PLUGIN-002
-- REQ-PLUGIN-003
+- REQ-PLUGIN-004
 
 Related ADRs
 
-- ADR-121 Extension Loader
+- ADR-122 Marketplace
 
 ---
 
