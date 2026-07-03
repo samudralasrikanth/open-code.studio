@@ -86,7 +86,7 @@ export class ExplorerService {
   public selectNode(nodeId: string, multi: boolean = false): void {
     this.treeModel.select(nodeId, multi);
     this.eventBus.emit("explorer.selectionChanged", {
-      selectedNodeIds: this.treeModel.getSelectedNodeIds()
+      selectedNodeIds: [...this.treeModel.getSelectedNodeIds()]
     });
   }
 
