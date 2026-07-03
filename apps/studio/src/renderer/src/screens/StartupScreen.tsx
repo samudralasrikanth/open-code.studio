@@ -38,5 +38,5 @@ export function StartupScreen(): React.ReactElement {
     return <SplashScreen />;
   }
 
-  return null;
+  return <></>;
 }

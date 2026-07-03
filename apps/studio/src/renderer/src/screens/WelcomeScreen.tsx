@@ -39,9 +39,17 @@ export function WelcomeScreen(): React.ReactElement {
   }, []);
 
   const openWorkspace = async (path: string): Promise<void> => {
+    console.info("[workspace-flow] renderer: workspace.open:start", { path });
     const workspace = await window.ocs?.workspace.open(path);
+    console.info("[workspace-flow] renderer: workspace.open:done", {
+      workspaceId: workspace?.id,
+      workspaceUri: workspace?.uri
+    });
     if (workspace) {
+      console.info("[workspace-flow] renderer: navigate:workspace", { workspaceId: workspace.id });
       navigate(`/workspace/${workspace.id}`, { replace: true });
+    } else {
+      console.warn("[workspace-flow] renderer: workspace.open returned no workspace");
     }
   };
 
@@ -94,16 +102,21 @@ export function WelcomeScreen(): React.ReactElement {
             className={`${styles.card} ${styles.cardPrimary}`}
             onClick={async () => {
               try {
+                console.info("[workspace-flow] renderer: open-folder-dialog:start");
                 const { canceled, folderPath } =
                   (await window.ocs?.workspace.openFolderDialog()) ?? {
                     canceled: true,
                     folderPath: null
                   };
+                console.info("[workspace-flow] renderer: open-folder-dialog:done", {
+                  canceled,
+                  folderPath
+                });
                 if (!canceled && folderPath) {
                   await openWorkspace(folderPath);
                 }
               } catch (err) {
-                console.error("Failed to open folder:", err);
+                console.error("[workspace-flow] renderer: open-folder:failed", err);
               }
             }}
             title="Open a local folder as a workspace"

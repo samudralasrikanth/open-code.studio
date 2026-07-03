@@ -49,5 +49,10 @@ export type {
 // Infrastructure
 export type { IFileSystem, StatResult } from "./infrastructure/IFileSystem.js";
 export type { IStorageAdapter } from "./infrastructure/IStorageAdapter.js";
+export { LocalFileSystem, createLocalFileSystem } from "./infrastructure/LocalFileSystem.js";
+export {
+  JsonStorageAdapter,
+  createJsonStorageAdapter
+} from "./infrastructure/JsonStorageAdapter.js";
 
 // Application (should be imported directly by main process)

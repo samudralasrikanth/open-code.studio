@@ -1,5 +1,4 @@
 /* eslint-disable */
-import { uriDisplayName } from "@ocs/workspace";
 import React from "react";
 
 interface EditorInputTabsProps {

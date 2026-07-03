@@ -11,15 +11,25 @@ export const Workbench: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [workspaceName, setWorkspaceName] = useState<string>("");
 
+  console.info("[workspace-flow] renderer: workbench:render", { routeWorkspaceId: id });
+
   useEffect(() => {
+    console.info("[workspace-flow] renderer: workbench:get-active:start", { routeWorkspaceId: id });
     window.ocs?.workspace
       .getActive()
       .then((ws) => {
+        console.info("[workspace-flow] renderer: workbench:get-active:done", {
+          routeWorkspaceId: id,
+          activeWorkspaceId: ws?.id,
+          activeWorkspaceUri: ws?.uri
+        });
         if (ws) {
           setWorkspaceName(ws.displayName || ws.id);
         }
       })
-      .catch(console.error);
+      .catch((error) => {
+        console.error("[workspace-flow] renderer: workbench:get-active:failed", error);
+      });
   }, [id]);
 
   return (

@@ -11,7 +11,7 @@ describe("ExplorerScheduler Batching", () => {
     const scheduler = new ExplorerScheduler(treeModel, eventBus);
 
     for (let i = 0; i < 5000; i++) {
-      scheduler.scheduleUpdate("onStateChanged");
+      scheduler.scheduleUpdate("explorer.refreshCompleted");
     }
   });
 
@@ -21,7 +21,7 @@ describe("ExplorerScheduler Batching", () => {
     const scheduler = new ExplorerScheduler(treeModel, eventBus);
 
     for (let i = 0; i < 10000; i++) {
-      scheduler.scheduleUpdate("onStateChanged");
+      scheduler.scheduleUpdate("explorer.refreshCompleted");
     }
   });
 });

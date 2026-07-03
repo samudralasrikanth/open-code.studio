@@ -1,5 +1,6 @@
 /* eslint-disable */
 import type { Container } from "@ocs/common";
+import type { EditorGroup, EditorInput } from "@ocs/editor";
 import {
   CreateFileCommand,
   CreateFileCommandHandler,
@@ -12,8 +13,7 @@ import {
   type WorkspaceProvider
 } from "@ocs/explorer";
 import { EditorEventTypes } from "@ocs/editor";
-import { uriFromString, uriToPath } from "@ocs/workspace";
-import type { IpcMainInvokeEvent } from "electron";
+import { uriFromPath, uriFromString, uriToPath } from "@ocs/workspace";
 import { ipcMain, webContents } from "electron";
 
 import { IpcChannels } from "../../shared/ipc-channels.js";
@@ -22,6 +22,7 @@ let activeWatcher: NodeWatcher | null = null;
 let watchedUri: string | null = null;
 
 function broadcastExplorerState(): void {
+  console.info("[workspace-flow] main: explorer:broadcast-state");
   webContents.getAllWebContents().forEach((wc) => {
     wc.send(IpcChannels.EXPLORER_STATE_CHANGED);
   });
@@ -31,22 +32,46 @@ async function setupWorkspaceExplorer(
   explorerService: ExplorerService,
   workspace: import("@ocs/workspace").Workspace
 ): Promise<void> {
-  const providers = (explorerService as unknown as { providers: Map<string, WorkspaceProvider> })
-    .providers;
-  const provider = providers.get("explorer.provider.workspace");
-  if (!provider) return;
+  console.info("[workspace-flow] main: explorer-setup:start", {
+    workspaceId: workspace.id,
+    workspaceUri: workspace.uri
+  });
+  const provider = explorerService.getProvider<WorkspaceProvider>("explorer.provider.workspace");
+  if (!provider) {
+    throw new Error("Workspace explorer provider is not registered.");
+  }
 
+  console.info("[workspace-flow] main: explorer-setup:set-root", { workspaceUri: workspace.uri });
   provider.setRoot(workspace.uri);
+  console.info("[workspace-flow] main: explorer-setup:open-root:start");
   await explorerService.openWorkspaceRoot();
+  console.info("[workspace-flow] main: explorer-setup:open-root:done", {
+    rootId: explorerService.treeModel.getRootId(),
+    visibleNodes: explorerService.treeModel.getVisibleNodes().length
+  });
 
   if (activeWatcher && watchedUri) {
+    console.info("[workspace-flow] main: explorer-setup:unwatch-previous", { watchedUri });
     await activeWatcher.unwatch(watchedUri as import("@ocs/workspace").WorkspaceUri);
   }
 
   activeWatcher = new NodeWatcher();
   watchedUri = workspace.uri;
-  await activeWatcher.watch(workspace.uri, (events) => {
-    void explorerService.handleFileWatchEvents(events);
+  try {
+    console.info("[workspace-flow] main: explorer-setup:watch:start", { watchedUri });
+    await activeWatcher.watch(workspace.uri, (events) => {
+      console.info("[workspace-flow] main: explorer-watch:events", { count: events.length });
+      void explorerService.handleFileWatchEvents(events);
+    });
+    console.info("[workspace-flow] main: explorer-setup:watch:done", { watchedUri });
+  } catch (error) {
+    activeWatcher = null;
+    watchedUri = null;
+    console.error("[workspace-flow] main: explorer-setup:watch:failed", error);
+  }
+  console.info("[workspace-flow] main: explorer-setup:done", {
+    rootId: explorerService.treeModel.getRootId(),
+    visibleNodes: explorerService.treeModel.getVisibleNodes().length
   });
 }
 
@@ -121,32 +146,54 @@ export function registerIpcHandlers(container: Container): void {
 
   // ── Workspace ──────────────────────────────────────────────────────────────
   ipcMain.handle(IpcChannels.WORKSPACE_OPEN_FOLDER_DIALOG, async () => {
+    console.info("[workspace-flow] main: dialog:start");
     const { dialog } = await import("electron");
     const { canceled, filePaths } = await dialog.showOpenDialog({
       properties: ["openDirectory", "createDirectory"]
     });
-    return { canceled, folderPath: canceled ? null : filePaths[0] };
+    const result = { canceled, folderPath: canceled ? null : filePaths[0] };
+    console.info("[workspace-flow] main: dialog:done", result);
+    return result;
   });
 
   ipcMain.handle(IpcChannels.WORKSPACE_OPEN, async (_, path: string): Promise<Workspace | null> => {
+    console.info("[workspace-flow] main: workspace-open:start", { path });
     if (workspaceService.isOpen()) {
       const current = workspaceService.getActive();
       const targetUri = uriFromPath(path);
       if (current?.uri === targetUri) {
+        console.info("[workspace-flow] main: workspace-open:already-open", {
+          workspaceId: current.id,
+          workspaceUri: current.uri
+        });
         return current;
       }
       if (activeWatcher && watchedUri) {
+        console.info("[workspace-flow] main: workspace-open:unwatch-current", { watchedUri });
         await activeWatcher.unwatch(watchedUri as import("@ocs/workspace").WorkspaceUri);
         activeWatcher = null;
         watchedUri = null;
       }
+      console.info("[workspace-flow] main: workspace-open:close-current:start");
       await workspaceService.close();
+      console.info("[workspace-flow] main: workspace-open:close-current:done");
     }
 
+    console.info("[workspace-flow] main: workspace-service.open:start", { path });
     const workspace = await workspaceService.open(path);
+    console.info("[workspace-flow] main: workspace-service.open:done", {
+      workspaceId: workspace.id,
+      workspaceUri: workspace.uri
+    });
     if (workspace) {
       await setupWorkspaceExplorer(explorerService, workspace);
     }
+    console.info("[workspace-flow] main: workspace-open:done", {
+      workspaceId: workspace?.id,
+      workspaceUri: workspace?.uri,
+      rootId: explorerService.treeModel.getRootId(),
+      visibleNodes: explorerService.treeModel.getVisibleNodes().length
+    });
     return workspace;
   });
 
@@ -296,12 +343,19 @@ export function registerIpcHandlers(container: Container): void {
   });
 
   // ── Editor ─────────────────────────────────────────────────────────────────
-  ipcMain.handle(IpcChannels.EDITOR_OPEN, async (_, inputStr: string, options?: unknown) => {
-    const uri = uriFromString(inputStr);
-    const doc = await documentService.openDocument(uri);
-    const { DocumentEditorInput } = require("@ocs/editor");
-    editorService.openEditor(new DocumentEditorInput(doc), options);
-  });
+  ipcMain.handle(
+    IpcChannels.EDITOR_OPEN,
+    async (
+      _,
+      inputStr: string,
+      options?: { preview?: boolean; active?: boolean; group?: string | EditorGroup }
+    ) => {
+      const uri = uriFromString(inputStr);
+      const doc = await documentService.openDocument(uri);
+      const { DocumentEditorInput } = require("@ocs/editor");
+      editorService.openEditor(new DocumentEditorInput(doc), options);
+    }
+  );
 
   ipcMain.handle(IpcChannels.EDITOR_CLOSE, async (_, inputStr: string, groupId?: string) => {
     const uri = uriFromString(inputStr);
@@ -309,10 +363,7 @@ export function registerIpcHandlers(container: Container): void {
       ? editorService.groups.find((g: { id: string }) => g.id === groupId)
       : undefined;
 
-    const performClose = async (
-      input: { isDirty: () => boolean; getName: () => string },
-      g: unknown
-    ) => {
+    const performClose = async (input: EditorInput, g: EditorGroup) => {
       if (input.isDirty()) {
         const { dialog } = await import("electron");
         const result = await dialog.showMessageBox({
@@ -334,13 +385,11 @@ export function registerIpcHandlers(container: Container): void {
     };
 
     if (group) {
-      const input = group.inputs.find((i: { id: string }) => i.id === uri.toString());
+      const input = group.inputs.find((i: EditorInput) => i.id === uri.toString());
       if (input) await performClose(input, group);
     } else {
       for (const g of editorService.groups) {
-        const input = (g as { inputs: { id: string }[] }).inputs.find(
-          (i) => i.id === uri.toString()
-        );
+        const input = g.inputs.find((i: EditorInput) => i.id === uri.toString());
         if (input) await performClose(input, g);
       }
     }

@@ -8,8 +8,7 @@ import { WorkspaceSettingsRepository } from "@ocs/workspace/application";
 import { WorkspaceRegistry } from "@ocs/workspace/application";
 import { createWorkspaceService } from "@ocs/workspace/application";
 import type { PersistedWorkspaceState } from "@ocs/workspace/application";
-import { createLocalFileSystem } from "../../../../packages/workspace/src/infrastructure/LocalFileSystem.js";
-import { createJsonStorageAdapter } from "../../../../packages/workspace/src/infrastructure/JsonStorageAdapter.js";
+import { createJsonStorageAdapter, createLocalFileSystem } from "@ocs/workspace";
 import {
   ExplorerService,
   TreeModel,
@@ -74,6 +73,10 @@ app.whenReady().then(async () => {
   // Initialise platform services
   container.singleton(Symbol.for("logger"), () => logger);
   container.singleton(Symbol.for("lifecycle"), () => lifecycle);
+  container.singleton(Symbol.for("workspace.fs"), () => workspaceFs);
+  container.singleton(Symbol.for("explorer.fs"), () => explorerFs);
+  container.singleton(Symbol.for("explorer.events"), () => explorerEventBus);
+  container.singleton(Symbol.for("explorer.tree"), () => treeModel);
   container.singleton(Symbol.for("workspace"), () => workspaceService);
   container.singleton(Symbol.for("explorer"), () => explorerService);
   container.singleton(Symbol.for("document"), () => documentService);
@@ -81,7 +84,10 @@ app.whenReady().then(async () => {
   container.singleton(Symbol.for("commands"), () => commandRegistry);
 
   // Register providers (Workspace is the primary one)
-  const workspaceProvider = new WorkspaceProvider(explorerFs);
+  const workspaceProvider = new WorkspaceProvider(
+    container.resolve<LocalVirtualFileSystem>(Symbol.for("explorer.fs"))
+  );
+  container.singleton(Symbol.for("explorer.provider.workspace"), () => workspaceProvider);
   explorerService.registerProvider(workspaceProvider);
 
   // Register IPC handlers before any window opens

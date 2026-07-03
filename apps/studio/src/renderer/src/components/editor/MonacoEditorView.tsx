@@ -1,7 +1,7 @@
 /* eslint-disable */
 import type { EditorInput } from "@ocs/editor";
 import { MonacoEditorAdapter } from "@ocs/editor-monaco";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 interface MonacoEditorViewProps {
   input: EditorInput;
@@ -30,7 +30,7 @@ export const MonacoEditorView: React.FC<MonacoEditorViewProps> = ({ input }) => 
 
     // Fetch document from main process via IPC
     window.ocs.document
-      .get(input.id || input)
+      .get(input.id)
       .then((doc) => {
         setDocContent(doc);
       })

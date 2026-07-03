@@ -22,6 +22,12 @@ export class ExplorerService {
     this.providers.set(provider.id, provider);
   }
 
+  public getProvider<TProvider extends ExplorerProvider = ExplorerProvider>(
+    providerId: string
+  ): TProvider | undefined {
+    return this.providers.get(providerId) as TProvider | undefined;
+  }
+
   public unregisterProvider(providerId: string) {
     this.providers.delete(providerId);
   }

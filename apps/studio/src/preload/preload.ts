@@ -59,11 +59,22 @@ const ocsAPI = {
 
   // ── Workspace ───────────────────────────────────────────────────────────────
   workspace: {
-    openFolderDialog: (): Promise<{ canceled: boolean; folderPath: string | null }> =>
-      ipcRenderer.invoke(IpcChannels.WORKSPACE_OPEN_FOLDER_DIALOG),
+    openFolderDialog: async (): Promise<{ canceled: boolean; folderPath: string | null }> => {
+      console.info("[workspace-flow] preload: open-folder-dialog:invoke");
+      const result = await ipcRenderer.invoke(IpcChannels.WORKSPACE_OPEN_FOLDER_DIALOG);
+      console.info("[workspace-flow] preload: open-folder-dialog:resolved", result);
+      return result;
+    },
 
-    open: (path: string): Promise<Workspace | null> =>
-      ipcRenderer.invoke(IpcChannels.WORKSPACE_OPEN, path),
+    open: async (path: string): Promise<Workspace | null> => {
+      console.info("[workspace-flow] preload: workspace-open:invoke", { path });
+      const workspace = await ipcRenderer.invoke(IpcChannels.WORKSPACE_OPEN, path);
+      console.info("[workspace-flow] preload: workspace-open:resolved", {
+        workspaceId: workspace?.id,
+        workspaceUri: workspace?.uri
+      });
+      return workspace;
+    },
 
     close: (): Promise<void> => ipcRenderer.invoke(IpcChannels.WORKSPACE_CLOSE),
 

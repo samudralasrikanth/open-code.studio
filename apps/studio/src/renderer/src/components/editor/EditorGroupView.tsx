@@ -1,5 +1,4 @@
 /* eslint-disable */
-import { DocumentEditorInput } from "@ocs/editor";
 import React from "react";
 
 import { EditorInputTabs } from "./EditorInputTabs.js";
