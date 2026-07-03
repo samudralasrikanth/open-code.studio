@@ -1,6 +1,7 @@
 import { uriFromString } from "@ocs/workspace";
 import { bench, describe } from "vitest";
 
+import { FileType } from "../src/domain/VirtualFileSystem.js";
 import { TreeModel, type ExplorerNode } from "../src/domain/TreeModel.js";
 
 function generateTree(depth: number, breadth: number, currentId = "root"): ExplorerNode {
@@ -8,7 +9,7 @@ function generateTree(depth: number, breadth: number, currentId = "root"): Explo
     id: currentId,
     name: `Node ${currentId}`,
     uri: uriFromString(`file:///${currentId}`),
-    type: "directory",
+    type: FileType.Directory,
     isDirectory: true,
     children: []
   };
@@ -21,7 +22,7 @@ function generateTree(depth: number, breadth: number, currentId = "root"): Explo
   } else {
     // Leaf nodes are files
     node.isDirectory = false;
-    node.type = "file";
+    node.type = FileType.File;
     delete node.children;
   }
 

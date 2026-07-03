@@ -36,7 +36,7 @@ export default defineConfig({
         },
         {
           find: /^@ocs\/workspace\/(.*)$/,
-          replacement: resolve(__dirname, "../../packages/workspace/$1/src/index.ts")
+          replacement: resolve(__dirname, "../../packages/workspace/src/$1/index.ts")
         },
         {
           find: "@ocs/workspace",
@@ -44,11 +44,35 @@ export default defineConfig({
         },
         {
           find: /^@ocs\/explorer\/(.*)$/,
-          replacement: resolve(__dirname, "../../packages/explorer/$1/src/index.ts")
+          replacement: resolve(__dirname, "../../packages/explorer/src/$1/index.ts")
         },
         {
           find: "@ocs/explorer",
           replacement: resolve(__dirname, "../../packages/explorer/src/index.ts")
+        },
+        {
+          find: /^@ocs\/document\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/document/src/$1/index.ts")
+        },
+        {
+          find: "@ocs/document",
+          replacement: resolve(__dirname, "../../packages/document/src/index.ts")
+        },
+        {
+          find: /^@ocs\/editor\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/editor/src/$1/index.ts")
+        },
+        {
+          find: "@ocs/editor",
+          replacement: resolve(__dirname, "../../packages/editor/src/index.ts")
+        },
+        {
+          find: /^@ocs\/editor-monaco\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/editor-monaco/src/$1/index.ts")
+        },
+        {
+          find: "@ocs/editor-monaco",
+          replacement: resolve(__dirname, "../../packages/editor-monaco/src/index.ts")
         }
       ]
     },
@@ -80,7 +104,7 @@ export default defineConfig({
         },
         {
           find: /^@ocs\/workspace\/(.*)$/,
-          replacement: resolve(__dirname, "../../packages/workspace/$1/src/index.ts")
+          replacement: resolve(__dirname, "../../packages/workspace/src/$1/index.ts")
         },
         {
           find: "@ocs/workspace",
@@ -88,7 +112,7 @@ export default defineConfig({
         },
         {
           find: /^@ocs\/explorer\/(.*)$/,
-          replacement: resolve(__dirname, "../../packages/explorer/$1/src/index.ts")
+          replacement: resolve(__dirname, "../../packages/explorer/src/$1/index.ts")
         },
         {
           find: "@ocs/explorer",
@@ -96,7 +120,7 @@ export default defineConfig({
         },
         {
           find: /^@ocs\/document\/(.*)$/,
-          replacement: resolve(__dirname, "../../packages/document/$1/src/index.ts")
+          replacement: resolve(__dirname, "../../packages/document/src/$1/index.ts")
         },
         {
           find: "@ocs/document",
@@ -104,7 +128,7 @@ export default defineConfig({
         },
         {
           find: /^@ocs\/editor\/(.*)$/,
-          replacement: resolve(__dirname, "../../packages/editor/$1/src/index.ts")
+          replacement: resolve(__dirname, "../../packages/editor/src/$1/index.ts")
         },
         {
           find: "@ocs/editor",
@@ -112,7 +136,7 @@ export default defineConfig({
         },
         {
           find: /^@ocs\/editor-monaco\/(.*)$/,
-          replacement: resolve(__dirname, "../../packages/editor-monaco/$1/src/index.ts")
+          replacement: resolve(__dirname, "../../packages/editor-monaco/src/$1/index.ts")
         },
         {
           find: "@ocs/editor-monaco",
@@ -150,7 +174,7 @@ export default defineConfig({
         },
         {
           find: /^@ocs\/workspace\/(.*)$/,
-          replacement: resolve(__dirname, "../../packages/workspace/$1/src/index.ts")
+          replacement: resolve(__dirname, "../../packages/workspace/src/$1/index.ts")
         },
         {
           find: "@ocs/workspace",
@@ -158,7 +182,7 @@ export default defineConfig({
         },
         {
           find: /^@ocs\/explorer\/(.*)$/,
-          replacement: resolve(__dirname, "../../packages/explorer/$1/src/index.ts")
+          replacement: resolve(__dirname, "../../packages/explorer/src/$1/index.ts")
         },
         {
           find: "@ocs/explorer",
@@ -166,7 +190,7 @@ export default defineConfig({
         },
         {
           find: /^@ocs\/document\/(.*)$/,
-          replacement: resolve(__dirname, "../../packages/document/$1/src/index.ts")
+          replacement: resolve(__dirname, "../../packages/document/src/$1/index.ts")
         },
         {
           find: "@ocs/document",
@@ -174,7 +198,7 @@ export default defineConfig({
         },
         {
           find: /^@ocs\/editor\/(.*)$/,
-          replacement: resolve(__dirname, "../../packages/editor/$1/src/index.ts")
+          replacement: resolve(__dirname, "../../packages/editor/src/$1/index.ts")
         },
         {
           find: "@ocs/editor",
@@ -182,7 +206,7 @@ export default defineConfig({
         },
         {
           find: /^@ocs\/editor-monaco\/(.*)$/,
-          replacement: resolve(__dirname, "../../packages/editor-monaco/$1/src/index.ts")
+          replacement: resolve(__dirname, "../../packages/editor-monaco/src/$1/index.ts")
         },
         {
           find: "@ocs/editor-monaco",

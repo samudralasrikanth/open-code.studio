@@ -61,6 +61,10 @@ export class WorkspaceService {
     return this.registry.getAll();
   }
 
+  public getLastOpenedUri(): import("../domain/WorkspaceUri.js").WorkspaceUri | null {
+    return this.registry.getLastOpenedUri();
+  }
+
   public async removeRecent(id: string): Promise<void> {
     await this.registry.remove(id);
     await this.events?.publish(WorkspaceEventTypes.RECENT_UPDATED, {

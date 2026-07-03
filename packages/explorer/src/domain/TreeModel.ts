@@ -187,6 +187,26 @@ export class TreeModel {
     return this.selectedNodes.has(id);
   }
 
+  public getSelectedNodeIds(): readonly string[] {
+    return Array.from(this.selectedNodes);
+  }
+
+  public getExpandedCount(): number {
+    return this.expandedNodes.size;
+  }
+
+  public getTotalNodeCount(): number {
+    return this.nodes.size;
+  }
+
+  /**
+   * Flattens the tree into a list of visible nodes for the virtualized renderer.
+   * Renderer never walks the tree.
+   */
+  public getRootId(): string | null {
+    return this.rootNode?.id ?? null;
+  }
+
   /**
    * Flattens the tree into a list of visible nodes for the virtualized renderer.
    * Renderer never walks the tree.

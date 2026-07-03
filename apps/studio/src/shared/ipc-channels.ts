@@ -27,15 +27,21 @@ export const IpcChannels = {
   WORKSPACE_CLOSE: "workspace:close",
   WORKSPACE_GET_ACTIVE: "workspace:get-active",
   WORKSPACE_GET_RECENT: "workspace:get-recent",
+  WORKSPACE_GET_LAST_OPENED: "workspace:get-last-opened",
   WORKSPACE_REMOVE_RECENT: "workspace:remove-recent",
 
   // Explorer
   EXPLORER_GET_VISIBLE_NODES: "explorer:get-visible-nodes",
+  EXPLORER_GET_STATS: "explorer:get-stats",
   EXPLORER_EXPAND_NODE: "explorer:expand-node",
   EXPLORER_COLLAPSE_NODE: "explorer:collapse-node",
   EXPLORER_SELECT_NODE: "explorer:select-node",
   EXPLORER_EXECUTE_COMMAND: "explorer:execute-command",
+  EXPLORER_REVEAL_IN_FINDER: "explorer:reveal-in-finder",
   EXPLORER_STATE_CHANGED: "explorer:state-changed", // main → renderer push event
+
+  // Diagnostics
+  DIAGNOSTICS_GET: "diagnostics:get",
 
   // Document
   DOCUMENT_OPEN: "document:open",

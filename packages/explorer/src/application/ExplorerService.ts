@@ -1,4 +1,9 @@
+import type { WorkspaceUri } from "@ocs/workspace";
+import { uriFromPath, uriToPath } from "@ocs/workspace";
+import * as path from "node:path";
+
 import type { TreeModel, ExplorerNode } from "../domain/TreeModel.js";
+import type { FileWatchEvent } from "./FileWatcher.js";
 import type { IExplorerEventBus } from "../events/ExplorerEvents.js";
 import type { ExplorerProvider } from "../providers/ExplorerProvider.js";
 
@@ -10,7 +15,7 @@ export class ExplorerService {
 
   constructor(
     public readonly treeModel: TreeModel,
-    private readonly eventBus: IExplorerEventBus
+    public readonly eventBus: IExplorerEventBus
   ) {}
 
   public registerProvider(provider: ExplorerProvider) {
@@ -80,6 +85,48 @@ export class ExplorerService {
 
   public selectNode(nodeId: string, multi: boolean = false): void {
     this.treeModel.select(nodeId, multi);
-    this.eventBus.emit("explorer.selectionChanged", { selectedNodeIds: [nodeId] }); // simplistic
+    this.eventBus.emit("explorer.selectionChanged", {
+      selectedNodeIds: this.treeModel.getSelectedNodeIds()
+    });
+  }
+
+  public getProviderId(): string {
+    return "explorer.provider.workspace";
+  }
+
+  public async openWorkspaceRoot(): Promise<void> {
+    const providerId = this.getProviderId();
+    await this.refresh(providerId, null);
+    const rootId = this.treeModel.getRootId();
+    if (rootId) {
+      await this.expandNode(providerId, rootId);
+    }
+  }
+
+  public async handleFileWatchEvents(events: FileWatchEvent[]): Promise<void> {
+    const providerId = this.getProviderId();
+    const refreshedParents = new Set<string>();
+    const rootId = this.treeModel.getRootId();
+    if (!rootId) return;
+
+    const rootPath = uriToPath(rootId as WorkspaceUri);
+
+    for (const event of events) {
+      const fsPath = uriToPath(event.uri);
+      const parentPath = path.dirname(fsPath);
+      const parentId = parentPath === rootPath ? rootId : uriFromPath(parentPath).toString();
+
+      if (this.treeModel.getNode(parentId) && this.treeModel.isExpanded(parentId)) {
+        refreshedParents.add(parentId);
+      }
+    }
+
+    for (const parentId of refreshedParents) {
+      await this.refresh(providerId, parentId);
+    }
+
+    if (refreshedParents.size > 0) {
+      this.eventBus.emit("explorer.refreshCompleted", { providerId });
+    }
   }
 }

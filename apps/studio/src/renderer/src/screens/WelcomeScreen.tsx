@@ -1,5 +1,6 @@
 /* eslint-disable */
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useTheme } from "../theme/ThemeProvider.js";
 import styles from "./WelcomeScreen.module.css";
 
@@ -9,6 +10,7 @@ interface PlatformInfo {
 }
 
 export function WelcomeScreen(): React.ReactElement {
+  const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
   const [platform, setPlatform] = useState<PlatformInfo | null>(null);
   const [isReady, setIsReady] = useState(false);
@@ -35,6 +37,13 @@ export function WelcomeScreen(): React.ReactElement {
     const timer = setTimeout(() => setIsReady(true), 150);
     return () => clearTimeout(timer);
   }, []);
+
+  const openWorkspace = async (path: string): Promise<void> => {
+    const workspace = await window.ocs?.workspace.open(path);
+    if (workspace) {
+      navigate(`/workspace/${workspace.id}`, { replace: true });
+    }
+  };
 
   const toggleTheme = (): void => {
     void setTheme(theme === "dark" ? "light" : "dark");
@@ -91,7 +100,7 @@ export function WelcomeScreen(): React.ReactElement {
                     folderPath: null
                   };
                 if (!canceled && folderPath) {
-                  await window.ocs?.workspace.open(folderPath);
+                  await openWorkspace(folderPath);
                 }
               } catch (err) {
                 console.error("Failed to open folder:", err);
@@ -106,9 +115,14 @@ export function WelcomeScreen(): React.ReactElement {
 
           <button
             className={styles.card}
-            disabled
-            aria-disabled="true"
-            title="No recent projects yet"
+            disabled={recent.length === 0}
+            aria-disabled={recent.length === 0}
+            title={recent.length === 0 ? "No recent projects yet" : "Open a recent project"}
+            onClick={() => {
+              if (recent[0]) {
+                void openWorkspace(recent[0].uri.replace("file://", ""));
+              }
+            }}
           >
             <span className={styles.cardIcon}>🕐</span>
             <span className={styles.cardLabel}>Recent Projects</span>
@@ -170,7 +184,7 @@ export function WelcomeScreen(): React.ReactElement {
                     }}
                     onClick={async () => {
                       try {
-                        await window.ocs?.workspace.open(ws.uri.replace("file://", ""));
+                        await openWorkspace(ws.uri.replace("file://", ""));
                       } catch (err) {
                         console.error("Failed to open recent workspace", err);
                       }

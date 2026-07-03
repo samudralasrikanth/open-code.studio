@@ -26,6 +26,7 @@ const DEFAULT_MAX = 20;
 
 export class WorkspaceRegistry {
   private recent: RecentWorkspace[] = [];
+  private lastOpenedUri: WorkspaceUri | null = null;
   private readonly max: number;
 
   public constructor(
@@ -42,16 +43,27 @@ export class WorkspaceRegistry {
     const state = await this.repo.load();
     if (!state) {
       this.recent = [];
+      this.lastOpenedUri = null;
       return;
     }
     const deserialized = state.recent.map((dto) => WorkspaceSettingsRepository.recentFromDto(dto));
     this.recent = await this.pruneMissing(deserialized);
+    this.lastOpenedUri = (state.activeWorkspaceId as WorkspaceUri | undefined) ?? null;
   }
 
   // ── Queries ─────────────────────────────────────────────────────────────────
 
   public getAll(): readonly RecentWorkspace[] {
     return this.sorted();
+  }
+
+  /** URI of the last opened workspace, used for session restore. */
+  public getLastOpenedUri(): WorkspaceUri | null {
+    if (this.lastOpenedUri) {
+      const exists = this.recent.some((r) => r.uri === this.lastOpenedUri);
+      if (exists) return this.lastOpenedUri;
+    }
+    return this.sorted()[0]?.uri ?? null;
   }
 
   public findById(id: string): RecentWorkspace | undefined {
@@ -82,6 +94,7 @@ export class WorkspaceRegistry {
     };
 
     this.recent.unshift(entry);
+    this.lastOpenedUri = uri;
     this.evict();
     await this.persist();
     return entry;
@@ -137,6 +150,6 @@ export class WorkspaceRegistry {
   }
 
   private async persist(): Promise<void> {
-    await this.repo.save(undefined, this.sorted());
+    await this.repo.save(this.lastOpenedUri ?? undefined, this.sorted());
   }
 }

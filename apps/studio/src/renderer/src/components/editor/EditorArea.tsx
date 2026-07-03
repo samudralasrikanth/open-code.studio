@@ -1,47 +1,65 @@
-/* eslint-disable */
 import React, { useEffect, useState } from "react";
 
 export const EditorArea: React.FC = () => {
-  const [editorState, setEditorState] = useState<any>(null);
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
   useEffect(() => {
-    // Initial fetch
-    window.ocs.editor.getState().then(setEditorState);
+    const refreshSelection = async (): Promise<void> => {
+      try {
+        const stats = await window.ocs.explorer.getStats();
+        const selectedId = stats.selectedNodeIds[0];
+        if (!selectedId) {
+          setSelectedFile(null);
+          return;
+        }
+        const nodes = await window.ocs.explorer.getVisibleNodes();
+        const selected = nodes.find((n) => n.node.id === selectedId && !n.node.isDirectory);
+        setSelectedFile(selected?.node.name ?? null);
+      } catch {
+        setSelectedFile(null);
+      }
+    };
 
-    // Listen for updates
-    const unsubscribe = window.ocs.editor.onStateChanged((state) => {
-      setEditorState(state);
+    void refreshSelection();
+    const unsubscribe = window.ocs.explorer.onStateChanged(() => {
+      void refreshSelection();
     });
-
     return unsubscribe;
   }, []);
 
-  if (!editorState || editorState.groups.length === 0) {
-    return (
-      <div
-        style={{
-          flex: 1,
-          backgroundColor: "#1e1e1e",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center"
-        }}
-      >
-        <div style={{ textAlign: "center", opacity: 0.5 }}>
-          <h1>Open-Code.Studio</h1>
-          <p>Select a file to open</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div style={{ flex: 1, display: "flex", backgroundColor: "#1e1e1e" }}>
-      {/* For now, just render the first group. We can add split view later */}
-      <EditorGroupView group={editorState.groups[0]} />
+    <div
+      style={{
+        flex: 1,
+        backgroundColor: "#1e1e1e",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        minWidth: 0
+      }}
+    >
+      <div style={{ textAlign: "center", opacity: 0.6, maxWidth: "400px", padding: "24px" }}>
+        {selectedFile ? (
+          <>
+            <div style={{ fontSize: "48px", marginBottom: "16px" }}>📄</div>
+            <h2 style={{ fontSize: "16px", fontWeight: 500, margin: "0 0 8px", color: "#ccc" }}>
+              {selectedFile}
+            </h2>
+            <p style={{ fontSize: "13px", color: "#888", margin: 0 }}>
+              Editor Platform coming in EPIC-6
+            </p>
+          </>
+        ) : (
+          <>
+            <div style={{ fontSize: "48px", marginBottom: "16px" }}>⬡</div>
+            <h2 style={{ fontSize: "18px", fontWeight: 500, margin: "0 0 8px", color: "#ccc" }}>
+              Open-Code.Studio
+            </h2>
+            <p style={{ fontSize: "13px", color: "#888", margin: 0 }}>Select a file to open</p>
+          </>
+        )}
+      </div>
     </div>
   );
 };
-
-// -- Mock EditorGroupView for now, I'll write the real one in a separate file
-import { EditorGroupView } from "./EditorGroupView.js";

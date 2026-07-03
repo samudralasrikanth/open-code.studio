@@ -4,20 +4,26 @@ import { join } from "path";
 import { createContainer } from "@ocs/common";
 import { createLifecycleManager } from "@ocs/common";
 import { createLogger } from "@ocs/common";
-import { WorkspaceSettingsRepository } from "../../../../packages/workspace/src/application/WorkspaceSettingsRepository.js";
-import { WorkspaceRegistry } from "../../../../packages/workspace/src/application/WorkspaceRegistry.js";
-import { createWorkspaceService } from "../../../../packages/workspace/src/application/WorkspaceService.js";
-import type { PersistedWorkspaceState } from "../../../../packages/workspace/src/application/WorkspaceSettingsRepository.js";
+import { WorkspaceSettingsRepository } from "@ocs/workspace/application";
+import { WorkspaceRegistry } from "@ocs/workspace/application";
+import { createWorkspaceService } from "@ocs/workspace/application";
+import type { PersistedWorkspaceState } from "@ocs/workspace/application";
 import { createLocalFileSystem } from "../../../../packages/workspace/src/infrastructure/LocalFileSystem.js";
 import { createJsonStorageAdapter } from "../../../../packages/workspace/src/infrastructure/JsonStorageAdapter.js";
-import { ExplorerService, TreeModel, ExplorerEventBus, WorkspaceProvider } from "@ocs/explorer";
-import { DocumentService } from "../../../../packages/document/src/application/DocumentService.js";
-import { EditorService } from "../../../../packages/editor/src/application/EditorService.js";
+import {
+  ExplorerService,
+  TreeModel,
+  ExplorerEventBus,
+  WorkspaceProvider,
+  LocalVirtualFileSystem
+} from "@ocs/explorer";
+import { DocumentService } from "@ocs/document/application";
+import { EditorService } from "@ocs/editor/application";
 import { CommandRegistry } from "@ocs/common";
-import { SaveDocumentCommand } from "../../../../packages/document/src/application/SaveDocumentCommand.js";
+import { SaveDocumentCommand } from "@ocs/document/application";
 import { app, BrowserWindow, shell } from "electron";
 
-import { registerIpcHandlers } from "./ipc/handlers.js";
+import { registerIpcHandlers, restoreLastWorkspace } from "./ipc/handlers.js";
 import { createApplicationMenu } from "./menu.js";
 import { createWindowManager } from "./window-manager.js";
 import type { WindowManager } from "./window-manager.js";
@@ -48,6 +54,7 @@ const workspaceService = createWorkspaceService(workspaceRegistry, workspaceFs, 
 const explorerEventBus = new ExplorerEventBus();
 const treeModel = new TreeModel();
 const explorerService = new ExplorerService(treeModel, explorerEventBus);
+const explorerFs = new LocalVirtualFileSystem();
 
 // ─── Document & Editor Infrastructure ──────────────────────────────────────────
 
@@ -74,11 +81,17 @@ app.whenReady().then(async () => {
   container.singleton(Symbol.for("commands"), () => commandRegistry);
 
   // Register providers (Workspace is the primary one)
-  const workspaceProvider = new WorkspaceProvider(workspaceFs);
+  const workspaceProvider = new WorkspaceProvider(explorerFs);
   explorerService.registerProvider(workspaceProvider);
 
   // Register IPC handlers before any window opens
   registerIpcHandlers(container);
+
+  // Restore previous workspace session if available
+  const restored = await restoreLastWorkspace(container);
+  if (restored) {
+    logger.info("Restored previous workspace session");
+  }
 
   // Build native menu
   createApplicationMenu();

@@ -6,7 +6,11 @@
     "src/preload/**/*",
     "src/shared/**/*",
     "../../packages/common/**/*",
-    "../../packages/workspace/**/*"
+    "../../packages/workspace/**/*",
+    "../../packages/explorer/**/*",
+    "../../packages/document/**/*",
+    "../../packages/editor/**/*",
+    "../../packages/editor-monaco/**/*"
   ],
   "compilerOptions": {
     "composite": true,
@@ -17,7 +21,15 @@
       "@ocs/common": ["../../packages/common/src/index.ts"],
       "@ocs/common/*": ["../../packages/common/*/src/index.ts"],
       "@ocs/workspace": ["../../packages/workspace/src/index.ts"],
-      "@ocs/workspace/*": ["../../packages/workspace/*/src/index.ts"]
+      "@ocs/workspace/*": ["../../packages/workspace/src/*/index.ts"],
+      "@ocs/explorer": ["../../packages/explorer/src/index.ts"],
+      "@ocs/explorer/*": ["../../packages/explorer/src/*/index.ts"],
+      "@ocs/document": ["../../packages/document/src/index.ts"],
+      "@ocs/document/*": ["../../packages/document/src/*/index.ts"],
+      "@ocs/editor": ["../../packages/editor/src/index.ts"],
+      "@ocs/editor/*": ["../../packages/editor/src/*/index.ts"],
+      "@ocs/editor-monaco": ["../../packages/editor-monaco/src/index.ts"],
+      "@ocs/editor-monaco/*": ["../../packages/editor-monaco/src/*/index.ts"]
     }
   },
   "exclude": ["../../packages/**/tests/**/*"]

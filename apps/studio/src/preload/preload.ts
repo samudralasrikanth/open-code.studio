@@ -73,6 +73,9 @@ const ocsAPI = {
     getRecent: (): Promise<readonly RecentWorkspace[]> =>
       ipcRenderer.invoke(IpcChannels.WORKSPACE_GET_RECENT),
 
+    getLastOpened: (): Promise<string | null> =>
+      ipcRenderer.invoke(IpcChannels.WORKSPACE_GET_LAST_OPENED),
+
     removeRecent: (id: string): Promise<void> =>
       ipcRenderer.invoke(IpcChannels.WORKSPACE_REMOVE_RECENT, id)
   },
@@ -82,6 +85,13 @@ const ocsAPI = {
     getVisibleNodes: (): Promise<VisibleNode[]> =>
       ipcRenderer.invoke(IpcChannels.EXPLORER_GET_VISIBLE_NODES),
 
+    getStats: (): Promise<{
+      visibleNodes: number;
+      totalNodes: number;
+      expandedCount: number;
+      selectedNodeIds: readonly string[];
+    }> => ipcRenderer.invoke(IpcChannels.EXPLORER_GET_STATS),
+
     expandNode: (providerId: string, nodeId: string): Promise<void> =>
       ipcRenderer.invoke(IpcChannels.EXPLORER_EXPAND_NODE, providerId, nodeId),
 
@@ -90,6 +100,14 @@ const ocsAPI = {
 
     selectNode: (nodeId: string, multi: boolean = false): Promise<void> =>
       ipcRenderer.invoke(IpcChannels.EXPLORER_SELECT_NODE, nodeId, multi),
+
+    executeCommand: (
+      commandId: string,
+      args?: { uri?: string; targetUri?: string; isDirectory?: boolean }
+    ): Promise<void> => ipcRenderer.invoke(IpcChannels.EXPLORER_EXECUTE_COMMAND, commandId, args),
+
+    revealInFinder: (uri: string): Promise<void> =>
+      ipcRenderer.invoke(IpcChannels.EXPLORER_REVEAL_IN_FINDER, uri),
 
     onStateChanged: (callback: () => void): (() => void) => {
       const handler = () => callback();
@@ -123,6 +141,22 @@ const ocsAPI = {
       ipcRenderer.on(IpcChannels.EDITOR_STATE_CHANGED, handler);
       return () => ipcRenderer.off(IpcChannels.EDITOR_STATE_CHANGED, handler);
     }
+  },
+
+  // ── Diagnostics ─────────────────────────────────────────────────────────────
+  diagnostics: {
+    get: (): Promise<{
+      desktop: boolean;
+      workspace: boolean;
+      explorer: boolean;
+      fileWatcher: boolean;
+      eventBus: boolean;
+      logger: boolean;
+      ipc: boolean;
+      visibleNodes: number;
+      expandedCount: number;
+      totalNodes: number;
+    }> => ipcRenderer.invoke(IpcChannels.DIAGNOSTICS_GET)
   },
 
   // ── Commands ────────────────────────────────────────────────────────────────
