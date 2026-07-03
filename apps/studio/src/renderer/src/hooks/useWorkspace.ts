@@ -1,5 +1,5 @@
-import type { Workspace } from "@ocs/workspace";
-import { useState, useEffect } from "react";
+import type { Workspace, RecentWorkspace } from "@ocs/workspace";
+import { useState, useEffect, useCallback } from "react";
 
 /**
  * Hook to access the currently active workspace.
@@ -29,5 +29,29 @@ export function useWorkspace() {
     };
   }, []);
 
-  return { workspace, isLoading };
+  const open = useCallback(async (path: string): Promise<Workspace | null> => {
+    return window.ocs?.workspace.open(path) ?? null;
+  }, []);
+
+  const getRecent = useCallback(async (): Promise<readonly RecentWorkspace[]> => {
+    return window.ocs?.workspace.getRecent() ?? [];
+  }, []);
+
+  const openFolderDialog = useCallback(async (): Promise<{
+    canceled: boolean;
+    folderPath: string | null;
+  }> => {
+    return (
+      window.ocs?.workspace.openFolderDialog() ?? {
+        canceled: true,
+        folderPath: null
+      }
+    );
+  }, []);
+
+  const getActive = useCallback(async (): Promise<Workspace | null> => {
+    return window.ocs?.workspace.getActive() ?? null;
+  }, []);
+
+  return { workspace, isLoading, open, getRecent, openFolderDialog, getActive };
 }

@@ -3,6 +3,8 @@ import type { EditorInput } from "@ocs/editor";
 import { MonacoEditorAdapter } from "@ocs/editor-monaco";
 import React, { useEffect, useRef, useState } from "react";
 
+import { useDocument } from "../../hooks/useDocument.js";
+
 interface MonacoEditorViewProps {
   input: EditorInput;
 }
@@ -11,6 +13,7 @@ export const MonacoEditorView: React.FC<MonacoEditorViewProps> = ({ input }) => 
   const containerRef = useRef<HTMLDivElement>(null);
   const adapterRef = useRef<MonacoEditorAdapter | null>(null);
   const [docContent, setDocContent] = useState<any>(null);
+  const { get } = useDocument();
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -29,15 +32,14 @@ export const MonacoEditorView: React.FC<MonacoEditorViewProps> = ({ input }) => 
     if (!input) return;
 
     // Fetch document from main process via IPC
-    window.ocs.document
-      .get(input.id)
+    get(input.id)
       .then((doc) => {
         setDocContent(doc);
       })
       .catch((err) => {
         console.error("Failed to fetch document", err);
       });
-  }, [input]);
+  }, [input, get]);
 
   useEffect(() => {
     if (adapterRef.current && docContent) {

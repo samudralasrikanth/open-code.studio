@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 /**
@@ -37,5 +37,13 @@ export function useEditor() {
     };
   }, []);
 
-  return { editorState, isLoading };
+  const open = useCallback(async (id: string): Promise<void> => {
+    await window.ocs?.editor.open(id);
+  }, []);
+
+  const close = useCallback(async (id: string, groupId?: string): Promise<void> => {
+    await window.ocs?.editor.close(id, groupId);
+  }, []);
+
+  return { editorState, isLoading, open, close };
 }

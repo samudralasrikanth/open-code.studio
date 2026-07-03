@@ -3,32 +3,20 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../theme/ThemeProvider.js";
 import { flowLog, correlationId } from "../utils/flow-log.js";
+import { useWorkspace } from "../hooks/useWorkspace.js";
+import { usePlatform } from "../hooks/usePlatform.js";
 import styles from "./WelcomeScreen.module.css";
-
-interface PlatformInfo {
-  appVersion: string;
-  platform: string;
-}
 
 export function WelcomeScreen(): React.ReactElement {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
-  const [platform, setPlatform] = useState<PlatformInfo | null>(null);
+  const { platformInfo, minimize } = usePlatform();
+  const { getRecent, open, openFolderDialog } = useWorkspace();
   const [isReady, setIsReady] = useState(false);
   const [recent, setRecent] = useState<readonly import("@ocs/workspace").RecentWorkspace[]>([]);
 
   useEffect(() => {
-    window.ocs?.health
-      .platformInfo()
-      .then((info) => {
-        setPlatform({ appVersion: info.appVersion, platform: info.platform });
-      })
-      .catch(() => {
-        setPlatform({ appVersion: "0.1.0", platform: process.platform });
-      });
-
-    window.ocs?.workspace
-      .getRecent()
+    getRecent()
       .then((workspaces) => {
         setRecent(workspaces);
       })
@@ -37,7 +25,7 @@ export function WelcomeScreen(): React.ReactElement {
     // Small delay so the startup animation is visible
     const timer = setTimeout(() => setIsReady(true), 150);
     return () => clearTimeout(timer);
-  }, []);
+  }, [getRecent]);
 
   const openWorkspace = async (path: string): Promise<void> => {
     const cid = correlationId("workspace");
@@ -48,7 +36,7 @@ export function WelcomeScreen(): React.ReactElement {
       correlationId: cid,
       context: { path }
     });
-    const workspace = await window.ocs?.workspace.open(path);
+    const workspace = await open(path);
     flowLog({
       domain: "workspace",
       source: "renderer",
@@ -100,7 +88,7 @@ export function WelcomeScreen(): React.ReactElement {
 
       {/* Hero */}
       <main className={styles.hero}>
-        <div className={styles.badge}>v{platform?.appVersion ?? "0.1.0"} · Alpha</div>
+        <div className={styles.badge}>v{platformInfo?.appVersion ?? "0.1.0"} · Alpha</div>
         <h1 className={styles.headline}>
           One IDE.
           <br />
@@ -126,11 +114,10 @@ export function WelcomeScreen(): React.ReactElement {
                   action: "open-folder-dialog:start",
                   correlationId: cid
                 });
-                const { canceled, folderPath } =
-                  (await window.ocs?.workspace.openFolderDialog()) ?? {
-                    canceled: true,
-                    folderPath: null
-                  };
+                const { canceled, folderPath } = (await openFolderDialog()) ?? {
+                  canceled: true,
+                  folderPath: null
+                };
                 flowLog({
                   domain: "workspace",
                   source: "renderer",
@@ -172,7 +159,7 @@ export function WelcomeScreen(): React.ReactElement {
             </span>
           </button>
 
-          <button className={styles.card} onClick={() => window.ocs?.window.minimize()}>
+          <button className={styles.card} onClick={() => void minimize()}>
             <span className={styles.cardIcon}>📖</span>
             <span className={styles.cardLabel}>Documentation</span>
             <span className={styles.cardHint}>Explore the docs</span>
@@ -249,7 +236,9 @@ export function WelcomeScreen(): React.ReactElement {
 
       {/* Footer */}
       <footer className={styles.footer}>
-        <span>{platform?.platform ? `Running on ${platform.platform}` : "Open-Code.Studio"}</span>
+        <span>
+          {platformInfo?.platform ? `Running on ${platformInfo.platform}` : "Open-Code.Studio"}
+        </span>
         <span>Phase 0 — Foundation</span>
       </footer>
     </div>

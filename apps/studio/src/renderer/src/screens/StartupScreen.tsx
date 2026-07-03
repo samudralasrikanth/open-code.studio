@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useWorkspace } from "../hooks/useWorkspace.js";
+
 import { SplashScreen } from "./SplashScreen.js";
 
 export function StartupScreen(): React.ReactElement {
   const navigate = useNavigate();
   const [ready, setReady] = useState(false);
+  const { getActive } = useWorkspace();
 
   useEffect(() => {
     let cancelled = false;
@@ -15,7 +18,7 @@ export function StartupScreen(): React.ReactElement {
       if (cancelled) return;
 
       try {
-        const active = await window.ocs?.workspace.getActive();
+        const active = await getActive();
         if (active) {
           navigate(`/workspace/${active.id}`, { replace: true });
         } else {

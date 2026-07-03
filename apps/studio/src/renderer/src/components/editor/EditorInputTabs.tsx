@@ -1,11 +1,13 @@
 /* eslint-disable */
 import React from "react";
+import { useEditor } from "../../hooks/useEditor.js";
 
 interface EditorInputTabsProps {
   group: any;
 }
 
 export const EditorInputTabs: React.FC<EditorInputTabsProps> = ({ group }) => {
+  const { open, close } = useEditor();
   // IPC state gives us group.inputs as an array of IDs.
   // We can render tabs for them.
   const activeId = group.activeInput;
@@ -14,12 +16,12 @@ export const EditorInputTabs: React.FC<EditorInputTabsProps> = ({ group }) => {
   // We can use the URI display name.
 
   const handleTabClick = (id: string) => {
-    window.ocs.editor.open(id);
+    void open(id);
   };
 
   const handleCloseClick = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
-    window.ocs.editor.close(id, group.id);
+    void close(id, group.id);
   };
 
   return (

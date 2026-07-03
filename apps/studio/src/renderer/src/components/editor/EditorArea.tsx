@@ -1,31 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+
+import { useExplorer } from "../../hooks/useExplorer.js";
 
 export const EditorArea: React.FC = () => {
-  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const { nodes, stats } = useExplorer();
 
-  useEffect(() => {
-    const refreshSelection = async (): Promise<void> => {
-      try {
-        const stats = await window.ocs.explorer.getStats();
-        const selectedId = stats.selectedNodeIds[0];
-        if (!selectedId) {
-          setSelectedFile(null);
-          return;
-        }
-        const nodes = await window.ocs.explorer.getVisibleNodes();
-        const selected = nodes.find((n) => n.node.id === selectedId && !n.node.isDirectory);
-        setSelectedFile(selected?.node.name ?? null);
-      } catch {
-        setSelectedFile(null);
-      }
-    };
-
-    void refreshSelection();
-    const unsubscribe = window.ocs.explorer.onStateChanged(() => {
-      void refreshSelection();
-    });
-    return unsubscribe;
-  }, []);
+  const selectedNodeIds = stats?.selectedNodeIds as string[] | undefined;
+  const selectedId = selectedNodeIds?.[0];
+  const selectedNode = selectedId
+    ? nodes.find((n) => n.node.id === selectedId && !n.node.isDirectory)
+    : null;
+  const selectedFile = selectedNode ? selectedNode.node.name : null;
 
   return (
     <div

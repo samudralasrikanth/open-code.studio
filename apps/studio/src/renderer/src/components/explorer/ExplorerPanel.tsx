@@ -10,7 +10,8 @@ const PROVIDER_ID = "explorer.provider.workspace";
 const ROW_HEIGHT = 24;
 
 export const ExplorerPanel: React.FC = () => {
-  const { nodes } = useExplorer();
+  const { nodes, selectNode, collapseNode, expandNode, executeCommand, revealInFinder } =
+    useExplorer();
   const [focusedIndex, setFocusedIndex] = useState(0);
   const [contextMenu, setContextMenu] = useState<{
     x: number;
@@ -26,15 +27,15 @@ export const ExplorerPanel: React.FC = () => {
     overscan: 5
   });
 
-  const selectNode = async (visibleNode: VisibleNode): Promise<void> => {
-    await window.ocs.explorer.selectNode(visibleNode.node.id);
+  const handleSelectNode = async (visibleNode: VisibleNode): Promise<void> => {
+    await selectNode(visibleNode.node.id);
   };
 
   const toggleExpand = async (visibleNode: VisibleNode): Promise<void> => {
     if (visibleNode.isExpanded) {
-      await window.ocs.explorer.collapseNode(visibleNode.node.id);
+      await collapseNode(visibleNode.node.id);
     } else {
-      await window.ocs.explorer.expandNode(PROVIDER_ID, visibleNode.node.id);
+      await expandNode(PROVIDER_ID, visibleNode.node.id);
     }
   };
 
@@ -43,7 +44,7 @@ export const ExplorerPanel: React.FC = () => {
     if (visibleNode.node.isDirectory) {
       await toggleExpand(visibleNode);
     } else {
-      await selectNode(visibleNode);
+      await handleSelectNode(visibleNode);
     }
   };
 
@@ -58,7 +59,7 @@ export const ExplorerPanel: React.FC = () => {
         action: () => {
           const name = window.prompt("New file name:");
           if (name) {
-            void window.ocs.explorer.executeCommand("explorer.command.createFile", {
+            void executeCommand("explorer.command.createFile", {
               uri: `${uri}/${name}`,
               isDirectory: false
             });
@@ -71,7 +72,7 @@ export const ExplorerPanel: React.FC = () => {
         action: () => {
           const name = window.prompt("New folder name:");
           if (name) {
-            void window.ocs.explorer.executeCommand("explorer.command.createFile", {
+            void executeCommand("explorer.command.createFile", {
               uri: `${uri}/${name}`,
               isDirectory: true
             });
@@ -85,7 +86,7 @@ export const ExplorerPanel: React.FC = () => {
           const newName = window.prompt("Rename to:", visibleNode.node.name);
           if (newName && newName !== visibleNode.node.name) {
             const parentUri = uri.slice(0, uri.lastIndexOf("/"));
-            void window.ocs.explorer.executeCommand("explorer.command.renameFile", {
+            void executeCommand("explorer.command.renameFile", {
               uri,
               targetUri: `${parentUri}/${newName}`
             });
@@ -96,7 +97,7 @@ export const ExplorerPanel: React.FC = () => {
         label: "Delete",
         action: () => {
           if (window.confirm(`Delete "${visibleNode.node.name}"?`)) {
-            void window.ocs.explorer.executeCommand("explorer.command.deleteFile", { uri });
+            void executeCommand("explorer.command.deleteFile", { uri });
           }
         }
       },
@@ -104,7 +105,7 @@ export const ExplorerPanel: React.FC = () => {
       {
         label: "Reveal in Finder",
         action: () => {
-          void window.ocs.explorer.revealInFinder(uri);
+          void revealInFinder(uri);
         }
       },
       {
@@ -147,7 +148,7 @@ export const ExplorerPanel: React.FC = () => {
       case "ArrowLeft": {
         e.preventDefault();
         if (current.node.isDirectory && current.isExpanded) {
-          await window.ocs.explorer.collapseNode(current.node.id);
+          await collapseNode(current.node.id);
         }
         break;
       }
@@ -231,7 +232,7 @@ export const ExplorerPanel: React.FC = () => {
                   onContextMenu={(e) => {
                     e.preventDefault();
                     setFocusedIndex(virtualItem.index);
-                    void selectNode(visibleNode);
+                    void handleSelectNode(visibleNode);
                     setContextMenu({ x: e.clientX, y: e.clientY, node: visibleNode });
                   }}
                   onMouseEnter={(e) => {
