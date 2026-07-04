@@ -5,6 +5,7 @@ import { ipcMain } from "electron";
 import { uriFromPath } from "@ocs/workspace";
 import { IpcChannels } from "../../../../shared/ipc-channels.js";
 import { setupWorkspaceExplorer, teardownWorkspaceExplorer } from "../explorer/index.js";
+import { bootstrapGit } from "../../../bootstrap/git.js";
 
 export function registerWorkspaceHandlers(container: Container): void {
   const workspaceService = container.resolve<import("@ocs/workspace/application").WorkspaceService>(
@@ -95,6 +96,7 @@ export function registerWorkspaceHandlers(container: Container): void {
     });
     if (workspace) {
       try {
+        bootstrapGit(path);
         await setupWorkspaceExplorer(container, workspace, logger, cid);
       } catch (error) {
         // The workspace itself opened successfully. Don't let a secondary
@@ -168,6 +170,7 @@ export async function restoreLastWorkspace(container: Container): Promise<boolea
   try {
     const workspace = await workspaceService.open(uriToPath(lastUri));
     if (workspace) {
+      bootstrapGit(uriToPath(lastUri));
       await setupWorkspaceExplorer(container, workspace, logger, cid);
       logger.flow({
         domain: "workspace",

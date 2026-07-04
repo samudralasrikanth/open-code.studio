@@ -15,7 +15,12 @@ const WORKSPACE_PACKAGES = [
   "@ocs/document",
   "@ocs/editor",
   "@ocs/editor-monaco",
-  "@ocs/ui"
+  "@ocs/ui",
+  "@ocs/terminal",
+  "@ocs/git",
+  "@ocs/commands",
+  "@ocs/search",
+  "@ocs/settings"
 ];
 
 export default defineConfig({
@@ -78,6 +83,46 @@ export default defineConfig({
         {
           find: "@ocs/ui",
           replacement: resolve(__dirname, "../../packages/ui/src/index.ts")
+        },
+        {
+          find: /^@ocs\/terminal\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/terminal/src/$1/index.ts")
+        },
+        {
+          find: "@ocs/terminal",
+          replacement: resolve(__dirname, "../../packages/terminal/src/index.ts")
+        },
+        {
+          find: /^@ocs\/git\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/git/src/$1/index.ts")
+        },
+        {
+          find: "@ocs/git",
+          replacement: resolve(__dirname, "../../packages/git/src/index.ts")
+        },
+        {
+          find: /^@ocs\/commands\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/commands/src/$1/index.ts")
+        },
+        {
+          find: "@ocs/commands",
+          replacement: resolve(__dirname, "../../packages/commands/src/index.ts")
+        },
+        {
+          find: /^@ocs\/search\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/search/src/$1/index.ts")
+        },
+        {
+          find: "@ocs/search",
+          replacement: resolve(__dirname, "../../packages/search/src/index.ts")
+        },
+        {
+          find: /^@ocs\/settings\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/settings/src/$1/index.ts")
+        },
+        {
+          find: "@ocs/settings",
+          replacement: resolve(__dirname, "../../packages/settings/src/index.ts")
         }
       ]
     },
@@ -150,6 +195,46 @@ export default defineConfig({
         {
           find: "@ocs/ui",
           replacement: resolve(__dirname, "../../packages/ui/src/index.ts")
+        },
+        {
+          find: /^@ocs\/terminal\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/terminal/src/$1/index.ts")
+        },
+        {
+          find: "@ocs/terminal",
+          replacement: resolve(__dirname, "../../packages/terminal/src/index.ts")
+        },
+        {
+          find: /^@ocs\/git\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/git/src/$1/index.ts")
+        },
+        {
+          find: "@ocs/git",
+          replacement: resolve(__dirname, "../../packages/git/src/index.ts")
+        },
+        {
+          find: /^@ocs\/commands\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/commands/src/$1/index.ts")
+        },
+        {
+          find: "@ocs/commands",
+          replacement: resolve(__dirname, "../../packages/commands/src/index.ts")
+        },
+        {
+          find: /^@ocs\/search\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/search/src/$1/index.ts")
+        },
+        {
+          find: "@ocs/search",
+          replacement: resolve(__dirname, "../../packages/search/src/index.ts")
+        },
+        {
+          find: /^@ocs\/settings\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/settings/src/$1/index.ts")
+        },
+        {
+          find: "@ocs/settings",
+          replacement: resolve(__dirname, "../../packages/settings/src/index.ts")
         }
       ]
     },
@@ -224,6 +309,46 @@ export default defineConfig({
         {
           find: "@ocs/ui",
           replacement: resolve(__dirname, "../../packages/ui/src/index.ts")
+        },
+        {
+          find: /^@ocs\/terminal\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/terminal/src/$1/index.ts")
+        },
+        {
+          find: "@ocs/terminal",
+          replacement: resolve(__dirname, "../../packages/terminal/src/index.ts")
+        },
+        {
+          find: /^@ocs\/git\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/git/src/$1/index.ts")
+        },
+        {
+          find: "@ocs/git",
+          replacement: resolve(__dirname, "../../packages/git/src/index.ts")
+        },
+        {
+          find: /^@ocs\/commands\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/commands/src/$1/index.ts")
+        },
+        {
+          find: "@ocs/commands",
+          replacement: resolve(__dirname, "../../packages/commands/src/index.ts")
+        },
+        {
+          find: /^@ocs\/search\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/search/src/$1/index.ts")
+        },
+        {
+          find: "@ocs/search",
+          replacement: resolve(__dirname, "../../packages/search/src/index.ts")
+        },
+        {
+          find: /^@ocs\/settings\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/settings/src/$1/index.ts")
+        },
+        {
+          find: "@ocs/settings",
+          replacement: resolve(__dirname, "../../packages/settings/src/index.ts")
         }
       ]
     },

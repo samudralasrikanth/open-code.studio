@@ -8,6 +8,7 @@
     { "path": "./apps/enterprise-console" },
     { "path": "./packages/runtime" },
     { "path": "./packages/gateway" },
+    { "path": "./packages/git" },
     { "path": "./packages/knowledge" },
     { "path": "./packages/memory" },
     { "path": "./packages/workflow" },

@@ -10,25 +10,9 @@ export interface IPtyProcess {
   kill(signal?: string): void;
 }
 
+import { spawn } from "child_process";
+
 export class PtyAdapter {
-  private static ptyModule: any = null;
-  private static isLoaded = false;
-
-  private static async ensurePtyLoaded(): Promise<boolean> {
-    if (this.isLoaded) return this.ptyModule !== null;
-    this.isLoaded = true;
-    try {
-      // Dynamic import to prevent bundler failures in non-Node environments
-      // @ts-ignore
-      const pty = await import("node-pty");
-      this.ptyModule = pty.default || pty;
-      return true;
-    } catch (e: any) {
-      console.warn("Failed to load native node-pty module. Falling back to Mock Shell.", e.message);
-      return false;
-    }
-  }
-
   public static async spawn(options: {
     shell: string;
     args: string[];
@@ -37,34 +21,93 @@ export class PtyAdapter {
     rows?: number;
     env?: Record<string, string>;
   }): Promise<IPtyProcess> {
-    const loaded = await this.ensurePtyLoaded();
-    if (loaded && this.ptyModule) {
-      try {
-        const ptyProcess = this.ptyModule.spawn(options.shell, options.args, {
-          name: "xterm-color",
-          cols: options.cols || 80,
-          rows: options.rows || 24,
-          cwd: options.cwd,
-          env: {
-            ...process.env,
-            ...options.env
-          }
-        });
-        return {
-          pid: ptyProcess.pid,
-          onData: (cb) => ptyProcess.onData(cb),
-          onExit: (cb) => ptyProcess.onExit(cb),
-          write: (data) => ptyProcess.write(data),
-          resize: (cols, rows) => ptyProcess.resize(cols, rows),
-          kill: (sig) => ptyProcess.kill(sig)
-        };
-      } catch (err: any) {
-        console.warn("node-pty spawn failed. Falling back to Mock Shell.", err.message);
-      }
+    try {
+      return new ChildProcessPtyProcess(options.shell, options.cwd, options.args, options.env);
+    } catch (err: any) {
+      console.warn("Child process spawn failed. Falling back to Mock Shell.", err.message);
+      return new MockPtyProcess(options.shell, options.cwd);
     }
+  }
+}
 
-    // Fallback to Mock PTY process
-    return new MockPtyProcess(options.shell, options.cwd);
+class ChildProcessPtyProcess implements IPtyProcess {
+  public pid: number;
+  private proc: any;
+  private emitter = new EventEmitter();
+
+  constructor(shell: string, cwd: string, args: string[] = [], env?: Record<string, string>) {
+    const defaultArgs =
+      args.length > 0 ? args : shell.endsWith("zsh") || shell.endsWith("bash") ? ["-i"] : [];
+
+    this.proc = spawn(shell, defaultArgs, {
+      cwd,
+      env: {
+        ...process.env,
+        ...env,
+        TERM: "xterm-256color"
+      },
+      stdio: ["pipe", "pipe", "pipe"]
+    });
+
+    this.pid = this.proc.pid || Math.floor(Math.random() * 90000) + 10000;
+
+    // Send initial prompt feedback if stdout is silent initially
+    setTimeout(() => {
+      const baseName = cwd.split("/").pop() || cwd;
+      this.emitter.emit("data", `\x1b[1;32mocs-terminal:${baseName} $\x1b[0m `);
+    }, 100);
+
+    this.proc.stdout?.on("data", (chunk: Buffer) => {
+      this.emitter.emit("data", chunk.toString("utf-8"));
+    });
+
+    this.proc.stderr?.on("data", (chunk: Buffer) => {
+      this.emitter.emit("data", chunk.toString("utf-8"));
+    });
+
+    this.proc.on("exit", (code: number) => {
+      this.emitter.emit("exit", { exitCode: code ?? 0 });
+    });
+
+    this.proc.on("error", (err: Error) => {
+      this.emitter.emit("data", `\r\n\x1b[31mTerminal process error: ${err.message}\x1b[0m\r\n`);
+    });
+  }
+
+  public onData(callback: (data: string) => void): { dispose(): void } {
+    this.emitter.on("data", callback);
+    return {
+      dispose: () => {
+        this.emitter.off("data", callback);
+      }
+    };
+  }
+
+  public onExit(callback: (event: { exitCode: number; signal?: number }) => void): {
+    dispose(): void;
+  } {
+    this.emitter.on("exit", callback);
+    return {
+      dispose: () => {
+        this.emitter.off("exit", callback);
+      }
+    };
+  }
+
+  public write(data: string): void {
+    if (this.proc.stdin && !this.proc.stdin.destroyed) {
+      this.proc.stdin.write(data);
+    }
+  }
+
+  public resize(_cols: number, _rows: number): void {
+    // Standard stdio handles fluid buffer widths
+  }
+
+  public kill(signal?: string): void {
+    if (this.proc && !this.proc.killed) {
+      this.proc.kill(signal || "SIGTERM");
+    }
   }
 }
 

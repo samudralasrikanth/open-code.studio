@@ -54,17 +54,30 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({ activeView, onViewChan
         </IconButton>
 
         <IconButton
-          disabled
-          title="Search (Disabled)"
-          style={{ width: "36px", height: "36px", opacity: 0.3 }}
+          active={activeView === "search"}
+          onClick={() => onViewChange("search")}
+          title="Search"
+          style={{
+            width: "36px",
+            height: "36px",
+            borderLeft: activeView === "search" ? "2px solid #007acc" : "2px solid transparent",
+            borderRadius: "0"
+          }}
         >
           <SearchIcon size={22} />
         </IconButton>
 
         <IconButton
-          disabled
-          title="Source Control (Disabled)"
-          style={{ width: "36px", height: "36px", opacity: 0.3 }}
+          active={activeView === "source-control"}
+          onClick={() => onViewChange("source-control")}
+          title="Source Control"
+          style={{
+            width: "36px",
+            height: "36px",
+            borderLeft:
+              activeView === "source-control" ? "2px solid #007acc" : "2px solid transparent",
+            borderRadius: "0"
+          }}
         >
           <SourceControlIcon size={22} />
         </IconButton>

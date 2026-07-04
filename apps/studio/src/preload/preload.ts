@@ -191,8 +191,11 @@ const ocsAPI = {
 
   // ── Commands ────────────────────────────────────────────────────────────────
   commands: {
+    search: (query: string, limit?: number): Promise<any[]> =>
+      ipcRenderer.invoke(IpcChannels.COMMANDS_SEARCH, query, limit),
     execute: (commandId: string, args?: any): Promise<any> =>
-      ipcRenderer.invoke(IpcChannels.COMMAND_EXECUTE, commandId, args)
+      ipcRenderer.invoke(IpcChannels.COMMANDS_EXECUTE, commandId, args),
+    getHistory: (): Promise<string[]> => ipcRenderer.invoke(IpcChannels.COMMANDS_GET_HISTORY)
   },
 
   // ── Terminal ────────────────────────────────────────────────────────────────
@@ -219,6 +222,61 @@ const ocsAPI = {
       const handler = (_: any, payload: { id: string; exitCode?: number }) => callback(payload);
       ipcRenderer.on(IpcChannels.TERMINAL_EXIT, handler);
       return () => ipcRenderer.off(IpcChannels.TERMINAL_EXIT, handler);
+    }
+  },
+
+  // ── Git ───────────────────────────────────────────────────────────────────
+  git: {
+    status: (): Promise<any> => ipcRenderer.invoke(IpcChannels.GIT_STATUS),
+    commit: (message: string): Promise<void> => ipcRenderer.invoke(IpcChannels.GIT_COMMIT, message),
+    pull: (): Promise<void> => ipcRenderer.invoke(IpcChannels.GIT_PULL),
+    push: (): Promise<void> => ipcRenderer.invoke(IpcChannels.GIT_PUSH)
+  },
+
+  // ── Search ────────────────────────────────────────────────────────────────
+  search: {
+    start: (query: any, cwd: string): Promise<void> =>
+      ipcRenderer.invoke(IpcChannels.SEARCH_START, query, cwd),
+    cancel: (queryId: string): Promise<void> =>
+      ipcRenderer.invoke(IpcChannels.SEARCH_CANCEL, queryId),
+    replace: (operation: any): Promise<void> =>
+      ipcRenderer.invoke(IpcChannels.SEARCH_REPLACE, operation),
+    onResultFound: (callback: (payload: any) => void): (() => void) => {
+      const handler = (_: any, payload: any) => callback(payload);
+      ipcRenderer.on(IpcChannels.SEARCH_RESULT_FOUND, handler);
+      return () => ipcRenderer.off(IpcChannels.SEARCH_RESULT_FOUND, handler);
+    },
+    onProgress: (callback: (payload: any) => void): (() => void) => {
+      const handler = (_: any, payload: any) => callback(payload);
+      ipcRenderer.on(IpcChannels.SEARCH_PROGRESS, handler);
+      return () => ipcRenderer.off(IpcChannels.SEARCH_PROGRESS, handler);
+    },
+    onCompleted: (callback: (payload: any) => void): (() => void) => {
+      const handler = (_: any, payload: any) => callback(payload);
+      ipcRenderer.on(IpcChannels.SEARCH_COMPLETED, handler);
+      return () => ipcRenderer.off(IpcChannels.SEARCH_COMPLETED, handler);
+    },
+    onCancelled: (callback: (payload: any) => void): (() => void) => {
+      const handler = (_: any, payload: any) => callback(payload);
+      ipcRenderer.on(IpcChannels.SEARCH_CANCELLED, handler);
+      return () => ipcRenderer.off(IpcChannels.SEARCH_CANCELLED, handler);
+    }
+  },
+
+  // ── Settings ──────────────────────────────────────────────────────────────
+  settings: {
+    get: (id: string): Promise<any> => ipcRenderer.invoke(IpcChannels.SETTINGS_GET, id),
+    getAll: (): Promise<Record<string, any>> => ipcRenderer.invoke(IpcChannels.SETTINGS_GET_ALL),
+    set: (id: string, value: any, scope: "user" | "workspace"): Promise<void> =>
+      ipcRenderer.invoke(IpcChannels.SETTINGS_SET, id, value, scope),
+    reset: (id: string, scope: "user" | "workspace"): Promise<void> =>
+      ipcRenderer.invoke(IpcChannels.SETTINGS_RESET, id, scope),
+    onChanged: (
+      callback: (payload: { id: string; value: any; scope: string }) => void
+    ): (() => void) => {
+      const handler = (_: any, payload: any) => callback(payload);
+      ipcRenderer.on(IpcChannels.SETTINGS_CHANGED, handler);
+      return () => ipcRenderer.off(IpcChannels.SETTINGS_CHANGED, handler);
     }
   }
 };

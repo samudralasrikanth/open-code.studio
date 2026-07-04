@@ -1,0 +1,115 @@
+{
+  "templates": {
+    "base": {
+      "risk": "Medium",
+      "qualityGates": {
+        "required": ["build", "lint", "typecheck", "unit", "integration", "e2e"],
+        "optional": []
+      }
+    },
+    "uiEpic": {
+      "extends": "base",
+      "risk": "High",
+      "qualityGates": {
+        "required": ["build", "lint", "typecheck", "unit", "integration", "e2e", "performance"],
+        "optional": ["accessibility", "snapshots"]
+      }
+    },
+    "agentEpic": {
+      "extends": "base",
+      "risk": "Critical",
+      "qualityGates": {
+        "required": [
+          "build",
+          "lint",
+          "typecheck",
+          "unit",
+          "integration",
+          "e2e",
+          "security",
+          "aiValidation"
+        ],
+        "optional": ["performance"]
+      }
+    }
+  },
+  "epics": {
+    "EPIC-0001": {
+      "extends": "base",
+      "name": "Repository Foundation",
+      "phase": "Phase 0 – Foundation",
+      "risk": "Critical",
+      "dependsOn": []
+    },
+    "EPIC-0002": {
+      "extends": "base",
+      "name": "Core Platform",
+      "phase": "Phase 0 – Foundation",
+      "risk": "Critical",
+      "dependsOn": ["EPIC-0001"]
+    },
+    "EPIC-0003": {
+      "extends": "uiEpic",
+      "name": "Desktop Bootstrap",
+      "phase": "Phase 0 – Foundation",
+      "risk": "Critical",
+      "dependsOn": ["EPIC-0001", "EPIC-0002"]
+    },
+    "EPIC-0004": {
+      "extends": "uiEpic",
+      "name": "Workspace Management",
+      "phase": "Phase 1 – IDE Platform",
+      "risk": "Critical",
+      "dependsOn": ["EPIC-0003"]
+    },
+    "EPIC-0005": {
+      "extends": "uiEpic",
+      "name": "Explorer Platform",
+      "phase": "Phase 1 – IDE Platform",
+      "risk": "Critical",
+      "dependsOn": ["EPIC-0004"]
+    },
+    "EPIC-0006": {
+      "extends": "uiEpic",
+      "name": "Document Editor Platform",
+      "phase": "Phase 1 – IDE Platform",
+      "risk": "Critical",
+      "dependsOn": ["EPIC-0003", "EPIC-0005"]
+    },
+    "EPIC-0007": {
+      "extends": "uiEpic",
+      "name": "Terminal Integration",
+      "phase": "Phase 1 – IDE Platform",
+      "risk": "Critical",
+      "dependsOn": ["EPIC-0003"]
+    },
+    "EPIC-0008": {
+      "extends": "uiEpic",
+      "name": "Git Integration",
+      "phase": "Phase 1 – IDE Platform",
+      "risk": "Critical",
+      "dependsOn": ["EPIC-0003", "EPIC-0005"]
+    },
+    "EPIC-0009": {
+      "extends": "uiEpic",
+      "name": "Command Palette",
+      "phase": "Phase 1 – IDE Platform",
+      "risk": "High",
+      "dependsOn": ["EPIC-0003"]
+    },
+    "EPIC-0010": {
+      "extends": "uiEpic",
+      "name": "Global Search",
+      "phase": "Phase 1 – IDE Platform",
+      "risk": "Critical",
+      "dependsOn": ["EPIC-0004", "EPIC-0005"]
+    },
+    "EPIC-0011": {
+      "extends": "uiEpic",
+      "name": "Settings",
+      "phase": "Phase 1 – IDE Platform",
+      "risk": "High",
+      "dependsOn": ["EPIC-0003"]
+    }
+  }
+}

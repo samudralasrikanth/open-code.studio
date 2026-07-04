@@ -33,9 +33,8 @@ export const ExplorerPanel: React.FC = () => {
     preview: boolean = true
   ): Promise<void> => {
     await selectNode(visibleNode.node.id);
-    if (!visibleNode.node.isDirectory && window.ocs?.commands?.execute) {
-      await window.ocs.commands.execute("editor.open", {
-        uri: visibleNode.node.id,
+    if (!visibleNode.node.isDirectory && window.ocs?.editor?.open) {
+      await window.ocs.editor.open(visibleNode.node.id, {
         preview,
         active: true
       });

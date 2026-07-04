@@ -9,13 +9,18 @@ import {
   bootstrapIpc,
   bootstrapWorkspace,
   bootstrapTerminal,
+  bootstrapCommands,
+  bootstrapSearch,
+  bootstrapSettings,
   wireExplorerProvider,
   StartupCoordinator
 } from "./bootstrap/index.js";
 import { restoreLastWorkspace } from "./ipc/handlers/index.js";
 
-app.name = "Open-Code.Studio";
-app.setName("Open-Code.Studio");
+process.on("uncaughtException", (err: any) => {
+  if (err?.code === "EPIPE" || err?.message?.includes("EPIPE")) return;
+  console.error("Uncaught exception in main process:", err);
+});
 
 const container = createContainer();
 const lifecycle = createLifecycleManager();
@@ -80,8 +85,34 @@ coordinator.register({
 });
 
 coordinator.register({
+  name: "commands",
+  dependsOn: ["workspace"],
+  execute: () => {
+    bootstrapCommands(container);
+  }
+});
+
+coordinator.register({
+  name: "search",
+  dependsOn: ["workspace"],
+  execute: async () => {
+    const eventBus = container.resolve(Symbol.for("events"));
+    bootstrapSearch(container, eventBus as any);
+  }
+});
+
+coordinator.register({
+  name: "settings",
+  dependsOn: ["workspace"],
+  execute: async () => {
+    const eventBus = container.resolve(Symbol.for("events"));
+    await bootstrapSettings(container, logger, eventBus as any);
+  }
+});
+
+coordinator.register({
   name: "ipc",
-  dependsOn: ["explorer", "document", "terminal"],
+  dependsOn: ["explorer", "document", "terminal", "commands", "search", "settings"],
   execute: () => {
     bootstrapIpc(container, logger);
   }

@@ -19,9 +19,13 @@ export function bootstrapTerminal(container: Container, logger: Logger): Termina
   // Bind to lifecycle manager for clean shutdown of all spawned processes
   const lifecycle = container.resolve<any>(Symbol.for("lifecycle"));
   if (lifecycle) {
-    lifecycle.onStop(() => {
-      logger.info("Lifecycle stopping: disposing active PTY terminal sessions");
-      terminalService.dispose();
+    lifecycle.register({
+      name: "TerminalService",
+      start: () => {},
+      stop: () => {
+        logger.info("Lifecycle stopping: disposing active PTY terminal sessions");
+        terminalService.dispose();
+      }
     });
   }
 

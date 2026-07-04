@@ -124,12 +124,16 @@ export class Logger {
 
 export class ConsoleSink implements LogSink {
   public write(record: LogRecord): void {
-    const output = JSON.stringify(record);
-    if (record.level === "error") {
-      console.error(output);
-      return;
+    try {
+      const output = JSON.stringify(record);
+      if (record.level === "error") {
+        console.error(output);
+        return;
+      }
+      console.log(output);
+    } catch {
+      // Ignore EPIPE and stdout/stderr stream closure errors
     }
-    console.log(output);
   }
 }
 

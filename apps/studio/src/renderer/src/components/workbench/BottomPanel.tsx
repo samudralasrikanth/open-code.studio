@@ -1,7 +1,8 @@
 import { Panel } from "@ocs/ui";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { DeveloperDiagnosticsPanel } from "../explorer/DeveloperDiagnosticsPanel.js";
+import { TerminalView } from "../terminal/TerminalView.js";
 
 interface BottomPanelProps {
   height: number;
@@ -10,8 +11,20 @@ interface BottomPanelProps {
 
 export const BottomPanel: React.FC<BottomPanelProps> = ({ height, isResizing }) => {
   const [activeTab, setActiveTab] = useState<"problems" | "output" | "terminal" | "diagnostics">(
-    "diagnostics"
+    "terminal"
   );
+  const [cwd, setCwd] = useState<string>("/");
+
+  useEffect(() => {
+    if (window.ocs?.workspace?.getActive) {
+      window.ocs.workspace.getActive().then((ws) => {
+        if (ws?.uri) {
+          const pathStr = ws.uri.startsWith("file://") ? ws.uri.replace("file://", "") : ws.uri;
+          setCwd(pathStr);
+        }
+      });
+    }
+  }, []);
 
   return (
     <Panel
@@ -45,9 +58,9 @@ export const BottomPanel: React.FC<BottomPanelProps> = ({ height, isResizing }) 
             borderBottom: activeTab === "problems" ? "2px solid #007acc" : "2px solid transparent",
             padding: "8px 0",
             marginRight: "20px",
-            cursor: "not-allowed",
-            opacity: 0.5
+            cursor: "pointer"
           }}
+          onClick={() => setActiveTab("problems")}
         >
           Problems
         </div>
@@ -60,9 +73,9 @@ export const BottomPanel: React.FC<BottomPanelProps> = ({ height, isResizing }) 
             borderBottom: activeTab === "output" ? "2px solid #007acc" : "2px solid transparent",
             padding: "8px 0",
             marginRight: "20px",
-            cursor: "not-allowed",
-            opacity: 0.5
+            cursor: "pointer"
           }}
+          onClick={() => setActiveTab("output")}
         >
           Output
         </div>
@@ -75,9 +88,9 @@ export const BottomPanel: React.FC<BottomPanelProps> = ({ height, isResizing }) 
             borderBottom: activeTab === "terminal" ? "2px solid #007acc" : "2px solid transparent",
             padding: "8px 0",
             marginRight: "20px",
-            cursor: "not-allowed",
-            opacity: 0.5
+            cursor: "pointer"
           }}
+          onClick={() => setActiveTab("terminal")}
         >
           Terminal
         </div>
@@ -99,7 +112,8 @@ export const BottomPanel: React.FC<BottomPanelProps> = ({ height, isResizing }) 
       </div>
 
       {/* Bottom Panel Content */}
-      <div style={{ flex: 1, overflow: "auto", display: "flex", backgroundColor: "#1e1e1e" }}>
+      <div style={{ flex: 1, overflow: "hidden", display: "flex", backgroundColor: "#1e1e1e" }}>
+        {activeTab === "terminal" && <TerminalView cwd={cwd} />}
         {activeTab === "diagnostics" && <DeveloperDiagnosticsPanel />}
       </div>
     </Panel>

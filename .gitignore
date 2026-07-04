@@ -6,6 +6,10 @@ dist/
 out/
 coverage/
 *.tsbuildinfo
+*.js.map
+*.d.ts.map
+packages/*/src/**/*.js
+packages/*/src/**/*.d.ts
 
 # ── Turbo cache ──────────────────────────────────────────────────────────────────
 .turbo/

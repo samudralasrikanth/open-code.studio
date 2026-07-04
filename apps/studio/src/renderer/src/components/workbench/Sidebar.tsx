@@ -4,13 +4,16 @@ import React, { useState } from "react";
 
 import { useExplorer } from "../../hooks/useExplorer.js";
 import { ExplorerPanel } from "../explorer/ExplorerPanel.js";
+import { SourceControlPanel } from "../git/SourceControlPanel.js";
+import { SearchSidebar } from "../search/SearchSidebar.js";
 
 interface SidebarProps {
   width: number;
   isResizing: boolean;
+  activeView: string;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ width, isResizing }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ width, isResizing, activeView }) => {
   const { nodes, collapseNode } = useExplorer();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -25,6 +28,40 @@ export const Sidebar: React.FC<SidebarProps> = ({ width, isResizing }) => {
     setIsRefreshing(true);
     setTimeout(() => setIsRefreshing(false), 500);
   };
+
+  if (activeView === "search") {
+    return (
+      <Panel
+        direction="column"
+        backgroundColor="#252526"
+        style={{
+          width: `${width}px`,
+          height: "100%",
+          flexShrink: 0,
+          userSelect: isResizing ? "none" : "auto"
+        }}
+      >
+        <SearchSidebar />
+      </Panel>
+    );
+  }
+
+  if (activeView === "source-control") {
+    return (
+      <Panel
+        direction="column"
+        backgroundColor="#252526"
+        style={{
+          width: `${width}px`,
+          height: "100%",
+          flexShrink: 0,
+          userSelect: isResizing ? "none" : "auto"
+        }}
+      >
+        <SourceControlPanel />
+      </Panel>
+    );
+  }
 
   return (
     <Panel

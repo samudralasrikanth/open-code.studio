@@ -1,0 +1,970 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Open-Code.Studio Test Validation Dashboard</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background-color: #1e1e1e;
+        color: #d4d4d4;
+        margin: 20px;
+      }
+      h1 {
+        color: #569cd6;
+      }
+      .card {
+        background: #252526;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: flex;
+        gap: 40px;
+      }
+      .metric {
+        font-size: 24px;
+        font-weight: bold;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #252526;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      th {
+        background: #333;
+        text-align: left;
+        padding: 12px;
+        color: #9cdcfe;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🚀 Open-Code.Studio Epic Validation Dashboard</h1>
+    <div class="card">
+      <div>
+        <div>Total Scenarios</div>
+        <div class="metric">64</div>
+      </div>
+      <div>
+        <div>Pass Rate</div>
+        <div class="metric" style="color: #28a745">100.0%</div>
+      </div>
+      <div>
+        <div>Passed</div>
+        <div class="metric" style="color: #28a745">64</div>
+      </div>
+      <div>
+        <div>Failed</div>
+        <div class="metric" style="color: #dc3545">0</div>
+      </div>
+      <div>
+        <div>Execution Time</div>
+        <div class="metric">9.89s</div>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Epic</th>
+          <th>Scenario ID</th>
+          <th>Title</th>
+          <th>Status</th>
+          <th>Duration</th>
+          <th>Error Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0001</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0001-SC-001</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Fresh Clone Monorepo Directory Layout
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">1ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0001</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0001-SC-002</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Dependency Installation & Lockfile Integrity
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">1ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0001</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0001-SC-003</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Workspace Detection (pnpm-workspace.yaml)
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0001</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0001-SC-004</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Package Declarations Discovery
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">1ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0001</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0001-SC-005</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Turborepo Build Configuration
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">1ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0001</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0001-SC-006</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Monorepo Typecheck & Lint Validation
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0001</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0001-SC-007</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Production Build Output Artifacts
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0001</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0001-SC-008</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Electron Main Process Startup Artifact
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">7ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0001</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0001-SC-009</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Version Consistency Check Across Packages
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0001</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0001-SC-010</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Lockfile Resolution Consistency
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0002</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0002-SC-001</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">Logger - Debug Level Logging</td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0002</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0002-SC-002</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">Logger - Info Level Logging</td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">1ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0002</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0002-SC-003</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">Logger - Warn Level Logging</td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0002</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0002-SC-004</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">Logger - Error Level Logging</td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0002</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0002-SC-005</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            EventBus - Publish Operations
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0002</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0002-SC-006</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            EventBus - Subscribe & Unsubscribe Lifecycle
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0002</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0002-SC-007</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            EventBus - Async Publish & Multiple Subscribers
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0002</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0002-SC-008</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Error Handling - Safe Exception & EPIPE Catching
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0002</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0002-SC-009</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Error Handling - Stack Preservation & IPC Propagation
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0003</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0003-SC-001</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Startup - First Launch & Main Window Creation
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">1ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0003</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0003-SC-002</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Startup - Single Instance Lock & Window Restore
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">16ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0003</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0003-SC-003</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Security - Preload Context Isolation & Exposed APIs
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">1ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0003</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0003-SC-004</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Security - IPC Bridge Channel Whitelist Enforcement
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">1ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0003</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0003-SC-005</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Recovery - Renderer Crash & Window Restore Capabilities
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0004</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0004-SC-001</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Workspace Lifecycle - Open Folder Workflow
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">2006ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0004</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0004-SC-002</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Workspace Lifecycle - Close Workspace
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0004</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0004-SC-003</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Workspace Lifecycle - Reopen Workspace
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">2ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0004</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0004-SC-004</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Workspace Lifecycle - Recent Workspaces List Persistence
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0004</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0004-SC-005</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Session - Save & Restore Layout State
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0005</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0005-SC-001</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            File Tree - Node Rendering & Expansion
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">6ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0005</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0005-SC-002</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            File Tree - Node Collapse & Lazy Loading
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0005</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0005-SC-003</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            File Tree - Refresh Tree Action
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0005</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0005-SC-004</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            File Operations - New File & New Folder Creation
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0005</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0005-SC-005</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            File Operations - Inline File Rename & Delete
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0005</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0005-SC-006</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Edge Cases - Hidden Files & Large Folder Performance (500+ Files)
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0006</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0006-SC-001</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Monaco - Component Load & Canvas Rendering
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">2ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0006</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0006-SC-002</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Editor - Open File & Multi-Tab Navigation
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0006</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0006-SC-003</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Editor - Dirty State Badge (*) & Document Save (Cmd+S)
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0006</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0006-SC-004</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Editor - Save As & Auto Save Execution
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0006</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0006-SC-005</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Editor - Undo (Cmd+Z) & Redo (Cmd+Shift+Z) Buffers
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0006</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0006-SC-006</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Editor - Copy (Cmd+C) & Paste (Cmd+V) Buffer Operations
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0006</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0006-SC-007</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Editor - In-Editor Search (Cmd+F), Find, Replace & Replace All
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0006</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0006-SC-008</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Layout - Split Editor View, Close Tab, Reopen Tab (Cmd+Shift+T)
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0006</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0006-SC-009</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Monaco - Syntax Highlighting, Minimap, Word Wrap & Line Numbers
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0006</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0006-SC-010</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Persistence - Window Reload & Tab Session Restoration
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0007</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0007-SC-001</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            PTY - Open Interactive Terminal & Dynamic Prompt Match
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">2238ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0007</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0007-SC-002</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            PTY - Multiple Terminals, Resize & Close Operations
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0007</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0007-SC-003</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Commands - Execute, Exit Codes & Ctrl+C Interrupt
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0007</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0007-SC-004</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Environment - Working Directory (pwd) & PATH Inheritance
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0007</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0007-SC-005</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Output - ANSI Colors & Live Output Streaming
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0008</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0008-SC-001</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Repository - Detect Git Repo, Status & Active Branch Display
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">1531ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0008</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0008-SC-002</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Operations - Stage, Unstage, Commit & Branch Checkout
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0008</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0008-SC-003</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            History - Commit Log Display, Diff View & Merge Conflicts
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0009</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0009-SC-001</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Palette - Trigger Overlay (F1 / Cmd+Shift+P) & Dismiss (Escape)
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">1008ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0009</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0009-SC-002</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Palette - Search, Fuzzy Matching & Keyboard Navigation
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0009</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0009-SC-003</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Execution - Command Dispatch & Recent Commands List
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0010</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0010-SC-001</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Search - Text Search & View Trigger (Cmd+Shift+F)
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">1018ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0010</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0010-SC-002</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Search Options - Regex, Whole Word & Case Sensitive Toggles
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0010</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0010-SC-003</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Replace - Single File Replace & Replace All Operations
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0010</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0010-SC-004</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Scope & Perf - Include/Exclude Globs & Large Repo Search (<500ms)
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">1ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0011</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0011-SC-001</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            User Settings - Change, Save & Reload Persistence
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">7ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0011</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0011-SC-002</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            Workspace Settings - Override & Reset to Defaults
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">1ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0011</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0011-SC-003</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            UI - Search Settings & Theme Live Update (Light/Dark)
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+        <tr style="background-color: rgba(40, 167, 69, 0.1)">
+          <td style="padding: 10px; border-bottom: 1px solid #333"><strong>EPIC-0011</strong></td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">EPIC-0011-SC-004</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">
+            JSON - Open JSON Settings Editor & Validate JSON Format
+          </td>
+          <td
+            style="padding: 10px; border-bottom: 1px solid #333; color: #28a745; font-weight: bold"
+          >
+            PASSED
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">0ms</td>
+          <td style="padding: 10px; border-bottom: 1px solid #333">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

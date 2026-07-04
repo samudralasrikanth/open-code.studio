@@ -164,17 +164,24 @@ export const Workbench: React.FC<WorkbenchProps> = ({ workspaceName }) => {
         {/* Activity Bar */}
         <ActivityBar activeView={activeView} onViewChange={setActiveView} />
 
-        {/* Sidebar (only explorer supported currently) */}
-        {isSidebarVisible && activeView === "explorer" && (
-          <>
-            <Sidebar width={sidebarWidth} isResizing={isResizingSidebar} />
-            <Resizer
-              orientation="vertical"
-              onMouseDown={handleSidebarMouseDown}
-              isResizing={isResizingSidebar}
-            />
-          </>
-        )}
+        {/* Sidebar */}
+        {isSidebarVisible &&
+          (activeView === "explorer" ||
+            activeView === "source-control" ||
+            activeView === "search") && (
+            <>
+              <Sidebar
+                width={sidebarWidth}
+                isResizing={isResizingSidebar}
+                activeView={activeView}
+              />
+              <Resizer
+                orientation="vertical"
+                onMouseDown={handleSidebarMouseDown}
+                isResizing={isResizingSidebar}
+              />
+            </>
+          )}
 
         {/* Editor Area & Bottom panel */}
         <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>

@@ -60,7 +60,9 @@ export const IpcChannels = {
   EDITOR_STATE_CHANGED: "editor:state-changed",
 
   // Commands
-  COMMAND_EXECUTE: "command:execute",
+  COMMANDS_SEARCH: "commands:search",
+  COMMANDS_EXECUTE: "commands:execute",
+  COMMANDS_GET_HISTORY: "commands:get-history",
 
   // Terminal
   TERMINAL_CREATE: "terminal:create",
@@ -69,7 +71,29 @@ export const IpcChannels = {
   TERMINAL_INPUT: "terminal:input",
   TERMINAL_LIST: "terminal:list",
   TERMINAL_OUTPUT: "terminal:output",
-  TERMINAL_EXIT: "terminal:exit"
+  TERMINAL_EXIT: "terminal:exit",
+
+  // Git
+  GIT_STATUS: "git:status",
+  GIT_COMMIT: "git:commit",
+  GIT_PULL: "git:pull",
+  GIT_PUSH: "git:push",
+
+  // Search
+  SEARCH_START: "search:start",
+  SEARCH_CANCEL: "search:cancel",
+  SEARCH_REPLACE: "search:replace",
+  SEARCH_RESULT_FOUND: "search:result-found",
+  SEARCH_PROGRESS: "search:progress",
+  SEARCH_COMPLETED: "search:completed",
+  SEARCH_CANCELLED: "search:cancelled",
+
+  // Settings
+  SETTINGS_GET: "settings:get",
+  SETTINGS_GET_ALL: "settings:get-all",
+  SETTINGS_SET: "settings:set",
+  SETTINGS_RESET: "settings:reset",
+  SETTINGS_CHANGED: "settings:changed"
 } as const;
 
 export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels];
