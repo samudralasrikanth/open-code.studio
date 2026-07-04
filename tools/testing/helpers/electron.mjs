@@ -10,7 +10,7 @@ export async function launchElectronApp(
   const app = await electron.launch({
     args: [mainPath],
     cwd: projectRoot,
-    env: { ...process.env, NODE_ENV: "development" }
+    env: { ...process.env, NODE_ENV: "development", ELECTRON_RENDERER_URL: "http://localhost:5173" }
   });
 
   const window = await app.firstWindow();

@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuite name="Open-Code.Studio Epic Validation Suite" tests="64">
 
-    <testcase classname="EPIC-0001" name="EPIC-0001-SC-001: Fresh Clone Monorepo Directory Layout" time="0.179">
+    <testcase classname="EPIC-0001" name="EPIC-0001-SC-001: Fresh Clone Monorepo Directory Layout" time="0.238">
       
     </testcase>
     <testcase classname="EPIC-0001" name="EPIC-0001-SC-002: Dependency Installation & Lockfile Integrity" time="0.001">
       
     </testcase>
-    <testcase classname="EPIC-0001" name="EPIC-0001-SC-003: Workspace Detection (pnpm-workspace.yaml)" time="0.001">
+    <testcase classname="EPIC-0001" name="EPIC-0001-SC-003: Workspace Detection (pnpm-workspace.yaml)" time="0.000">
       
     </testcase>
     <testcase classname="EPIC-0001" name="EPIC-0001-SC-004: Package Declarations Discovery" time="0.000">
       
     </testcase>
-    <testcase classname="EPIC-0001" name="EPIC-0001-SC-005: Turborepo Build Configuration" time="0.000">
+    <testcase classname="EPIC-0001" name="EPIC-0001-SC-005: Turborepo Build Configuration" time="0.001">
       
     </testcase>
     <testcase classname="EPIC-0001" name="EPIC-0001-SC-006: Monorepo Typecheck & Lint Validation" time="0.000">
       
     </testcase>
-    <testcase classname="EPIC-0001" name="EPIC-0001-SC-007: Production Build Output Artifacts" time="0.131">
+    <testcase classname="EPIC-0001" name="EPIC-0001-SC-007: Production Build Output Artifacts" time="0.194">
       
     </testcase>
-    <testcase classname="EPIC-0001" name="EPIC-0001-SC-008: Electron Main Process Startup Artifact" time="0.131">
+    <testcase classname="EPIC-0001" name="EPIC-0001-SC-008: Electron Main Process Startup Artifact" time="0.199">
       
     </testcase>
     <testcase classname="EPIC-0001" name="EPIC-0001-SC-009: Version Consistency Check Across Packages" time="0.000">
@@ -34,7 +34,7 @@
     <testcase classname="EPIC-0002" name="EPIC-0002-SC-001: Logger - Debug Level Logging" time="0.000">
       
     </testcase>
-    <testcase classname="EPIC-0002" name="EPIC-0002-SC-002: Logger - Info Level Logging" time="0.000">
+    <testcase classname="EPIC-0002" name="EPIC-0002-SC-002: Logger - Info Level Logging" time="0.001">
       
     </testcase>
     <testcase classname="EPIC-0002" name="EPIC-0002-SC-003: Logger - Warn Level Logging" time="0.000">
@@ -55,16 +55,16 @@
     <testcase classname="EPIC-0002" name="EPIC-0002-SC-008: Error Handling - Safe Exception & EPIPE Catching" time="0.000">
       
     </testcase>
-    <testcase classname="EPIC-0002" name="EPIC-0002-SC-009: Error Handling - Stack Preservation & IPC Propagation" time="0.001">
+    <testcase classname="EPIC-0002" name="EPIC-0002-SC-009: Error Handling - Stack Preservation & IPC Propagation" time="0.000">
       
     </testcase>
-    <testcase classname="EPIC-0003" name="EPIC-0003-SC-001: Startup - First Launch & Main Window Creation" time="0.132">
+    <testcase classname="EPIC-0003" name="EPIC-0003-SC-001: Startup - First Launch & Main Window Creation" time="0.198">
       
     </testcase>
-    <testcase classname="EPIC-0003" name="EPIC-0003-SC-002: Startup - Single Instance Lock & Window Restore" time="0.002">
+    <testcase classname="EPIC-0003" name="EPIC-0003-SC-002: Startup - Single Instance Lock & Window Restore" time="0.003">
       
     </testcase>
-    <testcase classname="EPIC-0003" name="EPIC-0003-SC-003: Security - Preload Context Isolation & Exposed APIs" time="0.002">
+    <testcase classname="EPIC-0003" name="EPIC-0003-SC-003: Security - Preload Context Isolation & Exposed APIs" time="0.001">
       
     </testcase>
     <testcase classname="EPIC-0003" name="EPIC-0003-SC-004: Security - IPC Bridge Channel Whitelist Enforcement" time="0.000">
@@ -73,124 +73,124 @@
     <testcase classname="EPIC-0003" name="EPIC-0003-SC-005: Recovery - Renderer Crash & Window Restore Capabilities" time="0.000">
       
     </testcase>
-    <testcase classname="EPIC-0004" name="EPIC-0004-SC-001: Workspace Lifecycle - Open Folder Workflow" time="0.130">
+    <testcase classname="EPIC-0004" name="EPIC-0004-SC-001: Workspace Lifecycle - Open Folder Workflow" time="0.196">
       
     </testcase>
-    <testcase classname="EPIC-0004" name="EPIC-0004-SC-002: Workspace Lifecycle - Close Workspace" time="0.136">
+    <testcase classname="EPIC-0004" name="EPIC-0004-SC-002: Workspace Lifecycle - Close Workspace" time="0.197">
       
     </testcase>
-    <testcase classname="EPIC-0004" name="EPIC-0004-SC-003: Workspace Lifecycle - Reopen Workspace" time="0.164">
+    <testcase classname="EPIC-0004" name="EPIC-0004-SC-003: Workspace Lifecycle - Reopen Workspace" time="0.202">
       
     </testcase>
-    <testcase classname="EPIC-0004" name="EPIC-0004-SC-004: Workspace Lifecycle - Recent Workspaces List Persistence" time="0.149">
+    <testcase classname="EPIC-0004" name="EPIC-0004-SC-004: Workspace Lifecycle - Recent Workspaces List Persistence" time="0.202">
       
     </testcase>
-    <testcase classname="EPIC-0004" name="EPIC-0004-SC-005: Session - Save & Restore Layout State" time="0.133">
+    <testcase classname="EPIC-0004" name="EPIC-0004-SC-005: Session - Save & Restore Layout State" time="0.197">
       
     </testcase>
-    <testcase classname="EPIC-0005" name="EPIC-0005-SC-001: File Tree - Node Rendering & Expansion" time="0.134">
+    <testcase classname="EPIC-0005" name="EPIC-0005-SC-001: File Tree - Node Rendering & Expansion" time="0.200">
       
     </testcase>
-    <testcase classname="EPIC-0005" name="EPIC-0005-SC-002: File Tree - Node Collapse & Lazy Loading" time="0.134">
+    <testcase classname="EPIC-0005" name="EPIC-0005-SC-002: File Tree - Node Collapse & Lazy Loading" time="0.211">
       
     </testcase>
-    <testcase classname="EPIC-0005" name="EPIC-0005-SC-003: File Tree - Refresh Tree Action" time="0.133">
+    <testcase classname="EPIC-0005" name="EPIC-0005-SC-003: File Tree - Refresh Tree Action" time="0.205">
       
     </testcase>
-    <testcase classname="EPIC-0005" name="EPIC-0005-SC-004: File Operations - New File & New Folder Creation" time="0.133">
+    <testcase classname="EPIC-0005" name="EPIC-0005-SC-004: File Operations - New File & New Folder Creation" time="0.199">
       
     </testcase>
-    <testcase classname="EPIC-0005" name="EPIC-0005-SC-005: File Operations - Inline File Rename & Delete" time="0.133">
+    <testcase classname="EPIC-0005" name="EPIC-0005-SC-005: File Operations - Inline File Rename & Delete" time="0.203">
       
     </testcase>
-    <testcase classname="EPIC-0005" name="EPIC-0005-SC-006: Edge Cases - Hidden Files & Large Folder Performance (500+ Files)" time="0.133">
+    <testcase classname="EPIC-0005" name="EPIC-0005-SC-006: Edge Cases - Hidden Files & Large Folder Performance (500+ Files)" time="0.197">
       
     </testcase>
-    <testcase classname="EPIC-0006" name="EPIC-0006-SC-001: Monaco - Component Load & Canvas Rendering" time="0.134">
+    <testcase classname="EPIC-0006" name="EPIC-0006-SC-001: Monaco - Component Load & Canvas Rendering" time="0.209">
       
     </testcase>
-    <testcase classname="EPIC-0006" name="EPIC-0006-SC-002: Editor - Open File & Multi-Tab Navigation" time="0.132">
+    <testcase classname="EPIC-0006" name="EPIC-0006-SC-002: Editor - Open File & Multi-Tab Navigation" time="0.192">
       
     </testcase>
-    <testcase classname="EPIC-0006" name="EPIC-0006-SC-003: Editor - Dirty State Badge (*) & Document Save (Cmd+S)" time="0.133">
+    <testcase classname="EPIC-0006" name="EPIC-0006-SC-003: Editor - Dirty State Badge (*) & Document Save (Cmd+S)" time="0.200">
       
     </testcase>
-    <testcase classname="EPIC-0006" name="EPIC-0006-SC-004: Editor - Save As & Auto Save Execution" time="0.134">
+    <testcase classname="EPIC-0006" name="EPIC-0006-SC-004: Editor - Save As & Auto Save Execution" time="0.201">
       
     </testcase>
-    <testcase classname="EPIC-0006" name="EPIC-0006-SC-005: Editor - Undo (Cmd+Z) & Redo (Cmd+Shift+Z) Buffers" time="0.133">
+    <testcase classname="EPIC-0006" name="EPIC-0006-SC-005: Editor - Undo (Cmd+Z) & Redo (Cmd+Shift+Z) Buffers" time="0.216">
       
     </testcase>
-    <testcase classname="EPIC-0006" name="EPIC-0006-SC-006: Editor - Copy (Cmd+C) & Paste (Cmd+V) Buffer Operations" time="0.134">
+    <testcase classname="EPIC-0006" name="EPIC-0006-SC-006: Editor - Copy (Cmd+C) & Paste (Cmd+V) Buffer Operations" time="0.201">
       
     </testcase>
-    <testcase classname="EPIC-0006" name="EPIC-0006-SC-007: Editor - In-Editor Search (Cmd+F), Find, Replace & Replace All" time="0.132">
+    <testcase classname="EPIC-0006" name="EPIC-0006-SC-007: Editor - In-Editor Search (Cmd+F), Find, Replace & Replace All" time="0.204">
       
     </testcase>
-    <testcase classname="EPIC-0006" name="EPIC-0006-SC-008: Layout - Split Editor View, Close Tab, Reopen Tab (Cmd+Shift+T)" time="0.134">
+    <testcase classname="EPIC-0006" name="EPIC-0006-SC-008: Layout - Split Editor View, Close Tab, Reopen Tab (Cmd+Shift+T)" time="0.197">
       
     </testcase>
-    <testcase classname="EPIC-0006" name="EPIC-0006-SC-009: Monaco - Syntax Highlighting, Minimap, Word Wrap & Line Numbers" time="0.133">
+    <testcase classname="EPIC-0006" name="EPIC-0006-SC-009: Monaco - Syntax Highlighting, Minimap, Word Wrap & Line Numbers" time="0.200">
       
     </testcase>
-    <testcase classname="EPIC-0006" name="EPIC-0006-SC-010: Persistence - Window Reload & Tab Session Restoration" time="0.132">
+    <testcase classname="EPIC-0006" name="EPIC-0006-SC-010: Persistence - Window Reload & Tab Session Restoration" time="0.199">
       
     </testcase>
-    <testcase classname="EPIC-0007" name="EPIC-0007-SC-001: PTY - Open Interactive Terminal & Dynamic Prompt Match" time="2.200">
+    <testcase classname="EPIC-0007" name="EPIC-0007-SC-001: PTY - Open Interactive Terminal & Dynamic Prompt Match" time="2.419">
       
     </testcase>
-    <testcase classname="EPIC-0007" name="EPIC-0007-SC-002: PTY - Multiple Terminals, Resize & Close Operations" time="0.132">
+    <testcase classname="EPIC-0007" name="EPIC-0007-SC-002: PTY - Multiple Terminals, Resize & Close Operations" time="0.194">
       
     </testcase>
-    <testcase classname="EPIC-0007" name="EPIC-0007-SC-003: Commands - Execute, Exit Codes & Ctrl+C Interrupt" time="0.133">
+    <testcase classname="EPIC-0007" name="EPIC-0007-SC-003: Commands - Execute, Exit Codes & Ctrl+C Interrupt" time="0.204">
       
     </testcase>
-    <testcase classname="EPIC-0007" name="EPIC-0007-SC-004: Environment - Working Directory (pwd) & PATH Inheritance" time="0.134">
+    <testcase classname="EPIC-0007" name="EPIC-0007-SC-004: Environment - Working Directory (pwd) & PATH Inheritance" time="0.198">
       
     </testcase>
-    <testcase classname="EPIC-0007" name="EPIC-0007-SC-005: Output - ANSI Colors & Live Output Streaming" time="0.133">
+    <testcase classname="EPIC-0007" name="EPIC-0007-SC-005: Output - ANSI Colors & Live Output Streaming" time="0.199">
       
     </testcase>
-    <testcase classname="EPIC-0008" name="EPIC-0008-SC-001: Repository - Detect Git Repo, Status & Active Branch Display" time="0.132">
+    <testcase classname="EPIC-0008" name="EPIC-0008-SC-001: Repository - Detect Git Repo, Status & Active Branch Display" time="0.330">
       
     </testcase>
-    <testcase classname="EPIC-0008" name="EPIC-0008-SC-002: Operations - Stage, Unstage, Commit & Branch Checkout" time="0.134">
+    <testcase classname="EPIC-0008" name="EPIC-0008-SC-002: Operations - Stage, Unstage, Commit & Branch Checkout" time="0.234">
       
     </testcase>
-    <testcase classname="EPIC-0008" name="EPIC-0008-SC-003: History - Commit Log Display, Diff View & Merge Conflicts" time="0.135">
+    <testcase classname="EPIC-0008" name="EPIC-0008-SC-003: History - Commit Log Display, Diff View & Merge Conflicts" time="0.232">
       
     </testcase>
-    <testcase classname="EPIC-0009" name="EPIC-0009-SC-001: Palette - Trigger Overlay (F1 / Cmd+Shift+P) & Dismiss (Escape)" time="1.153">
+    <testcase classname="EPIC-0009" name="EPIC-0009-SC-001: Palette - Trigger Overlay (F1 / Cmd+Shift+P) & Dismiss (Escape)" time="1.286">
       
     </testcase>
-    <testcase classname="EPIC-0009" name="EPIC-0009-SC-002: Palette - Search, Fuzzy Matching & Keyboard Navigation" time="0.162">
+    <testcase classname="EPIC-0009" name="EPIC-0009-SC-002: Palette - Search, Fuzzy Matching & Keyboard Navigation" time="0.227">
       
     </testcase>
-    <testcase classname="EPIC-0009" name="EPIC-0009-SC-003: Execution - Command Dispatch & Recent Commands List" time="0.133">
+    <testcase classname="EPIC-0009" name="EPIC-0009-SC-003: Execution - Command Dispatch & Recent Commands List" time="0.236">
       
     </testcase>
-    <testcase classname="EPIC-0010" name="EPIC-0010-SC-001: Search - Text Search & View Trigger (Cmd+Shift+F)" time="0.131">
+    <testcase classname="EPIC-0010" name="EPIC-0010-SC-001: Search - Text Search & View Trigger (Cmd+Shift+F)" time="0.248">
       
     </testcase>
-    <testcase classname="EPIC-0010" name="EPIC-0010-SC-002: Search Options - Regex, Whole Word & Case Sensitive Toggles" time="0.133">
+    <testcase classname="EPIC-0010" name="EPIC-0010-SC-002: Search Options - Regex, Whole Word & Case Sensitive Toggles" time="0.234">
       
     </testcase>
-    <testcase classname="EPIC-0010" name="EPIC-0010-SC-003: Replace - Single File Replace & Replace All Operations" time="0.135">
+    <testcase classname="EPIC-0010" name="EPIC-0010-SC-003: Replace - Single File Replace & Replace All Operations" time="0.217">
       
     </testcase>
-    <testcase classname="EPIC-0010" name="EPIC-0010-SC-004: Scope & Perf - Include/Exclude Globs & Large Repo Search (<500ms)" time="0.133">
+    <testcase classname="EPIC-0010" name="EPIC-0010-SC-004: Scope & Perf - Include/Exclude Globs & Large Repo Search (<500ms)" time="0.200">
       
     </testcase>
-    <testcase classname="EPIC-0011" name="EPIC-0011-SC-001: User Settings - Change, Save & Reload Persistence" time="0.133">
+    <testcase classname="EPIC-0011" name="EPIC-0011-SC-001: User Settings - Change, Save & Reload Persistence" time="0.232">
       
     </testcase>
-    <testcase classname="EPIC-0011" name="EPIC-0011-SC-002: Workspace Settings - Override & Reset to Defaults" time="0.134">
+    <testcase classname="EPIC-0011" name="EPIC-0011-SC-002: Workspace Settings - Override & Reset to Defaults" time="0.201">
       
     </testcase>
-    <testcase classname="EPIC-0011" name="EPIC-0011-SC-003: UI - Search Settings & Theme Live Update (Light/Dark)" time="0.133">
+    <testcase classname="EPIC-0011" name="EPIC-0011-SC-003: UI - Search Settings & Theme Live Update (Light/Dark)" time="0.234">
       
     </testcase>
-    <testcase classname="EPIC-0011" name="EPIC-0011-SC-004: JSON - Open JSON Settings Editor & Validate JSON Format" time="0.133">
+    <testcase classname="EPIC-0011" name="EPIC-0011-SC-004: JSON - Open JSON Settings Editor & Validate JSON Format" time="0.232">
       
     </testcase>
 </testsuite>
