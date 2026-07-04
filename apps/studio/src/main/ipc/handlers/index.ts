@@ -14,6 +14,7 @@ import { registerThemeHandlers } from "./theme/themeHandlers.js";
 import { registerNotificationHandlers } from "./notifications/notificationHandlers.js";
 import { registerKeybindingHandlers } from "./keybindings/keybindingHandlers.js";
 import { registerSessionHandlers } from "./session/sessionHandlers.js";
+import { registerExtensionsHandlers } from "./extensions/index.js";
 
 /**
  * Register all IPC handlers for the main process.
@@ -33,6 +34,7 @@ export function registerIpcHandlers(container: Container): void {
   registerNotificationHandlers(container);
   registerKeybindingHandlers(container);
   registerSessionHandlers(container);
+  registerExtensionsHandlers(container);
 }
 
 export { restoreLastWorkspace };

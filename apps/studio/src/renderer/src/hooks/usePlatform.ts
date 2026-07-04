@@ -30,10 +30,11 @@ export function usePlatform() {
   }, []);
 
   const getTheme = useCallback(async (): Promise<"dark" | "light" | "system"> => {
-    return (await window.ocs?.theme.get()) ?? "dark";
+    const result = await window.ocs?.theme.get();
+    return (result?.theme as any) ?? "dark";
   }, []);
 
-  const setTheme = useCallback(async (theme: "dark" | "light" | "system"): Promise<void> => {
+  const setTheme = useCallback(async (theme: string): Promise<void> => {
     await window.ocs?.theme.set(theme);
   }, []);
 

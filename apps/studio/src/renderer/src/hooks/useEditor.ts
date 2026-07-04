@@ -13,6 +13,7 @@ export interface SerializedEditorGroup {
   inputs: string[];
   activeInput?: string;
   previewInput?: string;
+  dirtyInputs?: string[];
 }
 
 export interface SerializedEditorState {

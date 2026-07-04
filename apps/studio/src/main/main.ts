@@ -13,6 +13,7 @@ import {
   bootstrapSearch,
   bootstrapSettings,
   bootstrapThemeNotificationKeybindingSession,
+  bootstrapExtensions,
   wireExplorerProvider,
   StartupCoordinator
 } from "./bootstrap/index.js";
@@ -23,6 +24,8 @@ process.on("uncaughtException", (err: any) => {
   if (err?.code === "EPIPE" || err?.message?.includes("EPIPE")) return;
   console.error("Uncaught exception in main process:", err);
 });
+
+app.setName("Open-Code.Studio");
 
 const container = createContainer();
 const lifecycle = createLifecycleManager();
@@ -123,6 +126,14 @@ coordinator.register({
 });
 
 coordinator.register({
+  name: "extensions",
+  dependsOn: ["workspace"],
+  execute: () => {
+    bootstrapExtensions(container, logger);
+  }
+});
+
+coordinator.register({
   name: "ipc",
   dependsOn: [
     "explorer",
@@ -131,6 +142,7 @@ coordinator.register({
     "commands",
     "search",
     "settings",
+    "extensions",
     "theme-notification-keybinding-session"
   ],
   execute: () => {

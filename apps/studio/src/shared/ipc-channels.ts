@@ -30,6 +30,7 @@ export const IpcChannels = {
   WORKSPACE_GET_LAST_OPENED: "workspace:get-last-opened",
   WORKSPACE_REMOVE_RECENT: "workspace:remove-recent",
   WORKSPACE_UPDATE_SETTINGS: "workspace:update-settings",
+  WORKSPACE_GET_ALL_FILES: "workspace:get-all-files",
 
   // Explorer
   EXPLORER_GET_VISIBLE_NODES: "explorer:get-visible-nodes",
@@ -78,6 +79,7 @@ export const IpcChannels = {
   GIT_COMMIT: "git:commit",
   GIT_PULL: "git:pull",
   GIT_PUSH: "git:push",
+  GIT_HISTORY: "git:history",
 
   // Search
   SEARCH_START: "search:start",
@@ -111,7 +113,13 @@ export const IpcChannels = {
   // Session Restore
   SESSION_LOAD: "session:load",
   SESSION_SAVE: "session:save",
-  SESSION_CHANGED: "session:changed"
+  SESSION_CHANGED: "session:changed",
+
+  // Extensions
+  EXTENSIONS_SEARCH: "extensions:search",
+  EXTENSIONS_INSTALL: "extensions:install",
+  EXTENSIONS_GET_DETAILS: "extensions:getDetails",
+  EXTENSIONS_IS_INSTALLED: "extensions:isInstalled"
 } as const;
 
 export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels];

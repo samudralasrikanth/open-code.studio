@@ -79,18 +79,20 @@ export function bootstrapCommands(container: Container): void {
     }
   });
 
-  registry.register({
-    id: "document.save",
-    title: "Document: Save Current Document",
-    category: "File",
-    handler: async (args?: { uri?: string }) => {
-      if (args?.uri) {
-        const documentService = container.resolve<any>(Symbol.for("document"));
-        const { uriFromString } = await import("@ocs/workspace");
-        await documentService.saveDocument(uriFromString(args.uri));
+  if (!registry.get("document.save")) {
+    registry.register({
+      id: "document.save",
+      title: "Document: Save Current Document",
+      category: "File",
+      handler: async (args?: { uri?: string }) => {
+        if (args?.uri) {
+          const documentService = container.resolve<any>(Symbol.for("document"));
+          const { uriFromString } = await import("@ocs/workspace");
+          await documentService.saveDocument(uriFromString(args.uri));
+        }
       }
-    }
-  });
+    });
+  }
 
   registry.register({
     id: "settings:get-all",

@@ -1,0 +1,34 @@
+export interface CacheConfig {
+  ttlMs: number;
+}
+
+interface CacheEntry<T> {
+  data: T;
+  timestamp: number;
+}
+
+export class MemoryCache<T> {
+  private cache = new Map<string, CacheEntry<T>>();
+
+  constructor(private config: CacheConfig) {}
+
+  get(key: string): T | null {
+    const entry = this.cache.get(key);
+    if (!entry) return null;
+
+    if (Date.now() - entry.timestamp > this.config.ttlMs) {
+      this.cache.delete(key);
+      return null;
+    }
+
+    return entry.data;
+  }
+
+  set(key: string, data: T): void {
+    this.cache.set(key, { data, timestamp: Date.now() });
+  }
+
+  clear(): void {
+    this.cache.clear();
+  }
+}

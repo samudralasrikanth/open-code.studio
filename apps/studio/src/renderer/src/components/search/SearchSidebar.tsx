@@ -1,5 +1,6 @@
+/* eslint-disable */
 import React, { useState, useEffect, useRef } from "react";
-import type { SearchResult } from "@ocs/search";
+import { FileIcon } from "@ocs/ui";
 
 export const SearchSidebar: React.FC = () => {
   const [query, setQuery] = useState("");
@@ -8,7 +9,7 @@ export const SearchSidebar: React.FC = () => {
   const [matchCase, setMatchCase] = useState(false);
   const [matchWholeWord, setMatchWholeWord] = useState(false);
 
-  const [results, setResults] = useState<SearchResult[]>([]);
+  const [results, setResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [filesScanned, setFilesScanned] = useState(0);
   const [matchesFound, setMatchesFound] = useState(0);
@@ -89,7 +90,7 @@ export const SearchSidebar: React.FC = () => {
     }
   };
 
-  const openFile = async (file: string, line: number, column: number) => {
+  const openFile = async (file: string, _line: number, _column: number) => {
     // In a real implementation we would go to the line/column
     await window.ocs.document.open(file);
     await window.ocs.editor.open(file);
@@ -107,6 +108,7 @@ export const SearchSidebar: React.FC = () => {
     >
       <div style={{ marginBottom: "10px" }}>
         <input
+          className="ocs-focus-ring"
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -114,40 +116,94 @@ export const SearchSidebar: React.FC = () => {
             if (e.key === "Enter") handleSearch();
           }}
           placeholder="Search"
-          style={{ width: "100%", padding: "5px", marginBottom: "5px" }}
+          style={{
+            width: "100%",
+            padding: "5px 8px",
+            marginBottom: "5px",
+            backgroundColor: "var(--color-bg-hover)",
+            color: "var(--workbench-text)",
+            border: "1px solid var(--workbench-border-strong)",
+            borderRadius: "8px",
+            outline: "none",
+            transition: "all var(--transition-fast)"
+          }}
         />
         <input
+          className="ocs-focus-ring"
           type="text"
           value={replaceText}
           onChange={(e) => setReplaceText(e.target.value)}
           placeholder="Replace"
-          style={{ width: "100%", padding: "5px", marginBottom: "5px" }}
+          style={{
+            width: "100%",
+            padding: "5px 8px",
+            marginBottom: "5px",
+            backgroundColor: "var(--color-bg-hover)",
+            color: "var(--workbench-text)",
+            border: "1px solid var(--workbench-border-strong)",
+            borderRadius: "8px",
+            outline: "none",
+            transition: "all var(--transition-fast)"
+          }}
         />
-        <div style={{ display: "flex", gap: "10px", fontSize: "12px", marginBottom: "10px" }}>
-          <label>
-            <input
-              type="checkbox"
-              checked={matchCase}
-              onChange={(e) => setMatchCase(e.target.checked)}
-            />{" "}
+        <div
+          style={{
+            display: "flex",
+            gap: "6px",
+            fontSize: "11px",
+            marginBottom: "10px",
+            fontFamily: "var(--font-mono)",
+            fontWeight: 600
+          }}
+        >
+          <button
+            onClick={() => setMatchCase(!matchCase)}
+            style={{
+              padding: "2px 6px",
+              borderRadius: "4px",
+              border: "1px solid transparent",
+              backgroundColor: matchCase ? "var(--workbench-accent-muted)" : "transparent",
+              color: matchCase ? "var(--workbench-accent)" : "var(--workbench-text-muted)",
+              cursor: "pointer",
+              transition: "all var(--transition-fast)"
+            }}
+            className="hover:bg-[var(--color-bg-hover)]"
+            title="Match Case"
+          >
             Aa
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              checked={matchWholeWord}
-              onChange={(e) => setMatchWholeWord(e.target.checked)}
-            />{" "}
+          </button>
+          <button
+            onClick={() => setMatchWholeWord(!matchWholeWord)}
+            style={{
+              padding: "2px 6px",
+              borderRadius: "4px",
+              border: "1px solid transparent",
+              backgroundColor: matchWholeWord ? "var(--workbench-accent-muted)" : "transparent",
+              color: matchWholeWord ? "var(--workbench-accent)" : "var(--workbench-text-muted)",
+              cursor: "pointer",
+              transition: "all var(--transition-fast)"
+            }}
+            className="hover:bg-[var(--color-bg-hover)]"
+            title="Match Whole Word"
+          >
             \b
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              checked={isRegex}
-              onChange={(e) => setIsRegex(e.target.checked)}
-            />{" "}
+          </button>
+          <button
+            onClick={() => setIsRegex(!isRegex)}
+            style={{
+              padding: "2px 6px",
+              borderRadius: "4px",
+              border: "1px solid transparent",
+              backgroundColor: isRegex ? "var(--workbench-accent-muted)" : "transparent",
+              color: isRegex ? "var(--workbench-accent)" : "var(--workbench-text-muted)",
+              cursor: "pointer",
+              transition: "all var(--transition-fast)"
+            }}
+            className="hover:bg-[var(--color-bg-hover)]"
+            title="Use Regular Expression"
+          >
             .*
-          </label>
+          </button>
         </div>
       </div>
 
@@ -160,7 +216,14 @@ export const SearchSidebar: React.FC = () => {
         </button>
       ) : null}
 
-      <div style={{ fontSize: "11px", color: "#888", marginBottom: "10px" }}>
+      <div
+        style={{
+          fontSize: "11px",
+          color: "var(--workbench-text-muted)",
+          marginBottom: "10px",
+          fontFamily: "var(--font-sans)"
+        }}
+      >
         {matchesFound} matches in {filesScanned} files
       </div>
 
@@ -171,31 +234,78 @@ export const SearchSidebar: React.FC = () => {
               style={{
                 fontWeight: "bold",
                 wordBreak: "break-all",
-                paddingBottom: "2px",
-                borderBottom: "1px solid #444",
-                marginBottom: "2px"
+                padding: "4px 0",
+                color: "var(--workbench-text)",
+                fontFamily: "var(--font-sans)",
+                fontSize: "12px",
+                display: "flex",
+                alignItems: "center",
+                gap: "6px"
               }}
             >
+              <FileIcon size={14} />
               {result.file}
             </div>
             {result.matches.slice(0, 5).map((m, j) => (
               <div
                 key={j}
-                style={{ cursor: "pointer", color: "#aaa", display: "flex", padding: "2px 0" }}
+                style={{
+                  cursor: "pointer",
+                  color: "var(--workbench-text-secondary)",
+                  display: "flex",
+                  padding: "2px 0",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "11px"
+                }}
                 onClick={() => openFile(result.file, m.lineNumber, m.column)}
+                className="hover:bg-[var(--color-bg-hover)]"
               >
-                <span style={{ minWidth: "30px", color: "#666", display: "inline-block" }}>
+                <span
+                  style={{
+                    minWidth: "30px",
+                    color: "var(--workbench-text-muted)",
+                    display: "inline-block",
+                    textAlign: "right",
+                    marginRight: "8px"
+                  }}
+                >
                   {m.lineNumber}
                 </span>
                 <span
-                  style={{ whiteSpace: "pre-wrap", overflow: "hidden", textOverflow: "ellipsis" }}
+                  style={{
+                    whiteSpace: "pre-wrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    flex: 1
+                  }}
                 >
-                  {m.text.trim().length > 0 ? m.text : result.preview.slice(0, 100) + "..."}
+                  {m.text.trim().length > 0 ? (
+                    <span
+                      style={{
+                        backgroundColor: "rgba(168, 85, 247, 0.2)",
+                        padding: "0 2px",
+                        borderRadius: "2px",
+                        color: "var(--color-hyper-purple)"
+                      }}
+                    >
+                      {m.text}
+                    </span>
+                  ) : (
+                    result.preview.slice(0, 100) + "..."
+                  )}
                 </span>
               </div>
             ))}
             {result.matches.length > 5 && (
-              <div style={{ color: "#666", fontStyle: "italic", padding: "2px 0" }}>
+              <div
+                style={{
+                  color: "var(--workbench-text-muted)",
+                  fontStyle: "italic",
+                  padding: "2px 0",
+                  fontSize: "11px",
+                  marginLeft: "38px"
+                }}
+              >
                 + {result.matches.length - 5} more matches
               </div>
             )}

@@ -71,14 +71,17 @@ export function registerEditorHandlers(container: Container): void {
     groups: editorService.groups.map(
       (g: {
         id: string;
-        inputs: { id: string }[];
+        inputs: any[];
         activeInput?: { id: string };
         previewInput?: { id: string };
       }) => ({
         id: g.id,
         inputs: g.inputs.map((i) => i.id),
         activeInput: g.activeInput?.id,
-        previewInput: g.previewInput?.id
+        previewInput: g.previewInput?.id,
+        dirtyInputs: g.inputs
+          .filter((i) => typeof i.isDirty === "function" && i.isDirty())
+          .map((i) => i.id)
       })
     ),
     activeGroup: editorService.activeGroup?.id
@@ -91,14 +94,17 @@ export function registerEditorHandlers(container: Container): void {
         groups: editorService.groups.map(
           (g: {
             id: string;
-            inputs: { id: string }[];
+            inputs: any[];
             activeInput?: { id: string };
             previewInput?: { id: string };
           }) => ({
             id: g.id,
             inputs: g.inputs.map((i) => i.id),
             activeInput: g.activeInput?.id,
-            previewInput: g.previewInput?.id
+            previewInput: g.previewInput?.id,
+            dirtyInputs: g.inputs
+              .filter((i) => typeof i.isDirty === "function" && i.isDirty())
+              .map((i) => i.id)
           })
         ),
         activeGroup: editorService.activeGroup?.id
@@ -109,4 +115,5 @@ export function registerEditorHandlers(container: Container): void {
   editorService.eventBus.on("editor.opened", broadcastEditorState);
   editorService.eventBus.on("editor.closed", broadcastEditorState);
   editorService.eventBus.on(EditorEventTypes.EDITOR_ACTIVE_CHANGED, broadcastEditorState);
+  documentService.eventBus.on("document.changed", broadcastEditorState);
 }

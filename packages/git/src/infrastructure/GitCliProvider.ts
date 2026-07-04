@@ -120,4 +120,27 @@ export class GitCliProvider {
   public async add(paths: string[]): Promise<void> {
     await this.exec(["add", ...paths]);
   }
+
+  public async getHistory(
+    filePath?: string
+  ): Promise<import("../domain/GitModels.js").GitCommit[]> {
+    const args = ["log", "--pretty=format:%H|%s|%an|%ad", "--date=short"];
+    if (filePath) {
+      args.push("--", filePath);
+    }
+    try {
+      const output = await this.exec(args);
+      if (!output) return [];
+
+      return output
+        .split("\n")
+        .filter(Boolean)
+        .map((line) => {
+          const [id = "", message = "", author = "", date = ""] = line.split("|");
+          return { id, message, author, date };
+        });
+    } catch {
+      return [];
+    }
+  }
 }

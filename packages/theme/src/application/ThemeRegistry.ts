@@ -1,5 +1,6 @@
-import type { Theme } from "../domain/Theme.js";
 import { PlatformError } from "@ocs/common/errors";
+
+import type { Theme } from "../domain/Theme.js";
 
 const ONE_DARK_THEME: Theme = {
   id: "one-dark",
@@ -166,6 +167,69 @@ const HIGH_CONTRAST_THEME: Theme = {
   }
 };
 
+const AETHER_OS_THEME: Theme = {
+  id: "aether-os",
+  name: "AetherOS",
+  author: "OpenCodeStudio",
+  version: "1.0.0",
+  type: "dark",
+  colors: {
+    "background.primary": "#0B0F17",
+    "background.secondary": "#0f131c",
+    "background.tertiary": "#181c24",
+    "background.hover": "#262a33",
+    "background.active": "#31353e",
+    "text.primary": "#dfe2ee",
+    "text.secondary": "#c2c6d7",
+    "text.muted": "#94A3B8",
+    "border.default": "rgba(255, 255, 255, 0.08)",
+    "border.strong": "#424654",
+    "accent.primary": "#2E7BFF",
+    "accent.hover": "#1d66e5",
+    "accent.muted": "rgba(46, 123, 255, 0.15)",
+    "editor.background": "#0B0F17",
+    "sidebar.background": "#0f131c",
+    "activityBar.background": "#0a0e16",
+    "statusBar.background": "#1c2028"
+  },
+  monaco: {
+    base: "vs-dark",
+    inherit: true,
+    rules: [
+      { token: "", foreground: "dfe2ee" },
+      { token: "comment", foreground: "94A3B8", fontStyle: "italic" },
+      { token: "keyword", foreground: "A855F7" },
+      { token: "string", foreground: "4edea3" },
+      { token: "number", foreground: "2E7BFF" }
+    ],
+    colors: {
+      "editor.background": "#0B0F17",
+      "editor.foreground": "#dfe2ee"
+    }
+  },
+  terminal: {
+    background: "#0B0F17",
+    foreground: "#dfe2ee",
+    cursor: "#2E7BFF",
+    black: "#0a0e16",
+    red: "#ffb4ab",
+    green: "#4edea3",
+    yellow: "#c2c6d7",
+    blue: "#2E7BFF",
+    magenta: "#A855F7",
+    cyan: "#4edea3",
+    white: "#dfe2ee",
+    brightBlack: "#353942",
+    brightRed: "#ffb4ab",
+    brightGreen: "#4edea3",
+    brightYellow: "#c2c6d7",
+    brightBlue: "#2E7BFF",
+    brightMagenta: "#A855F7",
+    brightCyan: "#4edea3",
+    brightWhite: "#ffffff"
+  }
+};
+
 export class ThemeRegistry {
   private readonly themes = new Map<string, Theme>();
 
@@ -174,12 +238,13 @@ export class ThemeRegistry {
     this.register(ONE_DARK_THEME);
     this.register(LIGHT_MODERN_THEME);
     this.register(HIGH_CONTRAST_THEME);
+    this.register(AETHER_OS_THEME);
   }
 
   public register(theme: Theme): void {
     if (this.themes.has(theme.id)) {
       throw new PlatformError({
-        category: "system" as any,
+        category: "configuration",
         code: "OCS-THEME-DUPLICATE",
         message: `Theme with ID '${theme.id}' is already registered.`
       });

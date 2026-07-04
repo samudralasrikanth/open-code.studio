@@ -31,8 +31,8 @@ export async function run() {
       "Theme API successfully returned initial state"
     );
     harness.assert(
-      initialThemeData?.activeId === "one-dark",
-      `Default theme is one-dark (got ${initialThemeData?.activeId})`
+      initialThemeData?.activeId === "aether-os",
+      `Default theme is aether-os (got ${initialThemeData?.activeId})`
     );
 
     // Set Theme to Light Modern

@@ -1,0 +1,27 @@
+{
+  "name": "@ocs/extensions",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Extensions integration package for Open-Code.Studio",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "lint": "eslint src tests",
+    "test": "vitest run --passWithNoTests",
+    "test:coverage": "vitest run --coverage --passWithNoTests",
+    "typecheck": "tsc -b --pretty false"
+  },
+  "dependencies": {
+    "@ocs/common": "workspace:*",
+    "adm-zip": "^0.5.18"
+  },
+  "devDependencies": {
+    "@types/adm-zip": "^0.5.8",
+    "@types/node": "^20.14.9",
+    "eslint": "^9.5.0",
+    "typescript": "^5.5.2",
+    "vitest": "^2.1.8"
+  }
+}

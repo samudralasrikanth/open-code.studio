@@ -3,7 +3,7 @@ import { join } from "path";
 
 import { is } from "@electron-toolkit/utils";
 import type { Logger } from "@ocs/common";
-import { BrowserWindow, shell } from "electron";
+import { BrowserWindow, shell, app, nativeImage } from "electron";
 
 export interface WindowState {
   x?: number;
@@ -57,6 +57,19 @@ export function createWindowManager(logger: Logger): WindowManager {
       icon: join(__dirname, "../../resources/icon.png")
     });
 
+    // Set dock icon on macOS dynamically
+    if (process.platform === "darwin") {
+      try {
+        const iconPath = join(__dirname, "../../resources/icon.png");
+        const image = nativeImage.createFromPath(iconPath);
+        if (!image.isEmpty()) {
+          app.dock.setIcon(image);
+        }
+      } catch (err) {
+        logger.error("Failed to set dock icon", { error: String(err) });
+      }
+    }
+
     // Show window gracefully once renderer content is loaded
     win.on("ready-to-show", () => {
       win.show();
@@ -96,8 +109,9 @@ export function createWindowManager(logger: Logger): WindowManager {
     });
 
     // Load the renderer
-    if (is.dev && process.env["ELECTRON_RENDERER_URL"]) {
-      win.loadURL(process.env["ELECTRON_RENDERER_URL"]);
+    if (is.dev) {
+      const url = process.env["ELECTRON_RENDERER_URL"] || "http://localhost:5173";
+      win.loadURL(url);
     } else {
       win.loadFile(join(__dirname, "../renderer/index.html"));
     }

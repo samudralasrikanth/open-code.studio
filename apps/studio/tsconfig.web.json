@@ -10,10 +10,19 @@
     "../../packages/document/**/*",
     "../../packages/editor/**/*",
     "../../packages/editor-monaco/**/*",
-    "../../packages/ui/**/*"
+    "../../packages/ui/**/*",
+    "../../packages/theme/**/*",
+    "../../packages/git/**/*",
+    "../../packages/search/**/*",
+    "../../packages/settings/**/*",
+    "../../packages/commands/**/*",
+    "../../packages/notifications/**/*",
+    "../../packages/session/**/*",
+    "../../packages/keybindings/**/*",
+    "../../packages/terminal/**/*",
+    "../../packages/extensions/**/*"
   ],
   "compilerOptions": {
-    "ignoreDeprecations": "6.0",
     "composite": true,
     "outDir": "dist/renderer",
     "baseUrl": ".",
@@ -33,7 +42,17 @@
       "@ocs/editor-monaco": ["../../packages/editor-monaco/src/index.ts"],
       "@ocs/editor-monaco/*": ["../../packages/editor-monaco/src/*/index.ts"],
       "@ocs/ui": ["../../packages/ui/src/index.ts"],
-      "@ocs/ui/*": ["../../packages/ui/src/*/index.ts"]
+      "@ocs/ui/*": ["../../packages/ui/src/*/index.ts"],
+      "@ocs/theme": ["../../packages/theme/src/index.ts"],
+      "@ocs/git": ["../../packages/git/src/index.ts"],
+      "@ocs/search": ["../../packages/search/src/index.ts"],
+      "@ocs/settings": ["../../packages/settings/src/index.ts"],
+      "@ocs/commands": ["../../packages/commands/src/index.ts"],
+      "@ocs/notifications": ["../../packages/notifications/src/index.ts"],
+      "@ocs/session": ["../../packages/session/src/index.ts"],
+      "@ocs/keybindings": ["../../packages/keybindings/src/index.ts"],
+      "@ocs/terminal": ["../../packages/terminal/src/index.ts"],
+      "@ocs/extensions": ["../../packages/extensions/src/index.ts"]
     }
   },
   "exclude": ["../../packages/**/tests/**/*"]

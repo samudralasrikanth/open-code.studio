@@ -1,17 +1,18 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 
-import { useWorkspace } from "../../hooks/useWorkspace.js";
 import { useKeybindings } from "../../hooks/useKeybindings.js";
-import { EditorArea } from "../editor/EditorArea.js";
+import { useWorkspace } from "../../hooks/useWorkspace.js";
+import { PanelRegistryProvider } from "../../workbench/PanelRegistry.js";
+import { registerBuiltinPanels } from "../../workbench/panels/index.js";
+import { useWorkbenchCommands } from "../../workbench/useWorkbenchCommands.js";
+import { useWorkbenchLayout } from "../../workbench/useWorkbenchLayout.js";
+import { WorkbenchRegion } from "../../workbench/WorkbenchRegion.js";
 import { CommandPalette } from "../commands/CommandPalette.js";
-import {
-  registerRendererCommand,
-  unregisterRendererCommand
-} from "../../commands/RendererCommandRegistry.js";
+import { QuickOpen } from "../commands/QuickOpen.js";
+import { EditorArea } from "../editor/EditorArea.js";
+
 import { ActivityBar } from "./ActivityBar.js";
-import { BottomPanel } from "./BottomPanel.js";
 import { Resizer } from "./Resizer.js";
-import { Sidebar } from "./Sidebar.js";
 import { StatusBar } from "./StatusBar.js";
 import { TitleBar } from "./TitleBar.js";
 
@@ -19,233 +20,153 @@ interface WorkbenchProps {
   workspaceName?: string;
 }
 
-export const Workbench: React.FC<WorkbenchProps> = ({ workspaceName }) => {
-  const { workspace, updateSettings, openFolderDialog, open } = useWorkspace();
+const WorkbenchShell: React.FC<WorkbenchProps> = ({ workspaceName }) => {
+  const { openFolderDialog } = useWorkspace();
+  const layoutManager = useWorkbenchLayout();
+  const { layout, resizingRegion, setResizingRegion } = layoutManager;
   useKeybindings();
 
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
-  const [activeBottomTab, setActiveBottomTab] = useState<
-    "problems" | "output" | "terminal" | "diagnostics"
-  >("terminal");
+  const [isQuickOpenOpen, setIsQuickOpenOpen] = useState(false);
 
-  // Read width from settings or default to 280
-  const settingsSidebarWidth = workspace?.configuration?.settings?.["sidebarWidth"] as
-    number | undefined;
-  const [sidebarWidth, setSidebarWidth] = useState(280);
-  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
-  const [bottomPanelHeight, setBottomPanelHeight] = useState(220);
-
-  const [isResizingSidebar, setIsResizingSidebar] = useState(false);
-  const [isResizingBottom, setIsResizingBottom] = useState(false);
-  const [activeView, setActiveView] = useState("explorer");
-
-  // Keep a ref to sidebarWidth for the drag-end closure
-  const sidebarWidthRef = useRef(sidebarWidth);
-  useEffect(() => {
-    sidebarWidthRef.current = sidebarWidth;
-  }, [sidebarWidth]);
-
-  // Sync saved width when workspace loads
-  useEffect(() => {
-    if (settingsSidebarWidth) {
-      setSidebarWidth(settingsSidebarWidth);
-    }
-  }, [settingsSidebarWidth]);
-
-  // Sidebar drag resize
-  const handleSidebarMouseDown = useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault();
-      setIsResizingSidebar(true);
-      const startX = e.clientX;
-      const startWidth = sidebarWidthRef.current;
-
-      const doDrag = (moveEvent: MouseEvent) => {
-        const deltaX = moveEvent.clientX - startX;
-        const newWidth = Math.max(180, Math.min(600, startWidth + deltaX));
-        setSidebarWidth(newWidth);
-      };
-
-      const stopDrag = () => {
-        setIsResizingSidebar(false);
-        document.removeEventListener("mousemove", doDrag);
-        document.removeEventListener("mouseup", stopDrag);
-        // Persist on drag end
-        void updateSettings({ sidebarWidth: sidebarWidthRef.current });
-      };
-
-      document.addEventListener("mousemove", doDrag);
-      document.addEventListener("mouseup", stopDrag);
+  useWorkbenchCommands({
+    layoutManager,
+    openFolderDialog: async () => {
+      await openFolderDialog();
     },
-    [updateSettings]
-  );
+    setIsCommandPaletteOpen,
+    setIsQuickOpenOpen
+  });
 
-  // Bottom panel drag resize
-  const handleBottomMouseDown = useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault();
-      setIsResizingBottom(true);
-      const startY = e.clientY;
-      const startHeight = bottomPanelHeight;
-
-      const doDrag = (moveEvent: MouseEvent) => {
-        const deltaY = moveEvent.clientY - startY;
-        const newHeight = Math.max(100, Math.min(600, startHeight - deltaY));
-        setBottomPanelHeight(newHeight);
-      };
-
-      const stopDrag = () => {
-        setIsResizingBottom(false);
-        document.removeEventListener("mousemove", doDrag);
-        document.removeEventListener("mouseup", stopDrag);
-      };
-
-      document.addEventListener("mousemove", doDrag);
-      document.addEventListener("mouseup", stopDrag);
-    },
-    [bottomPanelHeight]
-  );
-
+  // Persist layout to settings when it changes, debounce to avoid thrashing
   useEffect(() => {
-    const localCommands = [
-      {
-        id: "workbench.action.showCommands",
-        title: "Show All Commands",
-        category: "Workbench",
-        execute: async () => {
-          setIsCommandPaletteOpen(true);
-        }
-      },
-      {
-        id: "workbench.action.toggleSidebar",
-        title: "View: Toggle Sidebar",
-        category: "Workbench",
-        execute: async () => {
-          setIsSidebarVisible((prev) => !prev);
-        }
-      },
-      {
-        id: "workbench.action.openFolder",
-        title: "File: Open Folder...",
-        category: "File",
-        execute: async () => {
-          const { canceled, folderPath } = await openFolderDialog();
-          if (!canceled && folderPath) {
-            await open(folderPath);
-          }
-        }
-      },
-      {
-        id: "workbench.action.showExplorer",
-        title: "View: Show Explorer",
-        category: "View",
-        execute: async () => {
-          setIsSidebarVisible(true);
-          setActiveView("explorer");
-        }
-      },
-      {
-        id: "workbench.action.showSearch",
-        title: "View: Show Search",
-        category: "View",
-        execute: async () => {
-          setIsSidebarVisible(true);
-          setActiveView("search");
-        }
-      },
-      {
-        id: "workbench.action.openSettings",
-        title: "Preferences: Open Settings",
-        category: "Workbench",
-        execute: async () => {
-          setIsSidebarVisible(true);
-          setActiveView("settings");
-        }
-      },
-      {
-        id: "workbench.action.toggleTerminal",
-        title: "View: Toggle Terminal",
-        category: "View",
-        execute: async () => {
-          setActiveBottomTab("terminal");
-        }
-      }
-    ];
-
-    localCommands.forEach(registerRendererCommand);
-    return () => {
-      localCommands.forEach((command) => unregisterRendererCommand(command.id));
-    };
-  }, [open, openFolderDialog]);
+    const timer = setTimeout(() => {
+      void layoutManager.saveLayout();
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [layoutManager.layout]);
 
   return (
     <div
+      className="workbench-wrapper"
       style={{
         display: "flex",
         flexDirection: "column",
-        height: "100vh",
-        width: "100vw",
-        backgroundColor: "#1e1e1e",
-        color: "#ccc",
-        overflow: "hidden",
-        fontFamily: "system-ui, -apple-system, sans-serif"
+        height: "100%",
+        width: "100%",
+        backgroundColor: "var(--workbench-background)",
+        color: "var(--workbench-text)",
+        overflow: "hidden"
       }}
     >
-      <TitleBar workspaceName={workspaceName} />
+      <TitleBar title={workspaceName || "Open-Code.Studio"} />
 
-      <div style={{ display: "flex", flex: 1, minHeight: 0 }}>
-        {/* Activity Bar */}
-        <ActivityBar activeView={activeView} onViewChange={setActiveView} />
+      <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+        {layout.activityBar.visible && layout.activityBar.position === "left" && (
+          <ActivityBar
+            activePanelId={layout.primarySidebar.activePanelId}
+            onPanelSelect={(id) => layoutManager.setActivePanel("primarySidebar", id)}
+          />
+        )}
 
-        {/* Sidebar */}
-        {isSidebarVisible &&
-          (activeView === "explorer" ||
-            activeView === "source-control" ||
-            activeView === "search") && (
-            <>
-              <Sidebar
-                width={sidebarWidth}
-                isResizing={isResizingSidebar}
-                activeView={activeView}
-              />
-              <Resizer
-                orientation="vertical"
-                onMouseDown={handleSidebarMouseDown}
-                isResizing={isResizingSidebar}
-              />
-            </>
+        {layout.primarySidebar.visible && (
+          <WorkbenchRegion
+            region={layout.primarySidebar}
+            position="primary-sidebar"
+            orientation="vertical"
+            onActivePanelChange={(id) => layoutManager.setActivePanel("primarySidebar", id)}
+            isResizing={resizingRegion === "primarySidebar"}
+            hideTabs={true}
+          />
+        )}
+
+        {layout.primarySidebar.visible && (
+          <Resizer
+            orientation="vertical"
+            onResizeStart={() => setResizingRegion("primarySidebar")}
+            onResize={(delta) =>
+              layoutManager.setRegionSize(
+                "primarySidebar",
+                (layout.primarySidebar.width || 280) + delta
+              )
+            }
+            onResizeEnd={() => setResizingRegion(null)}
+          />
+        )}
+
+        <div
+          style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, minHeight: 0 }}
+        >
+          <EditorArea />
+
+          {layout.bottomPanel.visible && (
+            <Resizer
+              orientation="horizontal"
+              onResizeStart={() => setResizingRegion("bottomPanel")}
+              onResize={(delta) =>
+                layoutManager.setRegionSize(
+                  "bottomPanel",
+                  (layout.bottomPanel.height || 220) - delta
+                )
+              }
+              onResizeEnd={() => setResizingRegion(null)}
+            />
           )}
 
-        {/* Editor Area & Bottom panel */}
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
-          {/* Main Area */}
-          <div style={{ flex: 1, display: "flex", minHeight: 0 }}>
-            <EditorArea />
-          </div>
-
-          {/* Bottom Resizer */}
-          <Resizer
-            orientation="horizontal"
-            onMouseDown={handleBottomMouseDown}
-            isResizing={isResizingBottom}
-          />
-
-          {/* Bottom panel */}
-          <BottomPanel
-            height={bottomPanelHeight}
-            isResizing={isResizingBottom}
-            activeTab={activeBottomTab}
-            onTabChange={setActiveBottomTab}
-          />
+          {layout.bottomPanel.visible && (
+            <WorkbenchRegion
+              region={layout.bottomPanel}
+              position="bottom"
+              orientation="horizontal"
+              onActivePanelChange={(id) => layoutManager.setActivePanel("bottomPanel", id)}
+              isResizing={resizingRegion === "bottomPanel"}
+            />
+          )}
         </div>
+
+        {layout.secondarySidebar.visible && (
+          <Resizer
+            orientation="vertical"
+            onResizeStart={() => setResizingRegion("secondarySidebar")}
+            onResize={(delta) =>
+              layoutManager.setRegionSize(
+                "secondarySidebar",
+                (layout.secondarySidebar.width || 360) - delta
+              )
+            }
+            onResizeEnd={() => setResizingRegion(null)}
+          />
+        )}
+
+        {layout.secondarySidebar.visible && (
+          <WorkbenchRegion
+            region={layout.secondarySidebar}
+            position="secondary-sidebar"
+            orientation="vertical"
+            onActivePanelChange={(id) => layoutManager.setActivePanel("secondarySidebar", id)}
+            isResizing={resizingRegion === "secondarySidebar"}
+          />
+        )}
       </div>
 
-      <StatusBar workspaceName={workspaceName} />
-
-      <CommandPalette
-        isOpen={isCommandPaletteOpen}
-        onClose={() => setIsCommandPaletteOpen(false)}
-      />
+      <StatusBar />
+      {isCommandPaletteOpen && (
+        <CommandPalette
+          isOpen={isCommandPaletteOpen}
+          onClose={() => setIsCommandPaletteOpen(false)}
+        />
+      )}
+      {isQuickOpenOpen && (
+        <QuickOpen isOpen={isQuickOpenOpen} onClose={() => setIsQuickOpenOpen(false)} />
+      )}
     </div>
+  );
+};
+
+export const Workbench: React.FC<WorkbenchProps> = (props) => {
+  return (
+    <PanelRegistryProvider onReady={registerBuiltinPanels}>
+      <WorkbenchShell {...props} />
+    </PanelRegistryProvider>
   );
 };

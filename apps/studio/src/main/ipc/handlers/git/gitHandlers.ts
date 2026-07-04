@@ -21,4 +21,13 @@ export function registerGitHandlers(): void {
     // In a real implementation this would call git push
     return Promise.resolve();
   });
+
+  ipcMain.handle(IpcChannels.GIT_HISTORY, async (_, filePath?: string) => {
+    try {
+      return await getGitService().getHistory(filePath);
+    } catch (e) {
+      console.error("Failed to get git history", e);
+      return [];
+    }
+  });
 }

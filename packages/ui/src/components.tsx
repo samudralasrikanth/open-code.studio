@@ -23,16 +23,16 @@ export const Button: React.FC<ButtonProps> = ({
 
   const variantStyles: Record<string, React.CSSProperties> = {
     primary: {
-      backgroundColor: "#007acc",
-      color: "#ffffff"
+      backgroundColor: "var(--workbench-accent)",
+      color: "var(--workbench-text)"
     },
     secondary: {
-      backgroundColor: "#3a3d3e",
-      color: "#cccccc"
+      backgroundColor: "var(--workbench-panel)",
+      color: "var(--workbench-text-secondary)"
     },
     danger: {
-      backgroundColor: "#f44336",
-      color: "#ffffff"
+      backgroundColor: "var(--color-error)",
+      color: "var(--workbench-text)"
     }
   };
 
@@ -61,7 +61,11 @@ export const IconButton: React.FC<IconButtonProps> = ({
       style={{
         background: "none",
         border: "none",
-        color: props.disabled ? "#555" : active ? "#fff" : "#aaa",
+        color: props.disabled
+          ? "var(--workbench-text-muted)"
+          : active
+            ? "var(--workbench-text)"
+            : "var(--workbench-text-secondary)",
         cursor: props.disabled ? "not-allowed" : "pointer",
         padding: "4px",
         fontSize: "13px",
@@ -90,7 +94,7 @@ export interface PanelProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 export const Panel: React.FC<PanelProps> = ({
   direction = "column",
-  backgroundColor = "#1e1e1e",
+  backgroundColor = "var(--workbench-background)",
   borderRight,
   borderLeft,
   borderTop,
@@ -130,7 +134,7 @@ export interface DividerProps {
 }
 export const Divider: React.FC<DividerProps> = ({
   orientation = "horizontal",
-  color = "#2d2d2d",
+  color = "var(--workbench-border)",
   size = "1px",
   margin = "0"
 }) => {
@@ -161,8 +165,8 @@ export const Toolbar: React.FC<ToolbarProps> = ({ title, style, children, ...pro
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        backgroundColor: "#252526",
-        borderBottom: "1px solid #2d2d2d",
+        backgroundColor: "var(--workbench-panel)",
+        borderBottom: "1px solid var(--workbench-border)",
         flexShrink: 0,
         boxSizing: "border-box",
         ...style
@@ -175,7 +179,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ title, style, children, ...pro
             textTransform: "uppercase",
             fontSize: "11px",
             fontWeight: "bold",
-            color: "#858585",
+            color: "var(--workbench-text-muted)",
             letterSpacing: "0.05em",
             userSelect: "none"
           }}
@@ -207,7 +211,7 @@ export const StatusItem: React.FC<StatusItemProps> = ({
         alignItems: "center",
         gap: "4px",
         fontSize: "11px",
-        color: "#ffffff",
+        color: "var(--workbench-text)",
         cursor: "default",
         userSelect: "none",
         ...style

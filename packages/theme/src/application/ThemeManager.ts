@@ -1,12 +1,14 @@
 import type { EventBus } from "@ocs/common";
 import { ThemeEventTypes } from "@ocs/common/events";
+
 import type { Theme } from "../domain/Theme.js";
-import type { ThemeRegistry } from "./ThemeRegistry.js";
 import type { CssVariableGenerator } from "../infrastructure/CssVariableGenerator.js";
 import type { MonacoThemeAdapter } from "../infrastructure/MonacoThemeAdapter.js";
 
+import type { ThemeRegistry } from "./ThemeRegistry.js";
+
 export class ThemeManager {
-  private currentThemeId = "one-dark";
+  private currentThemeId = "aether-os";
 
   constructor(
     private readonly registry: ThemeRegistry,
@@ -24,7 +26,7 @@ export class ThemeManager {
     return theme;
   }
 
-  public applyTheme(themeId: string, monacoInstance?: any): void {
+  public applyTheme(themeId: string, monacoInstance?: unknown): void {
     const theme = this.registry.get(themeId);
     if (!theme) {
       throw new Error(`Theme '${themeId}' not found in registry.`);
@@ -37,6 +39,6 @@ export class ThemeManager {
     this.monacoAdapter.registerAndApply(theme, monacoInstance);
 
     // Publish event
-    this.eventBus.publish(ThemeEventTypes.THEME_CHANGED, { themeId });
+    void this.eventBus.publish(ThemeEventTypes.THEME_CHANGED, { themeId });
   }
 }

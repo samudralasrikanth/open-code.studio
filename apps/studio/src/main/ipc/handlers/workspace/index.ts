@@ -146,6 +146,39 @@ export function registerWorkspaceHandlers(container: Container): void {
       await workspaceService.updateSettings(settings);
     }
   );
+
+  ipcMain.handle(IpcChannels.WORKSPACE_GET_ALL_FILES, async () => {
+    const current = workspaceService.getActive();
+    if (!current) return [];
+
+    const fsPath = uriToPath(current.uri);
+    try {
+      const { spawnSync } = await import("child_process");
+      const arch = process.env.npm_config_arch || process.arch;
+      const binaryName = process.platform === "win32" ? "rg.exe" : "rg";
+      let ripgrepPath: string;
+      try {
+        const platformPkg = `@vscode/ripgrep-${process.platform}-${arch}`;
+        ripgrepPath = require("module")
+          .createRequire(import.meta.url)
+          .resolve(`${platformPkg}/bin/${binaryName}`);
+      } catch {
+        ripgrepPath = "rg";
+      }
+
+      const res = spawnSync(
+        ripgrepPath,
+        ["--files", "--hidden", "--glob", "!.git/*", "--glob", "!node_modules/*", "."],
+        { cwd: fsPath, encoding: "utf-8" }
+      );
+      if (res.stdout) {
+        return res.stdout.split("\n").filter(Boolean);
+      }
+    } catch (e) {
+      console.error("[WORKSPACE_GET_ALL_FILES IPC] ERROR:", e);
+    }
+    return [];
+  });
 }
 
 /** Restore the last workspace on startup. */

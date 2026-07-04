@@ -72,6 +72,7 @@ export class TreeModel {
     this.rootNode = node;
     this.nodes.clear();
     this.registerNode(node);
+    this.expandedNodes.add(node.id); // Expand root by default
     this.emitChange();
   }
 
@@ -90,10 +91,17 @@ export class TreeModel {
     const parent = this.nodes.get(parentId);
     if (!parent) return;
 
+    // Sort folders first, then files
+    const sortedChildren = [...children].sort((a, b) => {
+      if (a.isDirectory && !b.isDirectory) return -1;
+      if (!a.isDirectory && b.isDirectory) return 1;
+      return a.name.localeCompare(b.name);
+    });
+
     // Remove old children from the map if we want strict consistency,
     // but for now, we just overwrite and register new ones.
-    parent.children = children;
-    for (const child of children) {
+    parent.children = sortedChildren;
+    for (const child of sortedChildren) {
       child.parentId = parentId;
       this.registerNode(child);
     }
@@ -200,8 +208,7 @@ export class TreeModel {
   }
 
   /**
-   * Flattens the tree into a list of visible nodes for the virtualized renderer.
-   * Renderer never walks the tree.
+   * Returns the root node ID.
    */
   public getRootId(): string | null {
     return this.rootNode?.id ?? null;
@@ -216,13 +223,8 @@ export class TreeModel {
 
     const visible: VisibleNode[] = [];
 
-    // The root node itself might not be visible in some views, but let's assume it is,
-    // or we only render its children. We will just render its children for now.
-    if (this.rootNode.children) {
-      for (const child of this.rootNode.children) {
-        this.flatten(child, 0, visible);
-      }
-    }
+    // Flatten starting from the root node itself so it acts as the top-level accordion
+    this.flatten(this.rootNode, 0, visible);
 
     return visible;
   }

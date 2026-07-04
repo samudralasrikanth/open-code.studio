@@ -1,7 +1,33 @@
 {
   "folders": [],
   "settings": {
-    "sidebarWidth": 374
+    "sidebarWidth": 269,
+    "workbenchLayout": {
+      "activityBar": {
+        "visible": true,
+        "position": "left"
+      },
+      "primarySidebar": {
+        "visible": true,
+        "width": 337,
+        "activePanelId": "extensions",
+        "panelIds": ["explorer", "search", "source-control"]
+      },
+      "secondarySidebar": {
+        "visible": false,
+        "width": 360,
+        "panelIds": []
+      },
+      "bottomPanel": {
+        "visible": true,
+        "height": 318,
+        "activePanelId": "terminal",
+        "panelIds": ["problems", "output", "terminal", "diagnostics"]
+      },
+      "statusBar": {
+        "visible": true
+      }
+    }
   },
   "schemaVersion": 1
 }

@@ -3,7 +3,8 @@ import React from "react";
 
 import { type SplitNode, useEditor } from "../../hooks/useEditor.js";
 
-import { MonacoEditorView } from "./MonacoEditorView";
+import { Breadcrumbs } from "./Breadcrumbs.js";
+import { MonacoEditorView } from "./MonacoEditorView.js";
 
 export const EditorArea: React.FC = () => {
   const { editorState, isLoading, open, close } = useEditor();
@@ -13,11 +14,11 @@ export const EditorArea: React.FC = () => {
       <div
         style={{
           flex: 1,
-          backgroundColor: "#1e1e1e",
+          backgroundColor: "var(--workbench-background)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          color: "#858585"
+          color: "var(--workbench-text-muted)"
         }}
       >
         Loading Editor...
@@ -54,7 +55,7 @@ export const EditorArea: React.FC = () => {
           style={{
             width: isHorizontal ? "1px" : "100%",
             height: isHorizontal ? "100%" : "1px",
-            backgroundColor: "#2d2d2d",
+            backgroundColor: "var(--workbench-border)",
             zIndex: 10
           }}
         />
@@ -74,114 +75,115 @@ export const EditorArea: React.FC = () => {
     }
   };
 
+  const EmptyState: React.FC = () => {
+    return (
+      <div
+        style={{
+          flex: 1,
+          height: "100%",
+          backgroundColor: "var(--workbench-background)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          minWidth: 0,
+          color: "var(--workbench-text-secondary)"
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "var(--spacing-lg)",
+            padding: "var(--spacing-xl)",
+            maxWidth: "360px",
+            width: "100%"
+          }}
+        >
+          {/* Glowing Brand SVG Logo */}
+          <svg
+            width="48"
+            height="48"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            style={{ filter: "drop-shadow(0 0 8px var(--workbench-accent))" }}
+          >
+            <path
+              d="M12 2L3 7v10l9 5 9-5V7l-9-5z"
+              stroke="var(--workbench-accent)"
+              strokeWidth="2"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M8 10l-3 2 3 2M16 10l3 2-3 2"
+              stroke="var(--workbench-text)"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <circle cx="12" cy="12" r="2" fill="var(--workbench-accent)" />
+          </svg>
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "var(--spacing-sm)",
+              width: "100%",
+              backgroundColor: "var(--workbench-panel)",
+              border: "1px solid var(--workbench-border)",
+              borderRadius: "var(--radius-md)",
+              padding: "var(--spacing-md)"
+            }}
+          >
+            {[
+              { label: "Show All Commands", key: "⌘⇧P" },
+              { label: "Open Folder", key: "⌘O" },
+              { label: "Toggle Sidebar", key: "⌘B" },
+              { label: "Explorer View", key: "⌘⇧E" }
+            ].map((shortcut) => (
+              <div
+                key={shortcut.label}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  fontSize: "12px",
+                  height: "28px"
+                }}
+              >
+                <span style={{ color: "var(--workbench-text-secondary)", fontWeight: 500 }}>
+                  {shortcut.label}
+                </span>
+                <kbd
+                  style={{
+                    backgroundColor: "var(--color-bg-hover)",
+                    padding: "2px 6px",
+                    borderRadius: "var(--radius-sm)",
+                    fontSize: "11px",
+                    fontWeight: 600,
+                    color: "var(--workbench-text)",
+                    border: "1px solid var(--workbench-border)"
+                  }}
+                >
+                  {shortcut.key}
+                </kbd>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   // View for an individual editor group
   const EditorGroupView: React.FC<{ groupId: string }> = ({ groupId }) => {
     const group = editorState?.groups?.find((g) => g.id === groupId);
 
     if (!group || !group.inputs || group.inputs.length === 0) {
-      return (
-        <div
-          style={{
-            flex: 1,
-            height: "100%",
-            backgroundColor: "#1e1e1e",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            minWidth: 0
-          }}
-        >
-          <div style={{ textAlign: "center", opacity: 0.6, maxWidth: "400px", padding: "24px" }}>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: "16px"
-              }}
-            >
-              <h2 style={{ fontSize: "18px", fontWeight: 500, color: "#ccc", margin: "0 0 8px" }}>
-                Open-Code.Studio
-              </h2>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "10px",
-                  width: "240px",
-                  fontSize: "13px",
-                  color: "#858585"
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center"
-                  }}
-                >
-                  <span>Open Folder</span>
-                  <kbd
-                    style={{
-                      backgroundColor: "#2d2d2d",
-                      padding: "2px 6px",
-                      borderRadius: "3px",
-                      fontSize: "11px",
-                      color: "#ccc",
-                      border: "1px solid #444"
-                    }}
-                  >
-                    ⌘O
-                  </kbd>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center"
-                  }}
-                >
-                  <span>Toggle Sidebar</span>
-                  <kbd
-                    style={{
-                      backgroundColor: "#2d2d2d",
-                      padding: "2px 6px",
-                      borderRadius: "3px",
-                      fontSize: "11px",
-                      color: "#ccc",
-                      border: "1px solid #444"
-                    }}
-                  >
-                    ⌘B
-                  </kbd>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center"
-                  }}
-                >
-                  <span>Explorer View</span>
-                  <kbd
-                    style={{
-                      backgroundColor: "#2d2d2d",
-                      padding: "2px 6px",
-                      borderRadius: "3px",
-                      fontSize: "11px",
-                      color: "#ccc",
-                      border: "1px solid #444"
-                    }}
-                  >
-                    ⌘⇧E
-                  </kbd>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
+      return <EmptyState />;
     }
 
     const activeInputId = group.activeInput;
@@ -220,7 +222,7 @@ export const EditorArea: React.FC = () => {
           flexDirection: "column",
           width: "100%",
           height: "100%",
-          backgroundColor: "#1e1e1e",
+          backgroundColor: "var(--workbench-background)",
           minWidth: 0,
           minHeight: 0
         }}
@@ -229,9 +231,9 @@ export const EditorArea: React.FC = () => {
         <div
           style={{
             display: "flex",
-            backgroundColor: "#181818",
+            backgroundColor: "var(--workbench-titlebar)",
             height: "35px",
-            borderBottom: "1px solid #252526",
+            borderBottom: "1px solid var(--workbench-border)",
             justifyContent: "space-between",
             alignItems: "center",
             paddingRight: "8px",
@@ -251,52 +253,89 @@ export const EditorArea: React.FC = () => {
               const isActive = activeInputId === tabId;
               const isPreview = group.previewInput === tabId;
               const fileName = getFileName(tabId);
+              const isDirty = group.dirtyInputs?.includes(tabId);
 
               return (
                 <div
                   key={tabId}
                   onClick={() => handleTabClick(tabId)}
                   onDoubleClick={() => handleTabDoubleClick(tabId)}
+                  onAuxClick={(e) => {
+                    if (e.button === 1) handleTabClose(e, tabId);
+                  }}
+                  className="editor-tab"
                   style={{
                     display: "flex",
                     alignItems: "center",
                     padding: "0 16px",
                     height: "100%",
-                    backgroundColor: isActive ? "#1e1e1e" : "#2d2d2d",
-                    borderRight: "1px solid #252526",
+                    backgroundColor: isActive
+                      ? "var(--workbench-background)"
+                      : "var(--workbench-panel)",
+                    borderRight: "1px solid var(--workbench-border)",
                     cursor: "pointer",
                     fontSize: "12px",
-                    color: isActive ? "#ffffff" : "#969696",
+                    color: isActive ? "var(--workbench-text)" : "var(--workbench-text-secondary)",
                     fontStyle: isPreview ? "italic" : "normal",
                     gap: "8px",
-                    borderTop: isActive ? "1px solid #007acc" : "none"
+                    borderTop: isActive ? "1px solid var(--workbench-accent)" : "none"
                   }}
                 >
-                  <FileIcon size={14} style={{ color: isActive ? "#007acc" : "#858585" }} />
+                  <FileIcon
+                    size={14}
+                    style={{
+                      color: isActive ? "var(--workbench-accent)" : "var(--workbench-text-muted)"
+                    }}
+                  />
                   <span>{fileName}</span>
                   <div
-                    onClick={(e) => handleTabClose(e, tabId)}
                     style={{
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      width: "14px",
-                      height: "14px",
-                      borderRadius: "2px",
-                      color: "#969696",
-                      fontSize: "10px",
+                      width: "16px",
+                      height: "16px",
                       marginLeft: "4px"
                     }}
-                    onMouseEnter={(e) => {
-                      (e.currentTarget as HTMLElement).style.backgroundColor = "#333333";
-                      (e.currentTarget as HTMLElement).style.color = "#ff5f56";
-                    }}
-                    onMouseLeave={(e) => {
-                      (e.currentTarget as HTMLElement).style.backgroundColor = "transparent";
-                      (e.currentTarget as HTMLElement).style.color = "#969696";
-                    }}
+                    className="tab-action-container"
                   >
-                    ×
+                    {isDirty ? (
+                      <span
+                        className="dirty-dot"
+                        style={{
+                          width: "8px",
+                          height: "8px",
+                          borderRadius: "50%",
+                          backgroundColor: "var(--color-warning, #f0ad4e)"
+                        }}
+                      />
+                    ) : null}
+                    <div
+                      onClick={(e) => handleTabClose(e, tabId)}
+                      className="close-btn"
+                      style={{
+                        display: isDirty ? "none" : "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "14px",
+                        height: "14px",
+                        borderRadius: "2px",
+                        color: "var(--workbench-text-muted)",
+                        fontSize: "10px"
+                      }}
+                      onMouseEnter={(e) => {
+                        (e.currentTarget as HTMLElement).style.backgroundColor =
+                          "var(--color-bg-hover)";
+                        (e.currentTarget as HTMLElement).style.color = "var(--workbench-text)";
+                      }}
+                      onMouseLeave={(e) => {
+                        (e.currentTarget as HTMLElement).style.backgroundColor = "transparent";
+                        (e.currentTarget as HTMLElement).style.color =
+                          "var(--workbench-text-muted)";
+                      }}
+                    >
+                      ×
+                    </div>
                   </div>
                 </div>
               );
@@ -311,14 +350,14 @@ export const EditorArea: React.FC = () => {
               style={{
                 background: "none",
                 border: "none",
-                color: "#858585",
+                color: "var(--workbench-text-muted)",
                 cursor: "pointer",
                 padding: "4px 8px",
                 borderRadius: "3px",
                 fontSize: "12px"
               }}
               onMouseEnter={(e) =>
-                ((e.currentTarget as HTMLElement).style.backgroundColor = "#2d2d2d")
+                ((e.currentTarget as HTMLElement).style.backgroundColor = "var(--color-bg-hover)")
               }
               onMouseLeave={(e) =>
                 ((e.currentTarget as HTMLElement).style.backgroundColor = "transparent")
@@ -332,14 +371,14 @@ export const EditorArea: React.FC = () => {
               style={{
                 background: "none",
                 border: "none",
-                color: "#858585",
+                color: "var(--workbench-text-muted)",
                 cursor: "pointer",
                 padding: "4px 8px",
                 borderRadius: "3px",
                 fontSize: "12px"
               }}
               onMouseEnter={(e) =>
-                ((e.currentTarget as HTMLElement).style.backgroundColor = "#2d2d2d")
+                ((e.currentTarget as HTMLElement).style.backgroundColor = "var(--color-bg-hover)")
               }
               onMouseLeave={(e) =>
                 ((e.currentTarget as HTMLElement).style.backgroundColor = "transparent")
@@ -351,8 +390,15 @@ export const EditorArea: React.FC = () => {
         </div>
 
         {/* Editor Area Content */}
-        <div style={{ flex: 1, minWidth: 0, minHeight: 0 }}>
-          {activeInputId && <MonacoEditorView input={{ id: activeInputId }} />}
+        <div
+          style={{ flex: 1, minWidth: 0, minHeight: 0, display: "flex", flexDirection: "column" }}
+        >
+          {activeInputId && (
+            <>
+              <Breadcrumbs activeInputId={activeInputId} />
+              <MonacoEditorView input={{ id: activeInputId }} />
+            </>
+          )}
         </div>
       </div>
     );
@@ -362,22 +408,7 @@ export const EditorArea: React.FC = () => {
 
   return (
     <div style={{ flex: 1, height: "100%", display: "flex", minWidth: 0, minHeight: 0 }}>
-      {layoutRoot ? (
-        <RenderSplitNode node={layoutRoot} />
-      ) : (
-        <div
-          style={{
-            flex: 1,
-            backgroundColor: "#1e1e1e",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#858585"
-          }}
-        >
-          No active workspace or editor layout.
-        </div>
-      )}
+      {layoutRoot ? <RenderSplitNode node={layoutRoot} /> : <EmptyState />}
     </div>
   );
 };

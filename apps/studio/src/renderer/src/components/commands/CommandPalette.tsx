@@ -1,14 +1,28 @@
 import { useState, useEffect, useRef } from "react";
 
-import type { OcsAPI } from "../../../../preload/preload.js";
 import {
   searchRendererCommands,
   executeRendererCommand
 } from "../../commands/RendererCommandRegistry.js";
 
-declare global {
-  interface Window {
-    ocs: OcsAPI;
+const MRU_KEY = "ocs_command_mru";
+
+function getMru(): string[] {
+  try {
+    const raw = localStorage.getItem(MRU_KEY);
+    return raw ? (JSON.parse(raw) as string[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function addMru(commandId: string) {
+  try {
+    const mru = getMru();
+    const nextMru = [commandId, ...mru.filter((id) => id !== commandId)].slice(0, 20);
+    localStorage.setItem(MRU_KEY, JSON.stringify(nextMru));
+  } catch (err) {
+    console.warn("Failed to save MRU cache", err);
   }
 }
 
@@ -68,31 +82,51 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
 
   const fetchResults = async (searchQuery: string) => {
     try {
-      const mainResults = window.ocs?.commands
-        ? await window.ocs.commands.search(searchQuery, 20)
+      const mainResults = (window as any).ocs?.commands
+        ? await (window as any).ocs.commands.search(searchQuery, 20)
         : [];
       const rendererResults = searchRendererCommands(searchQuery, 20);
 
-      const merged = [
-        ...rendererResults.map((result) => ({
-          command: result.command,
-          highlightedTitle: result.highlightedTitle || result.command.title,
+      const combinedResults = [
+        ...rendererResults.map((r: any) => ({
+          command: {
+            id: r.command.id,
+            title: r.command.title,
+            category: r.command.category || ""
+          },
+          highlightedTitle: r.highlightedTitle || r.command.title,
           source: "renderer" as const
         })),
-        ...mainResults.map((result) => ({
-          command: result.command,
-          highlightedTitle: result.highlightedTitle || result.command.title,
+        ...mainResults.map((r: any) => ({
+          command: {
+            id: r.id,
+            title: r.title,
+            category: r.category || ""
+          },
+          highlightedTitle: r.highlightedTitle || r.title,
           source: "main" as const
         }))
       ];
 
-      const deduped = merged.reduce<UnifiedCommandResult[]>((acc, item) => {
-        if (acc.some((existing) => existing.command.id === item.command.id)) {
-          return acc;
+      const seenIds = new Set<string>();
+      const deduped: UnifiedCommandResult[] = [];
+
+      for (const item of combinedResults) {
+        if (!seenIds.has(item.command.id)) {
+          seenIds.add(item.command.id);
+          deduped.push(item);
         }
-        acc.push(item);
-        return acc;
-      }, []);
+      }
+
+      const mru = getMru();
+      deduped.sort((a, b) => {
+        const idxA = mru.indexOf(a.command.id);
+        const idxB = mru.indexOf(b.command.id);
+        if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+        if (idxA !== -1) return -1;
+        if (idxB !== -1) return 1;
+        return 0;
+      });
 
       setResults(deduped.slice(0, 20));
       setSelectedIndex(0);
@@ -108,6 +142,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   };
 
   const executeCommand = async (commandId: string, source: "renderer" | "main") => {
+    addMru(commandId);
     onClose();
     try {
       if (source === "renderer") {
@@ -124,27 +159,42 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex justify-center items-start pt-[15vh] bg-black/40 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex justify-center items-start pt-[15vh] bg-black/60 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
-        className="w-[600px] max-w-[90vw] bg-[var(--ocs-color-bg-panel)] rounded-xl shadow-2xl border border-[var(--ocs-color-border)] overflow-hidden flex flex-col"
+        style={{
+          backgroundColor: "var(--workbench-panel)",
+          borderColor: "var(--workbench-border)"
+        }}
+        className="w-[600px] max-w-[90vw] rounded-xl shadow-2xl border overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center px-4 py-3 border-b border-[var(--ocs-color-border)]">
+        <div
+          style={{
+            borderColor: "var(--workbench-border)"
+          }}
+          className="flex items-center px-4 py-3 border-b focus-within:ring-2 focus-within:ring-[var(--workbench-accent)] focus-within:ring-offset-0 transition-all duration-150"
+        >
           <input
             ref={inputRef}
             type="text"
             value={query}
             onChange={handleQueryChange}
             placeholder="Type a command..."
-            className="flex-1 bg-transparent border-none text-[var(--ocs-color-text)] outline-none text-lg"
+            style={{
+              color: "var(--workbench-text)"
+            }}
+            className="flex-1 bg-transparent border-none outline-none text-lg"
           />
         </div>
 
         <div className="max-h-[300px] overflow-y-auto py-2">
           {results.length === 0 ? (
-            <div className="px-4 py-3 text-sm text-[var(--ocs-color-text-muted)] text-center">
+            <div
+              style={{ color: "var(--workbench-text-muted)" }}
+              className="px-4 py-3 text-sm text-center"
+            >
               No matching commands
             </div>
           ) : (
@@ -153,23 +203,46 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                 key={result.command.id}
                 onClick={() => void executeCommand(result.command.id, result.source)}
                 onMouseEnter={() => setSelectedIndex(idx)}
-                className={`px-4 py-2 cursor-pointer flex justify-between items-center ${
-                  idx === selectedIndex
-                    ? "bg-[var(--ocs-color-bg-active)] text-[var(--ocs-color-text-active)]"
-                    : "text-[var(--ocs-color-text)] hover:bg-[var(--ocs-color-bg-hover)]"
-                }`}
+                style={{
+                  backgroundColor:
+                    idx === selectedIndex ? "var(--workbench-accent-hover)" : "transparent",
+                  color:
+                    idx === selectedIndex
+                      ? "var(--workbench-text)"
+                      : "var(--workbench-text-secondary)"
+                }}
+                className="px-4 py-2.5 cursor-pointer flex justify-between items-center transition-colors duration-100"
               >
                 <div>
-                  <span className="text-xs font-semibold mr-2 opacity-60 uppercase">
+                  <span
+                    style={{ color: "var(--workbench-accent)" }}
+                    className="text-xs font-bold mr-2 opacity-80 uppercase tracking-wider"
+                  >
                     {result.command.category}
                   </span>
+                  {getMru().includes(result.command.id) && (
+                    <span
+                      style={{
+                        color: "var(--workbench-text-secondary)",
+                        marginLeft: "4px",
+                        marginRight: "8px",
+                        fontSize: "10px",
+                        opacity: 0.8
+                      }}
+                    >
+                      (recently used)
+                    </span>
+                  )}
                   <span
                     dangerouslySetInnerHTML={{
                       __html: result.highlightedTitle || result.command.title
                     }}
                   />
                 </div>
-                <div className="text-[10px] text-[var(--ocs-color-text-muted)] uppercase tracking-[0.18em]">
+                <div
+                  style={{ color: "var(--workbench-text-muted)" }}
+                  className="text-[10px] uppercase tracking-[0.18em]"
+                >
                   {result.source === "renderer" ? "UI" : "App"}
                 </div>
               </div>

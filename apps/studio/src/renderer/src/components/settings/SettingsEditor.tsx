@@ -1,5 +1,4 @@
 import React from "react";
-import type { SettingSchema } from "@ocs/settings";
 
 // Note: In reality, we'd want a way to fetch the schema from the registry.
 // For now, since SettingsRegistry is in main, we need an IPC call for getAllSchemas() too,

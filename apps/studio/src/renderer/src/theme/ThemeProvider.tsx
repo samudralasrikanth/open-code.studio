@@ -2,7 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useState } fr
 
 import { usePlatform } from "../hooks/usePlatform.js";
 
-export type Theme = "dark" | "light" | "system";
+export type Theme = string;
 
 interface ThemeContextValue {
   theme: Theme;
@@ -12,51 +12,102 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
+function injectThemeCss(colors: Record<string, string>): void {
+  let style = document.getElementById("ocs-theme-variables");
+  if (!style) {
+    style = document.createElement("style");
+    style.id = "ocs-theme-variables";
+    document.head.appendChild(style);
+  }
+  const variables = Object.entries(colors)
+    .map(([token, value]) => {
+      const cssName = `--${token.replace(/\./g, "-")}`;
+      return `  ${cssName}: ${value};`;
+    })
+    .join("\n");
+  style.innerHTML = `
+:root {
+${variables}
+}
+`;
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }): React.ReactElement {
-  const [theme, setThemeState] = useState<Theme>("dark");
+  const [theme, setThemeState] = useState<Theme>("one-dark");
   const [resolvedTheme, setResolvedTheme] = useState<"dark" | "light">("dark");
-  const { getTheme, setTheme: setPlatformTheme } = usePlatform();
+  const { setTheme: setPlatformTheme } = usePlatform();
 
-  // Load persisted theme on mount
+  // Load persisted theme on mount and listen for IPC push notifications
   useEffect(() => {
-    getTheme()
-      .then((persisted) => {
-        applyTheme(persisted);
-        setThemeState(persisted);
-      })
-      .catch(() => {
-        applyTheme("dark");
-      });
-
-    // Listen for OS theme changes
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const handleSystemChange = (): void => {
-      if (theme === "system") {
-        const resolved = mediaQuery.matches ? "dark" : "light";
-        setResolvedTheme(resolved);
-        document.documentElement.setAttribute("data-theme", resolved);
+    const initTheme = async (): Promise<void> => {
+      try {
+        const res = await window.ocs.theme.get();
+        if (res && typeof res === "object") {
+          const { activeId, theme: themeObj } = res;
+          if (themeObj && themeObj.colors) {
+            injectThemeCss(themeObj.colors);
+          }
+          const resolvedMode = themeObj?.type === "light" ? "light" : "dark";
+          document.documentElement.setAttribute("data-theme", resolvedMode);
+          setThemeState(activeId || "one-dark");
+          setResolvedTheme(resolvedMode);
+        }
+      } catch (err) {
+        console.error("Failed to load active theme in renderer:", err);
       }
     };
-    mediaQuery.addEventListener("change", handleSystemChange);
-    return () => mediaQuery.removeEventListener("change", handleSystemChange);
-  }, [theme, getTheme]);
+
+    void initTheme();
+
+    if (window.ocs.theme.onChange) {
+      const cleanup = window.ocs.theme.onChange((data) => {
+        void (async () => {
+          const themeId = data?.themeId;
+          if (themeId) {
+            try {
+              const res = await window.ocs.theme.get();
+              if (res && typeof res === "object") {
+                const { theme: themeObj } = res;
+                if (themeObj && themeObj.colors) {
+                  injectThemeCss(themeObj.colors);
+                }
+                const resolvedMode = themeObj?.type === "light" ? "light" : "dark";
+                document.documentElement.setAttribute("data-theme", resolvedMode);
+                setThemeState(themeId);
+                setResolvedTheme(resolvedMode);
+              }
+            } catch (err) {
+              console.error("Failed to update active theme in renderer:", err);
+            }
+          }
+        })();
+      });
+      return cleanup;
+    }
+    return undefined;
+  }, []);
 
   const setTheme = useCallback(
     async (newTheme: Theme): Promise<void> => {
       await setPlatformTheme(newTheme);
-      applyTheme(newTheme);
-      setThemeState(newTheme);
+      try {
+        const res = await window.ocs.theme.get();
+        if (res && typeof res === "object") {
+          const { theme: themeObj } = res;
+          if (themeObj && themeObj.colors) {
+            injectThemeCss(themeObj.colors);
+          }
+          const resolvedMode = themeObj?.type === "light" ? "light" : "dark";
+          document.documentElement.setAttribute("data-theme", resolvedMode);
+          setThemeState(newTheme);
+          setResolvedTheme(resolvedMode);
+        }
+      } catch (err) {
+        console.error("Failed to get updated theme in renderer:", err);
+      }
     },
     [setPlatformTheme]
   );
-
-  function applyTheme(t: Theme): void {
-    const isDark =
-      t === "dark" || (t === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
-    const resolved: "dark" | "light" = isDark ? "dark" : "light";
-    document.documentElement.setAttribute("data-theme", resolved);
-    setResolvedTheme(resolved);
-  }
 
   return (
     <ThemeContext.Provider value={{ theme, resolvedTheme, setTheme }}>

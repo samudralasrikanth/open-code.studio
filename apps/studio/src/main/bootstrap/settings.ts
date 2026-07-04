@@ -1,4 +1,4 @@
-import { Container, EventBus, Logger } from "@ocs/common";
+import type { Container, EventBus, Logger } from "@ocs/common";
 import {
   SettingsService,
   SettingsRegistry,
@@ -46,6 +46,26 @@ export async function bootstrapSettings(
     defaultValue: "system",
     enum: ["system", "light", "dark"],
     category: "Workbench"
+  });
+
+  registry.register({
+    id: "extensions.marketplaceGalleryUrl",
+    title: "Marketplace Gallery URL",
+    description:
+      "Changes the base URL for marketplace search results. You must restart Antigravity IDE to use the new marketplace after changing this value.",
+    type: "string",
+    defaultValue: "https://open-vsx.org/vscode/gallery",
+    category: "Extensions"
+  });
+
+  registry.register({
+    id: "extensions.marketplaceItemUrl",
+    title: "Marketplace Item URL",
+    description:
+      "Changes the base URL on each extension page. You must restart Antigravity IDE to use the new marketplace after changing this value.",
+    type: "string",
+    defaultValue: "https://open-vsx.org/vscode/item",
+    category: "Extensions"
   });
 
   const settingsService = new SettingsService(

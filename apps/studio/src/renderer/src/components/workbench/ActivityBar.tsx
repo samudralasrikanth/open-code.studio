@@ -1,115 +1,134 @@
 import { Panel, IconButton } from "@ocs/ui";
-import {
-  FolderIcon,
-  SearchIcon,
-  SourceControlIcon,
-  RunDebugIcon,
-  ExtensionsIcon,
-  SettingsIcon
-} from "@ocs/ui";
+import { SettingsIcon, UserIcon } from "@ocs/ui";
 import React from "react";
 
+import { executeRendererCommand } from "../../commands/RendererCommandRegistry.js";
+import { usePanelsForPosition } from "../../workbench/PanelRegistry.js";
+
 interface ActivityBarProps {
-  activeView: string;
-  onViewChange: (view: string) => void;
+  activePanelId?: string;
+  onPanelSelect: (id: string) => void;
 }
 
-export const ActivityBar: React.FC<ActivityBarProps> = ({ activeView, onViewChange }) => {
+export const ActivityBar: React.FC<ActivityBarProps> = ({ activePanelId, onPanelSelect }) => {
+  const primaryPanels = usePanelsForPosition("primary-sidebar");
+
+  const getIconStyle = (isActive: boolean) => ({
+    width: "36px",
+    height: "36px",
+    borderRadius: "var(--radius-sm)",
+    transition: "all var(--motion-duration-fast) var(--motion-ease)",
+    color: isActive ? "var(--workbench-text)" : "var(--workbench-text-muted)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+  });
+
   return (
     <Panel
       direction="column"
-      backgroundColor="#181818"
-      borderRight="1px solid #252526"
+      backgroundColor="var(--workbench-panel)"
+      borderRight="1px solid var(--workbench-border)"
       style={{
         width: "48px",
         height: "100%",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: "10px 0",
+        padding: "var(--spacing-sm) 0",
         flexShrink: 0
       }}
+      aria-label="Activity Bar"
     >
       {/* Top Icons */}
       <div
         style={{
           display: "flex",
           flexDirection: "column",
-          gap: "12px",
+          gap: "var(--spacing-md)",
           width: "100%",
           alignItems: "center"
         }}
       >
-        <IconButton
-          active={activeView === "explorer"}
-          onClick={() => onViewChange("explorer")}
-          title="Explorer"
-          style={{
-            width: "36px",
-            height: "36px",
-            borderLeft: activeView === "explorer" ? "2px solid #007acc" : "2px solid transparent",
-            borderRadius: "0"
-          }}
-        >
-          <FolderIcon size={22} />
-        </IconButton>
-
-        <IconButton
-          active={activeView === "search"}
-          onClick={() => onViewChange("search")}
-          title="Search"
-          style={{
-            width: "36px",
-            height: "36px",
-            borderLeft: activeView === "search" ? "2px solid #007acc" : "2px solid transparent",
-            borderRadius: "0"
-          }}
-        >
-          <SearchIcon size={22} />
-        </IconButton>
-
-        <IconButton
-          active={activeView === "source-control"}
-          onClick={() => onViewChange("source-control")}
-          title="Source Control"
-          style={{
-            width: "36px",
-            height: "36px",
-            borderLeft:
-              activeView === "source-control" ? "2px solid #007acc" : "2px solid transparent",
-            borderRadius: "0"
-          }}
-        >
-          <SourceControlIcon size={22} />
-        </IconButton>
-
-        <IconButton
-          disabled
-          title="Run & Debug (Disabled)"
-          style={{ width: "36px", height: "36px", opacity: 0.3 }}
-        >
-          <RunDebugIcon size={22} />
-        </IconButton>
-
-        <IconButton
-          disabled
-          title="Extensions (Disabled)"
-          style={{ width: "36px", height: "36px", opacity: 0.3 }}
-        >
-          <ExtensionsIcon size={22} />
-        </IconButton>
+        {primaryPanels.map((panel) => {
+          const isActive = activePanelId === panel.id;
+          return (
+            <div
+              key={panel.id}
+              style={{
+                position: "relative",
+                width: "100%",
+                display: "flex",
+                justifyContent: "center"
+              }}
+            >
+              {isActive && (
+                <div
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    width: "3px",
+                    height: "24px",
+                    backgroundColor: "var(--workbench-accent)",
+                    borderRadius: "0 3px 3px 0"
+                  }}
+                />
+              )}
+              <IconButton
+                active={isActive}
+                onClick={() => onPanelSelect(panel.id)}
+                title={panel.title}
+                className="ocs-focus-ring"
+                style={getIconStyle(isActive)}
+                aria-label={panel.title}
+              >
+                {panel.icon}
+              </IconButton>
+            </div>
+          );
+        })}
       </div>
 
       {/* Bottom Icons */}
       <div
-        style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "var(--spacing-md)",
+          width: "100%",
+          alignItems: "center",
+          marginBottom: "var(--spacing-md)"
+        }}
       >
-        <IconButton
-          disabled
-          title="Settings (Disabled)"
-          style={{ width: "36px", height: "36px", opacity: 0.3 }}
+        <div
+          style={{ position: "relative", width: "100%", display: "flex", justifyContent: "center" }}
         >
-          <SettingsIcon size={22} />
-        </IconButton>
+          <IconButton
+            title="Accounts"
+            className="ocs-focus-ring"
+            style={getIconStyle(false)}
+            onClick={() => {
+              // Placeholder for account/user action
+            }}
+          >
+            <UserIcon size={24} />
+          </IconButton>
+        </div>
+        <div
+          style={{ position: "relative", width: "100%", display: "flex", justifyContent: "center" }}
+        >
+          <IconButton
+            title="Settings"
+            className="ocs-focus-ring"
+            style={getIconStyle(false)}
+            onClick={() => {
+              void executeRendererCommand("workbench.action.openSettings");
+            }}
+          >
+            <SettingsIcon size={24} />
+          </IconButton>
+        </div>
       </div>
     </Panel>
   );

@@ -5,6 +5,7 @@ export interface ContextMenuItem {
   action: () => void;
   disabled?: boolean;
   separator?: boolean;
+  checked?: boolean;
 }
 
 interface ExplorerContextMenuProps {
@@ -13,6 +14,22 @@ interface ExplorerContextMenuProps {
   items: ContextMenuItem[];
   onClose: () => void;
 }
+
+const CheckIcon: React.FC<{ size?: number }> = ({ size = 16 }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 16 16"
+    fill="currentColor"
+    style={{ marginRight: "6px" }}
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M14.431 3.323l-8.47 10-.79-.036-3.35-4.77.818-.574 2.978 4.24 8.051-9.506.763.646z"
+    />
+  </svg>
+);
 
 export const ExplorerContextMenu: React.FC<ExplorerContextMenuProps> = ({
   x,
@@ -75,15 +92,17 @@ export const ExplorerContextMenu: React.FC<ExplorerContextMenuProps> = ({
               }
             }}
             style={{
-              display: "block",
+              display: "flex",
+              alignItems: "center",
               width: "100%",
-              padding: "6px 20px",
+              padding: "6px 12px 6px 20px",
               textAlign: "left",
               background: "none",
               border: "none",
               color: item.disabled ? "#666" : "#ccc",
               cursor: item.disabled ? "default" : "pointer",
-              fontSize: "13px"
+              fontSize: "13px",
+              position: "relative"
             }}
             onMouseEnter={(e) => {
               if (!item.disabled) e.currentTarget.style.backgroundColor = "#094771";
@@ -92,7 +111,12 @@ export const ExplorerContextMenu: React.FC<ExplorerContextMenuProps> = ({
               e.currentTarget.style.backgroundColor = "transparent";
             }}
           >
-            {item.label}
+            <span
+              style={{ position: "absolute", left: "6px", display: "flex", alignItems: "center" }}
+            >
+              {item.checked && <CheckIcon size={12} />}
+            </span>
+            <span style={{ marginLeft: "12px" }}>{item.label}</span>
           </button>
         )
       )}

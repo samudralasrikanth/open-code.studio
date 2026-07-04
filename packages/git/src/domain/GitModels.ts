@@ -25,3 +25,10 @@ export interface GitStatus {
   behind?: number;
   files: GitFileStatus[];
 }
+
+export interface GitCommit {
+  id: string;
+  message: string;
+  author: string;
+  date: string;
+}

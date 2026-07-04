@@ -2,6 +2,7 @@
 import { electronAPI } from "@electron-toolkit/preload";
 import type { VisibleNode } from "@ocs/explorer";
 import type { Workspace, RecentWorkspace } from "@ocs/workspace";
+import type { Theme } from "@ocs/theme";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { contextBridge, ipcRenderer } from "electron";
 
@@ -42,14 +43,17 @@ const ocsAPI = {
 
   // ── Theme ───────────────────────────────────────────────────────────────────
   theme: {
-    get: (): Promise<"dark" | "light" | "system"> => ipcRenderer.invoke(IpcChannels.THEME_GET),
+    get: (): Promise<{
+      activeId: string;
+      theme: Theme;
+      all: Array<{ id: string; name: string; type: "dark" | "light" | "hc" }>;
+    }> => ipcRenderer.invoke(IpcChannels.THEME_GET),
 
-    set: (theme: "dark" | "light" | "system"): Promise<boolean> =>
-      ipcRenderer.invoke(IpcChannels.THEME_SET, theme),
+    set: (themeId: string): Promise<Theme> => ipcRenderer.invoke(IpcChannels.THEME_SET, themeId),
 
-    onChange: (callback: (theme: "dark" | "light" | "system") => void): (() => void) => {
-      const handler = (_: Electron.IpcRendererEvent, theme: "dark" | "light" | "system"): void => {
-        callback(theme);
+    onChange: (callback: (data: { themeId: string }) => void): (() => void) => {
+      const handler = (_: Electron.IpcRendererEvent, data: { themeId: string }): void => {
+        callback(data);
       };
       ipcRenderer.on(IpcChannels.THEME_CHANGED, handler);
       return () => ipcRenderer.off(IpcChannels.THEME_CHANGED, handler);
@@ -96,6 +100,8 @@ const ocsAPI = {
 
     getRecent: (): Promise<readonly RecentWorkspace[]> =>
       ipcRenderer.invoke(IpcChannels.WORKSPACE_GET_RECENT),
+
+    getAllFiles: (): Promise<string[]> => ipcRenderer.invoke(IpcChannels.WORKSPACE_GET_ALL_FILES),
 
     getLastOpened: (): Promise<string | null> =>
       ipcRenderer.invoke(IpcChannels.WORKSPACE_GET_LAST_OPENED),
@@ -230,7 +236,9 @@ const ocsAPI = {
     status: (): Promise<any> => ipcRenderer.invoke(IpcChannels.GIT_STATUS),
     commit: (message: string): Promise<void> => ipcRenderer.invoke(IpcChannels.GIT_COMMIT, message),
     pull: (): Promise<void> => ipcRenderer.invoke(IpcChannels.GIT_PULL),
-    push: (): Promise<void> => ipcRenderer.invoke(IpcChannels.GIT_PUSH)
+    push: (): Promise<void> => ipcRenderer.invoke(IpcChannels.GIT_PUSH),
+    history: (filePath?: string): Promise<any[]> =>
+      ipcRenderer.invoke(IpcChannels.GIT_HISTORY, filePath)
   },
 
   // ── Search ────────────────────────────────────────────────────────────────
@@ -315,6 +323,17 @@ const ocsAPI = {
       ipcRenderer.on(IpcChannels.SESSION_CHANGED, handler);
       return () => ipcRenderer.off(IpcChannels.SESSION_CHANGED, handler);
     }
+  },
+
+  // ── Extensions ──────────────────────────────────────────────────────────────
+  extensions: {
+    search: (query: any): Promise<{ success: boolean; data?: any; error?: any }> =>
+      ipcRenderer.invoke(IpcChannels.EXTENSIONS_SEARCH, query),
+    install: (id: string): Promise<any> => ipcRenderer.invoke(IpcChannels.EXTENSIONS_INSTALL, id),
+    getDetails: (id: string): Promise<{ success: boolean; data?: any; error?: any }> =>
+      ipcRenderer.invoke(IpcChannels.EXTENSIONS_GET_DETAILS, id),
+    isInstalled: (id: string): Promise<{ success: boolean; data?: boolean; error?: any }> =>
+      ipcRenderer.invoke(IpcChannels.EXTENSIONS_IS_INSTALLED, id)
   }
 };
 

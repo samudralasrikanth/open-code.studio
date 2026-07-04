@@ -24,7 +24,8 @@ const WORKSPACE_PACKAGES = [
   "@ocs/theme",
   "@ocs/notifications",
   "@ocs/keybindings",
-  "@ocs/session"
+  "@ocs/session",
+  "@ocs/extensions"
 ];
 
 export default defineConfig({
@@ -143,6 +144,14 @@ export default defineConfig({
         {
           find: "@ocs/session",
           replacement: resolve(__dirname, "../../packages/session/src/index.ts")
+        },
+        {
+          find: /^@ocs\/extensions\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/extensions/src/$1/index.ts")
+        },
+        {
+          find: "@ocs/extensions",
+          replacement: resolve(__dirname, "../../packages/extensions/src/index.ts")
         }
       ]
     },
@@ -271,6 +280,14 @@ export default defineConfig({
         {
           find: "@ocs/session",
           replacement: resolve(__dirname, "../../packages/session/src/index.ts")
+        },
+        {
+          find: /^@ocs\/extensions\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/extensions/src/$1/index.ts")
+        },
+        {
+          find: "@ocs/extensions",
+          replacement: resolve(__dirname, "../../packages/extensions/src/index.ts")
         }
       ]
     },
@@ -401,6 +418,14 @@ export default defineConfig({
         {
           find: "@ocs/session",
           replacement: resolve(__dirname, "../../packages/session/src/index.ts")
+        },
+        {
+          find: /^@ocs\/extensions\/(.*)$/,
+          replacement: resolve(__dirname, "../../packages/extensions/src/$1/index.ts")
+        },
+        {
+          find: "@ocs/extensions",
+          replacement: resolve(__dirname, "../../packages/extensions/src/index.ts")
         }
       ]
     },

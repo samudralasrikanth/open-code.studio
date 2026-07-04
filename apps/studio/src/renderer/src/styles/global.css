@@ -16,65 +16,68 @@
   padding: 0;
 }
 
-/* ── Design Tokens — Dark Theme (default) ────────────────── */
+/* ── Design Tokens — Dark Theme (AetherOS Mission Control) ── */
 :root,
 [data-theme="dark"] {
-  --color-bg-primary: #0d0d0d;
-  --color-bg-secondary: #141414;
-  --color-bg-tertiary: #1c1c1c;
-  --color-bg-hover: #252525;
-  --color-bg-active: #2d2d2d;
+  --color-bg-primary: #0b0f17; /* Deep Dark Base */
+  --color-bg-secondary: rgba(15, 23, 42, 0.6); /* Surface Glass */
+  --color-bg-tertiary: #181c24; /* Surface Container Low */
+  --color-bg-hover: #1c2028; /* Surface Container */
+  --color-bg-active: #262a33; /* Surface Container High */
 
-  --color-border: #2a2a2a;
-  --color-border-strong: #3a3a3a;
+  --color-border: rgba(255, 255, 255, 0.08); /* Border Subtle */
+  --color-border-strong: #31353e; /* Surface Variant */
 
-  --color-text-primary: #f0f0f0;
-  --color-text-secondary: #9a9a9a;
-  --color-text-muted: #5a5a5a;
+  --color-text-primary: #dfe2ee; /* On-Surface */
+  --color-text-secondary: #c2c6d7; /* On-Surface Variant */
+  --color-text-muted: #94a3b8; /* Text Muted */
 
-  --color-accent: #7c6af7;
-  --color-accent-hover: #6b59e6;
-  --color-accent-muted: rgba(124, 106, 247, 0.12);
+  --color-accent: #2e7bff; /* Electric Blue */
+  --color-accent-hover: #558dff; /* Primary Container */
+  --color-accent-muted: rgba(46, 123, 255, 0.12); /* Electric Blue Alpha */
 
-  --color-success: #4ade80;
+  --color-hyper-purple: #a855f7; /* Hyper Purple */
+  --color-emerald-glow: #10b981; /* Emerald Glow */
+
+  --color-success: #10b981; /* Emerald Glow */
   --color-warning: #fbbf24;
-  --color-error: #f87171;
-  --color-info: #60a5fa;
+  --color-error: #ffb4ab;
+  --color-info: #558dff;
 
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
-  --shadow-glow: 0 0 32px rgba(124, 106, 247, 0.2);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4), 0 8px 16px rgba(0, 0, 0, 0.2); /* Wide-spread glow */
+  --shadow-glow: 0 0 32px var(--color-accent, rgba(46, 123, 255, 0.25));
 }
 
 /* ── Design Tokens — Light Theme ────────────────────────── */
 [data-theme="light"] {
-  --color-bg-primary: #ffffff;
-  --color-bg-secondary: #f5f5f5;
-  --color-bg-tertiary: #ebebeb;
-  --color-bg-hover: #e0e0e0;
-  --color-bg-active: #d6d6d6;
+  --color-bg-primary: var(--background-primary, #ffffff);
+  --color-bg-secondary: var(--background-secondary, #f5f5f5);
+  --color-bg-tertiary: var(--background-tertiary, #ebebeb);
+  --color-bg-hover: var(--background-hover, #e0e0e0);
+  --color-bg-active: var(--background-active, #d6d6d6);
 
-  --color-border: #e0e0e0;
-  --color-border-strong: #c8c8c8;
+  --color-border: var(--border-default, #e0e0e0);
+  --color-border-strong: var(--border-strong, #c8c8c8);
 
-  --color-text-primary: #111111;
-  --color-text-secondary: #555555;
-  --color-text-muted: #aaaaaa;
+  --color-text-primary: var(--text-primary, #111111);
+  --color-text-secondary: var(--text-secondary, #555555);
+  --color-text-muted: var(--text-muted, #aaaaaa);
 
-  --color-accent: #6050e0;
-  --color-accent-hover: #4e40ca;
-  --color-accent-muted: rgba(96, 80, 224, 0.1);
+  --color-accent: var(--accent-primary, #6050e0);
+  --color-accent-hover: var(--accent-hover, #4e40ca);
+  --color-accent-muted: var(--accent-muted, rgba(96, 80, 224, 0.1));
 
-  --color-success: #16a34a;
-  --color-warning: #d97706;
-  --color-error: #dc2626;
-  --color-info: #2563eb;
+  --color-success: var(--success, #16a34a);
+  --color-warning: var(--warning, #d97706);
+  --color-error: var(--error, #dc2626);
+  --color-info: var(--info, #2563eb);
 
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
-  --shadow-glow: 0 0 24px rgba(96, 80, 224, 0.15);
+  --shadow-glow: 0 0 24px var(--color-accent, rgba(96, 80, 224, 0.15));
 }
 
 /* ── Shared Tokens ───────────────────────────────────────── */
@@ -82,15 +85,66 @@
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", "Fira Code", monospace;
 
+  /* Standardized Spacing Scale */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 24px;
+  --spacing-xxl: 32px;
+
+  /* Standardized Border Radiuses */
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-xl: 16px;
   --radius-full: 9999px;
 
-  --transition-fast: 100ms ease;
-  --transition-base: 200ms ease;
-  --transition-slow: 350ms ease;
+  /* Premium Motion System */
+  --motion-duration-fast: 120ms;
+  --motion-duration-base: 220ms;
+  --motion-ease: cubic-bezier(0.25, 1, 0.5, 1);
+
+  --transition-fast: var(--motion-duration-fast) var(--motion-ease);
+  --transition-base: var(--motion-duration-base) var(--motion-ease);
+  --transition-slow: 350ms var(--motion-ease);
+}
+
+/* ── Semantic Workbench Design Tokens ────────────────────── */
+:root {
+  --workbench-background: var(--color-bg-primary);
+  --workbench-panel: var(--color-bg-secondary);
+  --workbench-sidebar: var(--color-bg-secondary);
+  --workbench-titlebar: var(--color-bg-primary);
+  --workbench-statusbar: var(--color-bg-primary);
+  --workbench-border: var(--color-border);
+  --workbench-border-strong: var(--color-border-strong);
+
+  --workbench-accent: var(--color-accent);
+  --workbench-accent-hover: var(--color-accent-hover);
+  --workbench-accent-muted: var(--color-accent-muted);
+
+  --workbench-text: var(--color-text-primary);
+  --workbench-text-secondary: var(--color-text-secondary);
+  --workbench-text-muted: var(--color-text-muted);
+
+  /* Legacy Compatibility Bridging */
+  --ocs-panel-bg: var(--workbench-panel);
+  --ocs-text: var(--workbench-text);
+  --ocs-text-muted: var(--workbench-text-muted);
+  --ocs-input-bg: var(--color-bg-tertiary);
+  --ocs-border: var(--workbench-border);
+  --ocs-button-bg: var(--workbench-accent);
+  --ocs-button-hover: var(--workbench-accent-hover);
+  --ocs-error: var(--color-error);
+  --ocs-list-hover: var(--color-bg-hover);
+  --ocs-color-bg-panel: var(--workbench-panel);
+  --ocs-color-border: var(--workbench-border);
+  --ocs-color-text: var(--workbench-text);
+  --ocs-color-text-muted: var(--workbench-text-muted);
+  --ocs-color-bg-active: var(--color-bg-active);
+  --ocs-color-text-active: var(--workbench-text);
+  --ocs-color-bg-hover: var(--color-bg-hover);
 }
 
 /* ── Base ────────────────────────────────────────────────── */
@@ -98,6 +152,27 @@ html,
 body {
   height: 100%;
   overflow: hidden; /* Electron window — no OS scrollbar */
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--workbench-background);
+  color: var(--workbench-text);
+  font-family: var(--font-sans);
+}
+
+/* ── Utilities ───────────────────────────────────────────── */
+.ocs-focus-ring {
+  outline: none !important;
+}
+
+.ocs-focus-ring:focus-visible {
+  box-shadow: 0 0 0 2px var(--workbench-accent) !important;
+  border-radius: var(--radius-sm);
 }
 
 body {
@@ -166,4 +241,29 @@ body {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* ── Workbench Window Shell & Editor Tabs Premium Polish ── */
+
+.workbench-wrapper {
+  box-shadow: inset 0 0 0 1px var(--workbench-border);
+}
+
+.editor-tab {
+  transition:
+    background-color var(--motion-duration-fast) var(--motion-ease),
+    color var(--motion-duration-fast) var(--motion-ease),
+    border-color var(--motion-duration-fast) var(--motion-ease);
+}
+
+.editor-tab:hover {
+  background-color: var(--color-bg-hover) !important;
+}
+
+.editor-tab:hover .tab-action-container .dirty-dot {
+  display: none !important;
+}
+
+.editor-tab:hover .tab-action-container .close-btn {
+  display: flex !important;
 }

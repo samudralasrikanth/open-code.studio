@@ -23,4 +23,10 @@ export class GitService {
   public async add(paths: string[]): Promise<void> {
     await this.provider.add(paths);
   }
+
+  public async getHistory(
+    filePath?: string
+  ): Promise<import("../domain/GitModels.js").GitCommit[]> {
+    return this.provider.getHistory(filePath);
+  }
 }
