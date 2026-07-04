@@ -22,6 +22,18 @@ console.log("===================================================================
 console.log("          OPEN-CODE.STUDIO EPIC VALIDATION PLATFORM RUNNER                      ");
 console.log("================================================================================");
 
+async function captureBase64(window, filename) {
+  if (!window) return null;
+  try {
+    const shotPath = path.join(screenshotsDir, filename);
+    await window.screenshot({ path: shotPath });
+    const buffer = fs.readFileSync(shotPath);
+    return `data:image/png;base64,${buffer.toString("base64")}`;
+  } catch {
+    return null;
+  }
+}
+
 async function runPlatformSuites() {
   const suitesDir = path.join(testingDir, "suites");
   const suiteFiles = fs
@@ -35,7 +47,6 @@ async function runPlatformSuites() {
 
   const results = [];
   const startTime = Date.now();
-
   const tempWorkspace = createTempWorkspace("runner-fixture");
 
   console.log("🚀 Launching Electron Application Runtime...");
@@ -63,11 +74,33 @@ async function runPlatformSuites() {
 
     for (const scenario of scenarios) {
       const sStart = Date.now();
+      let shotBeforeBase64 = null;
+      let shotAfterBase64 = null;
+
       try {
-        if (!appInstance) {
-          throw new Error("Electron app instance unavailable");
+        if (!appInstance) throw new Error("Electron app instance unavailable");
+
+        // Capture BEFORE Screenshot for UI scenarios
+        if (
+          scenario.tags &&
+          scenario.tags.some((t) =>
+            [
+              "@smoke",
+              "@workspace",
+              "@explorer",
+              "@editor",
+              "@terminal",
+              "@git",
+              "@search",
+              "@settings",
+              "@palette"
+            ].includes(t)
+          )
+        ) {
+          shotBeforeBase64 = await captureBase64(appInstance.window, `${scenario.id}_before.png`);
         }
 
+        // Run Scenario Action
         await scenario.run({
           window: appInstance.window,
           projectRoot,
@@ -75,19 +108,28 @@ async function runPlatformSuites() {
           testingDir
         });
 
+        // Capture AFTER Screenshot for UI scenarios
+        if (
+          scenario.tags &&
+          scenario.tags.some((t) =>
+            [
+              "@smoke",
+              "@workspace",
+              "@explorer",
+              "@editor",
+              "@terminal",
+              "@git",
+              "@search",
+              "@settings",
+              "@palette"
+            ].includes(t)
+          )
+        ) {
+          shotAfterBase64 = await captureBase64(appInstance.window, `${scenario.id}_after.png`);
+        }
+
         const duration = Date.now() - sStart;
         epicPassed++;
-
-        // Capture base64 screenshot proof for visual verification scenarios
-        let screenshotBase64 = null;
-        if (scenario.tags && scenario.tags.includes("@smoke") && appInstance.window) {
-          try {
-            const shotPath = path.join(screenshotsDir, `${scenario.id}.png`);
-            await appInstance.window.screenshot({ path: shotPath });
-            const buffer = fs.readFileSync(shotPath);
-            screenshotBase64 = `data:image/png;base64,${buffer.toString("base64")}`;
-          } catch {}
-        }
 
         results.push({
           epic: epicMetadata.epic,
@@ -97,21 +139,16 @@ async function runPlatformSuites() {
           status: "PASSED",
           duration,
           error: null,
-          screenshotBase64
+          shotBeforeBase64,
+          shotAfterBase64
         });
         console.log(`   ✅ [${scenario.id}] ${scenario.title} (${duration}ms)`);
       } catch (err) {
         const duration = Date.now() - sStart;
         epicFailed++;
 
-        let screenshotBase64 = null;
         if (appInstance && appInstance.window) {
-          try {
-            const shotPath = path.join(screenshotsDir, `${scenario.id}_error.png`);
-            await appInstance.window.screenshot({ path: shotPath });
-            const buffer = fs.readFileSync(shotPath);
-            screenshotBase64 = `data:image/png;base64,${buffer.toString("base64")}`;
-          } catch {}
+          shotAfterBase64 = await captureBase64(appInstance.window, `${scenario.id}_error.png`);
         }
 
         results.push({
@@ -122,7 +159,8 @@ async function runPlatformSuites() {
           status: "FAILED",
           duration,
           error: err.message,
-          screenshotBase64
+          shotBeforeBase64,
+          shotAfterBase64
         });
         console.log(
           `   ❌ [${scenario.id}] ${scenario.title} (${duration}ms) - Error: ${err.message}`
@@ -182,12 +220,31 @@ function generateHtmlDashboard(results, totalDuration, reportsDir) {
     .join("");
 
   const visualCards = results
-    .filter((r) => r.screenshotBase64)
+    .filter((r) => r.shotBeforeBase64 || r.shotAfterBase64)
     .map(
       (r) => `
-    <div style="background: #252526; border: 1px solid #3c3c3c; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
-      <h3 style="margin-top: 0; color: #569cd6;">[${r.epic}] ${r.scenarioId}: ${r.title}</h3>
-      <img src="${r.screenshotBase64}" style="max-width: 100%; border-radius: 4px; border: 1px solid #555;" alt="Visual Proof" />
+    <div style="background: #252526; border: 1px solid #3c3c3c; border-radius: 8px; padding: 20px; margin-bottom: 25px;">
+      <h3 style="margin-top: 0; color: #569cd6;">[${r.epic}] ${r.scenarioId}: ${r.title} <span style="font-size:14px; color:${r.status === "PASSED" ? "#28a745" : "#dc3545"};">(${r.status})</span></h3>
+      <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        ${
+          r.shotBeforeBase64
+            ? `
+        <div style="flex: 1; min-width: 300px;">
+          <h4 style="margin: 5px 0; color: #ce9178;">📷 BEFORE Action (State Transition Initial)</h4>
+          <img src="${r.shotBeforeBase64}" style="width: 100%; border-radius: 6px; border: 1px solid #555;" alt="Before State" />
+        </div>`
+            : ""
+        }
+        ${
+          r.shotAfterBase64
+            ? `
+        <div style="flex: 1; min-width: 300px;">
+          <h4 style="margin: 5px 0; color: #4ec9b0;">📷 AFTER Action (State Transition Verified)</h4>
+          <img src="${r.shotAfterBase64}" style="width: 100%; border-radius: 6px; border: 1px solid #555;" alt="After State" />
+        </div>`
+            : ""
+        }
+      </div>
     </div>`
     )
     .join("");
@@ -196,7 +253,7 @@ function generateHtmlDashboard(results, totalDuration, reportsDir) {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Open-Code.Studio Test Validation Dashboard</title>
+  <title>Open-Code.Studio Visual Validation Dashboard</title>
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #1e1e1e; color: #d4d4d4; margin: 20px; }
     h1 { color: #569cd6; }
@@ -207,7 +264,7 @@ function generateHtmlDashboard(results, totalDuration, reportsDir) {
   </style>
 </head>
 <body>
-  <h1>🚀 Open-Code.Studio Epic Validation Dashboard</h1>
+  <h1>🚀 Open-Code.Studio Epic Validation Dashboard & Visual Gallery</h1>
   <div class="card">
     <div><div>Total Scenarios</div><div class="metric">${results.length}</div></div>
     <div><div>Pass Rate</div><div class="metric" style="color: #28a745;">${passRate}%</div></div>
@@ -216,7 +273,7 @@ function generateHtmlDashboard(results, totalDuration, reportsDir) {
     <div><div>Execution Time</div><div class="metric">${(totalDuration / 1000).toFixed(2)}s</div></div>
   </div>
 
-  <h2>📊 Test Scenario Matrix</h2>
+  <h2>📊 Scenario Execution Matrix</h2>
   <table>
     <thead>
       <tr>
@@ -233,16 +290,16 @@ function generateHtmlDashboard(results, totalDuration, reportsDir) {
     </tbody>
   </table>
 
-  <h2>🖼️ Visual Execution Proof Gallery (Embedded Base64 Screenshots)</h2>
+  <h2>🖼️ Visual Execution Proof Gallery (BEFORE & AFTER Embedded Base64 Screenshots)</h2>
   <div>
-    ${visualCards || "<p>No screenshots captured.</p>"}
+    ${visualCards || "<p>No UI screenshots captured.</p>"}
   </div>
 </body>
 </html>`;
 
   fs.writeFileSync(htmlPath, html);
   console.log(
-    `📊 HTML Dashboard Report generated with embedded Base64 screenshots at: ${htmlPath}`
+    `📊 HTML Dashboard Report with BEFORE & AFTER Base64 screenshots generated at: ${htmlPath}`
   );
 }
 
