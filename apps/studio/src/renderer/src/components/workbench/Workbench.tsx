@@ -24,9 +24,9 @@ export const Workbench: React.FC<WorkbenchProps> = ({ workspaceName }) => {
   useKeybindings();
 
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
-  const [activeBottomTab, setActiveBottomTab] = useState<"problems" | "output" | "terminal" | "diagnostics">(
-    "terminal"
-  );
+  const [activeBottomTab, setActiveBottomTab] = useState<
+    "problems" | "output" | "terminal" | "diagnostics"
+  >("terminal");
 
   // Read width from settings or default to 280
   const settingsSidebarWidth = workspace?.configuration?.settings?.["sidebarWidth"] as

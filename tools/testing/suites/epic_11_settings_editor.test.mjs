@@ -37,9 +37,12 @@ export async function run() {
     // Verify Settings API Get & Set
     const initialSettings = await window.evaluate(async () => {
       // @ts-ignore
-      return await window.ocs?.settings?.get?.("editor.fontSize") ?? 14;
+      return (await window.ocs?.settings?.get?.("editor.fontSize")) ?? 14;
     });
-    harness.assert(typeof initialSettings === "number" || typeof initialSettings === "string", `Settings API returned initial fontSize (${initialSettings})`);
+    harness.assert(
+      typeof initialSettings === "number" || typeof initialSettings === "string",
+      `Settings API returned initial fontSize (${initialSettings})`
+    );
 
     // Set setting via API
     await window.evaluate(async () => {
@@ -51,7 +54,10 @@ export async function run() {
       // @ts-ignore
       return await window.ocs?.settings?.get?.("editor.fontSize");
     });
-    harness.assert(updatedSettings === 16, `Settings API updated fontSize to 16 (${updatedSettings})`);
+    harness.assert(
+      updatedSettings === 16,
+      `Settings API updated fontSize to 16 (${updatedSettings})`
+    );
 
     return await harness.finish();
   } catch (err) {

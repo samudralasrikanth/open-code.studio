@@ -27,10 +27,14 @@ async function runAllSuites() {
 
   if (args.length > 0) {
     const filter = args[0];
-    suiteFiles = suiteFiles.filter((f) => f.includes(filter) || path.basename(f) === path.basename(filter));
+    suiteFiles = suiteFiles.filter(
+      (f) => f.includes(filter) || path.basename(f) === path.basename(filter)
+    );
   }
 
-  console.log(`📋 Found ${suiteFiles.length} Enterprise E2E Test Suite files in tools/testing/suites/\n`);
+  console.log(
+    `📋 Found ${suiteFiles.length} Enterprise E2E Test Suite files in tools/testing/suites/\n`
+  );
 
   const results = [];
   const startTime = Date.now();
@@ -53,9 +57,13 @@ async function runAllSuites() {
       results.push(fullResult);
 
       if (res.passed) {
-        console.log(`   ✅ PASSED [${res.epicId}] ${res.scenarioName} (${res.passedAssertions}/${res.totalAssertions} assertions, ${res.metrics?.mouseClicks || 0} clicks, ${res.metrics?.keyboardEvents || 0} keys, ${duration}ms)`);
+        console.log(
+          `   ✅ PASSED [${res.epicId}] ${res.scenarioName} (${res.passedAssertions}/${res.totalAssertions} assertions, ${res.metrics?.mouseClicks || 0} clicks, ${res.metrics?.keyboardEvents || 0} keys, ${duration}ms)`
+        );
       } else {
-        console.log(`   ❌ FAILED [${res.epicId}] ${res.scenarioName} (${res.failedAssertions} failed assertions, ${duration}ms)`);
+        console.log(
+          `   ❌ FAILED [${res.epicId}] ${res.scenarioName} (${res.failedAssertions} failed assertions, ${duration}ms)`
+        );
         if (res.logs && res.logs.length > 0) {
           console.log("      --- SUITE LOGS ---");
           for (const line of res.logs) {

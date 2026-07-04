@@ -16,6 +16,7 @@ import {
   wireExplorerProvider,
   StartupCoordinator
 } from "./bootstrap/index.js";
+import { createApplicationMenu } from "./menu.js";
 import { restoreLastWorkspace } from "./ipc/handlers/index.js";
 
 process.on("uncaughtException", (err: any) => {
@@ -37,8 +38,8 @@ container.singleton(Symbol.for("startup"), () => coordinator);
 coordinator.register({
   name: "desktop",
   dependsOn: [],
-  execute: () => {
-    const windowManager = bootstrapDesktop(logger);
+  execute: async () => {
+    const windowManager = await bootstrapDesktop(logger, container);
     container.singleton(Symbol.for("windowManager"), () => windowManager);
 
     app.on("activate", () => {
@@ -56,6 +57,7 @@ coordinator.register({
   execute: async () => {
     const userDataPath = app.getPath("userData");
     await bootstrapWorkspace(container, userDataPath, logger);
+    await createApplicationMenu(container);
   }
 });
 
@@ -122,7 +124,15 @@ coordinator.register({
 
 coordinator.register({
   name: "ipc",
-  dependsOn: ["explorer", "document", "terminal", "commands", "search", "settings", "theme-notification-keybinding-session"],
+  dependsOn: [
+    "explorer",
+    "document",
+    "terminal",
+    "commands",
+    "search",
+    "settings",
+    "theme-notification-keybinding-session"
+  ],
   execute: () => {
     bootstrapIpc(container, logger);
   }

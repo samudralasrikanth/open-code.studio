@@ -55,9 +55,7 @@ export function useKeybindings(): void {
       }
 
       // Check if matches any registered command keybinding
-      const matched = bindingsRef.current.find(
-        (b) => b.key.toLowerCase() === seq.toLowerCase()
-      );
+      const matched = bindingsRef.current.find((b) => b.key.toLowerCase() === seq.toLowerCase());
 
       if (matched) {
         e.preventDefault();
@@ -72,8 +70,8 @@ export function useKeybindings(): void {
       }
 
       // Check if first part of a chord
-      const isChordStart = bindingsRef.current.some(
-        (b) => b.key.toLowerCase().startsWith(`${parsed.toLowerCase()} `)
+      const isChordStart = bindingsRef.current.some((b) =>
+        b.key.toLowerCase().startsWith(`${parsed.toLowerCase()} `)
       );
 
       if (isChordStart) {

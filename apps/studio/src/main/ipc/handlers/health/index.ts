@@ -3,7 +3,7 @@ import type { Container } from "@ocs/common";
 import { ipcMain } from "electron";
 import { IpcChannels } from "../../../../shared/ipc-channels.js";
 import { getExplorerWatcherState } from "../explorer/index.js";
-import type { StartupCoordinator } from "../../bootstrap/startup-coordinator.js";
+import type { StartupCoordinator } from "../../../bootstrap/startup-coordinator.js";
 
 export function registerHealthHandlers(container: Container): void {
   ipcMain.handle(IpcChannels.HEALTH_CHECK, async () => ({

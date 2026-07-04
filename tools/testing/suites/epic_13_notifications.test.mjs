@@ -29,7 +29,10 @@ export async function run() {
       });
     });
 
-    harness.assert(typeof noteId === "string", `Notification successfully created with ID: ${noteId}`);
+    harness.assert(
+      typeof noteId === "string",
+      `Notification successfully created with ID: ${noteId}`
+    );
     await window.waitForTimeout(200);
 
     // Verify active list holds it
@@ -37,8 +40,11 @@ export async function run() {
       // @ts-ignore
       return await window.ocs?.notifications?.getActive?.();
     });
-    harness.assert(active.some(n => n.id === noteId), "Created notification is present in active queue");
-    harness.assert(active.find(n => n.id === noteId)?.progress === 10, "Initial progress is 10");
+    harness.assert(
+      active.some((n) => n.id === noteId),
+      "Created notification is present in active queue"
+    );
+    harness.assert(active.find((n) => n.id === noteId)?.progress === 10, "Initial progress is 10");
 
     // Update progress in-place
     await window.evaluate(async (id) => {
@@ -54,9 +60,15 @@ export async function run() {
       // @ts-ignore
       return await window.ocs?.notifications?.getActive?.();
     });
-    const updatedNote = active.find(n => n.id === noteId);
-    harness.assert(updatedNote?.progress === 75, `Progress updated in place to 75% (${updatedNote?.progress}%)`);
-    harness.assert(updatedNote?.message === "Writing files...", `Message updated in place to "Writing files..."`);
+    const updatedNote = active.find((n) => n.id === noteId);
+    harness.assert(
+      updatedNote?.progress === 75,
+      `Progress updated in place to 75% (${updatedNote?.progress}%)`
+    );
+    harness.assert(
+      updatedNote?.message === "Writing files...",
+      `Message updated in place to "Writing files..."`
+    );
 
     // Dismiss notification and verify it moves to history
     await window.evaluate(async (id) => {
@@ -74,8 +86,14 @@ export async function run() {
       return await window.ocs?.notifications?.getHistory?.();
     });
 
-    harness.assert(!active.some(n => n.id === noteId), "Notification removed from active queue upon dismissal");
-    harness.assert(history.some(n => n.id === noteId), "Dismissed notification archived in Notification History Center");
+    harness.assert(
+      !active.some((n) => n.id === noteId),
+      "Notification removed from active queue upon dismissal"
+    );
+    harness.assert(
+      history.some((n) => n.id === noteId),
+      "Dismissed notification archived in Notification History Center"
+    );
 
     return await harness.finish();
   } catch (err) {

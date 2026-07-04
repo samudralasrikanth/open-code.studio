@@ -26,7 +26,7 @@ export function registerIpcHandlers(container: Container): void {
   registerEditorHandlers(container);
   registerCommandsHandlers(container);
   registerTerminalHandlers(container);
-  registerGitHandlers(container);
+  registerGitHandlers();
   registerSearchHandlers(container);
   registerSettingsHandlers(container);
   registerThemeHandlers(container);

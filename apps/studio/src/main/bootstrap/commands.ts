@@ -16,6 +16,40 @@ export function bootstrapCommands(container: Container): void {
   container.singleton(Symbol.for("commandHistory"), () => history);
   container.singleton(Symbol.for("commandSearch"), () => searchEngine);
 
+  // Bridge legacy per-package command registries (registered as Symbol.for("commands"))
+  // into the centralized commands registry so all commands are discoverable
+  // through the main `commands` pipeline and IPC handlers.
+  try {
+    const legacy = container.resolve<any>(Symbol.for("commands"));
+    if (legacy && typeof legacy.getCommands === "function") {
+      const legacyList = legacy.getCommands();
+      for (const legacyCmd of legacyList) {
+        try {
+          registry.register({
+            id: legacyCmd.id,
+            title: (legacyCmd as any).title || legacyCmd.id,
+            category: (legacyCmd as any).category || "Platform",
+            // Adapter: call legacy `execute` if present
+            handler: async (args?: any) => {
+              if (typeof legacyCmd.execute === "function") {
+                return await legacyCmd.execute(args);
+              }
+              return undefined;
+            },
+            enableWhen: (legacyCmd as any).enableWhen,
+            isVisible: (legacyCmd as any).isVisible
+          });
+        } catch (err) {
+          // Ignore duplicate registrations or adapter failures — log and continue
+          // eslint-disable-next-line no-console
+          console.warn(`Failed to bridge legacy command ${legacyCmd.id}: ${String(err)}`);
+        }
+      }
+    }
+  } catch {
+    // No legacy registry present — nothing to bridge
+  }
+
   // Register foundational platform commands
   registry.register({
     id: "app.quit",
@@ -68,4 +102,3 @@ export function bootstrapCommands(container: Container): void {
     }
   });
 }
-

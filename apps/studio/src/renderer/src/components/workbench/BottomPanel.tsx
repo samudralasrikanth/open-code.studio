@@ -11,7 +11,12 @@ interface BottomPanelProps {
   onTabChange: (tab: "problems" | "output" | "terminal" | "diagnostics") => void;
 }
 
-export const BottomPanel: React.FC<BottomPanelProps> = ({ height, isResizing, activeTab, onTabChange }) => {
+export const BottomPanel: React.FC<BottomPanelProps> = ({
+  height,
+  isResizing,
+  activeTab,
+  onTabChange
+}) => {
   const [cwd, setCwd] = useState<string>("/");
 
   useEffect(() => {

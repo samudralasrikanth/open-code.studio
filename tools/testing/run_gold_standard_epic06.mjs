@@ -125,7 +125,7 @@ async function runTrueGoldStandard() {
 
   // State-based wait: Wait for main layout container to appear
   log("  Waiting for application shell (state-based wait)...");
-  await window.waitForSelector('#root > div', { state: 'visible', timeout: 15000 });
+  await window.waitForSelector("#root > div", { state: "visible", timeout: 15000 });
   log("  Application shell mounted successfully.");
 
   // ── STEP 2: Capture BEFORE screenshot ───────────────────────────────────────
@@ -150,8 +150,8 @@ async function runTrueGoldStandard() {
   // State-based wait for Explorer tree node to appear in UI
   log("  Waiting for Explorer tree items to render in UI...");
   const treeItemLocator = window.locator('[role="treeitem"]');
-  await treeItemLocator.first().waitFor({ state: 'visible', timeout: 10000 });
-  
+  await treeItemLocator.first().waitFor({ state: "visible", timeout: 10000 });
+
   const nodeCount = await treeItemLocator.count();
   log(`  Explorer panel rendered ${nodeCount} node(s).`);
   assert(nodeCount > 0, "Explorer tree rendered files in sidebar");
@@ -163,15 +163,18 @@ async function runTrueGoldStandard() {
   log("");
   log("STEP 4: UI INTERACTION — Clicking file node in Explorer sidebar tree...");
   const fileNode = treeItemLocator.filter({ hasText: testFileName }).first();
-  await fileNode.waitFor({ state: 'visible' });
+  await fileNode.waitFor({ state: "visible" });
   log(`  Found file node in tree: "${testFileName}". Clicking...`);
   await fileNode.click();
 
   // State-based wait for Editor tab to appear in UI
   log("  Waiting for Editor tab to open in UI...");
-  const tabLocator = window.locator('div').filter({ hasText: testFileName }).first();
-  await tabLocator.waitFor({ state: 'visible', timeout: 5000 });
-  assert(await tabLocator.isVisible(), `UI Assertion: Tab "${testFileName}" is visible in Editor area`);
+  const tabLocator = window.locator("div").filter({ hasText: testFileName }).first();
+  await tabLocator.waitFor({ state: "visible", timeout: 5000 });
+  assert(
+    await tabLocator.isVisible(),
+    `UI Assertion: Tab "${testFileName}" is visible in Editor area`
+  );
 
   await window.screenshot({ path: path.join(proofDir, "03_file_opened_via_ui.png") });
   log("  03_file_opened_via_ui.png captured.");
@@ -179,30 +182,36 @@ async function runTrueGoldStandard() {
   // ── STEP 5: UI Interaction — Focus Monaco & Type Text via Keyboard ─────────
   log("");
   log("STEP 5: UI INTERACTION — Focusing Monaco Editor & typing via Keyboard...");
-  const monacoEditor = window.locator('.monaco-editor').first();
-  await monacoEditor.waitFor({ state: 'visible', timeout: 5000 });
+  const monacoEditor = window.locator(".monaco-editor").first();
+  await monacoEditor.waitFor({ state: "visible", timeout: 5000 });
   assert(await monacoEditor.isVisible(), "UI Assertion: Monaco Editor view is rendered");
 
   log("  Focusing Monaco editor inputarea...");
-  const inputArea = window.locator('.monaco-editor textarea.inputarea').first();
+  const inputArea = window.locator(".monaco-editor textarea.inputarea").first();
   if (await inputArea.isVisible().catch(() => false)) {
     await inputArea.focus();
   } else {
     await monacoEditor.click();
   }
-  
-  log(`  Typing text via page.keyboard.type("${TYPED_TEXT.replace(/\n/g, '\\n')}")...`);
+
+  log(`  Typing text via page.keyboard.type("${TYPED_TEXT.replace(/\n/g, "\\n")}")...`);
   await window.keyboard.type(TYPED_TEXT);
 
   // Trigger blur to immediately flush Monaco changes to main process
   await monacoEditor.click({ position: { x: 1, y: 1 } }).catch(() => {});
 
   log("  Waiting for Monaco editor text change to flush to document service...");
-  await window.waitForFunction(async (filePath) => {
-    // @ts-ignore
-    const doc = await window.ocs?.document?.get(`file://${filePath}`);
-    return doc && doc.isDirty === true;
-  }, testFilePath, { timeout: 5000 }).catch(() => {});
+  await window
+    .waitForFunction(
+      async (filePath) => {
+        // @ts-ignore
+        const doc = await window.ocs?.document?.get(`file://${filePath}`);
+        return doc && doc.isDirty === true;
+      },
+      testFilePath,
+      { timeout: 5000 }
+    )
+    .catch(() => {});
 
   await window.screenshot({ path: path.join(proofDir, "04_typed_in_monaco.png") });
   log("  04_typed_in_monaco.png captured.");
@@ -216,11 +225,14 @@ async function runTrueGoldStandard() {
   // If debounced flush was still pending, update document directly via UI interaction API
   if (!inMemoryDoc?.isDirty) {
     log("  Updating document content to trigger dirty state...");
-    await window.evaluate(async ({ filePath, text }) => {
-      // @ts-ignore
-      await window.ocs?.document?.update(`file://${filePath}`, text);
-    }, { filePath: testFilePath, text: ORIGINAL_TEXT + TYPED_TEXT });
-    
+    await window.evaluate(
+      async ({ filePath, text }) => {
+        // @ts-ignore
+        await window.ocs?.document?.update(`file://${filePath}`, text);
+      },
+      { filePath: testFilePath, text: ORIGINAL_TEXT + TYPED_TEXT }
+    );
+
     inMemoryDoc = await window.evaluate(async (filePath) => {
       // @ts-ignore
       return await window.ocs?.document?.get(`file://${filePath}`);
@@ -228,7 +240,10 @@ async function runTrueGoldStandard() {
   }
 
   log(`  In-memory document isDirty: ${inMemoryDoc?.isDirty}`);
-  assert(inMemoryDoc?.isDirty === true, "UI Assertion: Document marked dirty after text modification");
+  assert(
+    inMemoryDoc?.isDirty === true,
+    "UI Assertion: Document marked dirty after text modification"
+  );
   assert(
     inMemoryDoc?.content?.includes("Playwright User Typing"),
     "UI Assertion: Editor content updated with typed text"
@@ -236,7 +251,10 @@ async function runTrueGoldStandard() {
 
   // Verify disk has NOT been updated yet
   const diskBeforeSave = fs.readFileSync(testFilePath, "utf-8");
-  assert(diskBeforeSave === ORIGINAL_TEXT, "Filesystem Assertion: Disk still retains ORIGINAL content prior to save");
+  assert(
+    diskBeforeSave === ORIGINAL_TEXT,
+    "Filesystem Assertion: Disk still retains ORIGINAL content prior to save"
+  );
 
   // ── STEP 6: UI Interaction — Press Cmd+S / Ctrl+S Keyboard Shortcut ─────────
   log("");
@@ -248,18 +266,25 @@ async function runTrueGoldStandard() {
 
   // State-based wait: Wait for isDirty to become false
   log("  Waiting for document dirty state to clear...");
-  await window.waitForFunction(async (filePath) => {
-    // @ts-ignore
-    const doc = await window.ocs?.document?.get(`file://${filePath}`);
-    return doc && doc.isDirty === false;
-  }, testFilePath, { timeout: 5000 });
+  await window.waitForFunction(
+    async (filePath) => {
+      // @ts-ignore
+      const doc = await window.ocs?.document?.get(`file://${filePath}`);
+      return doc && doc.isDirty === false;
+    },
+    testFilePath,
+    { timeout: 5000 }
+  );
 
   const postSaveDoc = await window.evaluate(async (filePath) => {
     // @ts-ignore
     return await window.ocs?.document?.get(`file://${filePath}`);
   }, testFilePath);
 
-  assert(postSaveDoc?.isDirty === false, "UI Assertion: Document isDirty is false after Cmd+S shortcut");
+  assert(
+    postSaveDoc?.isDirty === false,
+    "UI Assertion: Document isDirty is false after Cmd+S shortcut"
+  );
 
   await window.screenshot({ path: path.join(proofDir, "05_after_shortcut_save.png") });
   log("  05_after_shortcut_save.png captured.");
@@ -269,7 +294,7 @@ async function runTrueGoldStandard() {
   log("STEP 7: FILESYSTEM ASSERTION — Verifying saved file on disk...");
   const diskAfterSave = fs.readFileSync(testFilePath, "utf-8");
   log(`  Disk content length: ${diskAfterSave.length} bytes`);
-  log(`  Disk content snippet: "${diskAfterSave.replace(/\n/g, '\\n')}"`);
+  log(`  Disk content snippet: "${diskAfterSave.replace(/\n/g, "\\n")}"`);
 
   assert(
     diskAfterSave.includes("Playwright User Typing"),
@@ -285,7 +310,10 @@ async function runTrueGoldStandard() {
   log("STEP 8: Quality Gate — Validating console & page error logs...");
   log(`  Console messages captured: ${consoleLogs.length}`);
   log(`  Console errors captured: ${consoleErrors.length}`);
-  assert(consoleErrors.length === 0, "Quality Gate: Zero unhandled console errors or page errors during test execution");
+  assert(
+    consoleErrors.length === 0,
+    "Quality Gate: Zero unhandled console errors or page errors during test execution"
+  );
 
   // ── STEP 9: Final AFTER screenshot & Trace capture ──────────────────────────
   log("");

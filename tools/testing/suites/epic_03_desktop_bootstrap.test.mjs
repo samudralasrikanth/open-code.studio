@@ -1,7 +1,10 @@
 import { ElectronE2ETestHarness } from "../helpers/electron_e2e_helper.mjs";
 
 export async function run() {
-  const harness = new ElectronE2ETestHarness("EPIC-0003", "Desktop Bootstrap Shell & Window Controls");
+  const harness = new ElectronE2ETestHarness(
+    "EPIC-0003",
+    "Desktop Bootstrap Shell & Window Controls"
+  );
 
   try {
     await harness.setupWorkspace({ "bootstrap.txt": "Desktop Bootstrap" });
@@ -22,7 +25,7 @@ export async function run() {
     await harness.takeScreenshot("sidebar_toggled_visible");
 
     // Interaction 3: Click Header Title Bar
-    const header = window.locator('header').first();
+    const header = window.locator("header").first();
     harness.assert(await header.isVisible(), "Header TitleBar is visible");
     await harness.click(header);
 
@@ -31,11 +34,17 @@ export async function run() {
       // @ts-ignore
       return await window.ocs?.window?.isMaximized();
     });
-    harness.assert(typeof isMaximized === "boolean", `Window isMaximized API returned ${isMaximized}`);
+    harness.assert(
+      typeof isMaximized === "boolean",
+      `Window isMaximized API returned ${isMaximized}`
+    );
 
     // Verify TitleBar contains app title
     const headerText = await header.innerText();
-    harness.assert(headerText.includes("Open-Code.Studio"), `TitleBar contains application name ("${headerText}")`);
+    harness.assert(
+      headerText.includes("Open-Code.Studio"),
+      `TitleBar contains application name ("${headerText}")`
+    );
 
     return await harness.finish();
   } catch (err) {

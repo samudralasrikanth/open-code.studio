@@ -6,8 +6,6 @@ import {
   UserSettingsStore,
   WorkspaceSettingsStore
 } from "@ocs/settings";
-import { app } from "electron";
-import * as path from "path";
 
 export async function bootstrapSettings(
   container: Container,

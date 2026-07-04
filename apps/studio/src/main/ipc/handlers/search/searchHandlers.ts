@@ -11,7 +11,8 @@ export function registerSearchHandlers(container: Container): void {
 
   ipcMain.handle(IpcChannels.SEARCH_START, async (_, query: SearchQuery, cwd?: string) => {
     try {
-      const rawPath = typeof cwd === "string" ? cwd : (query as any)?.rootUri || (query as any)?.cwd || "";
+      const rawPath =
+        typeof cwd === "string" ? cwd : (query as any)?.rootUri || (query as any)?.cwd || "";
       const fsPath = rawPath.startsWith("file://") ? uriToPath(rawPath as any) : rawPath;
       if (fsPath) {
         await searchService.executeSearch(query, fsPath);

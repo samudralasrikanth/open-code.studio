@@ -31,7 +31,15 @@ export class SessionManager {
     const baseSnapshot = this.currentSnapshot || {
       version: 1,
       workspaceId: this.activeWorkspaceId,
-      windowState: { width: 1024, height: 768, x: 0, y: 0, maximized: false, fullscreen: false, zoom: 1 },
+      windowState: {
+        width: 1024,
+        height: 768,
+        x: 0,
+        y: 0,
+        maximized: false,
+        fullscreen: false,
+        zoom: 1
+      },
       editorLayout: { groups: [] },
       terminalState: { tabs: [] },
       viewState: {}

@@ -18,16 +18,9 @@ import {
   NotificationService
 } from "@ocs/notifications";
 
-import {
-  ContextService,
-  KeybindingRegistry,
-  KeybindingResolver
-} from "@ocs/keybindings";
+import { ContextService, KeybindingRegistry, KeybindingResolver } from "@ocs/keybindings";
 
-import {
-  SessionStore,
-  SessionManager
-} from "@ocs/session";
+import { SessionStore, SessionManager } from "@ocs/session";
 
 export function bootstrapThemeNotificationKeybindingSession(
   container: Container,

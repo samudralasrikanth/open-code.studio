@@ -38,7 +38,10 @@ export function executeRendererCommand(commandId: string, args?: any): Promise<b
   return Promise.resolve(command.execute(args)).then(() => true);
 }
 
-export function searchRendererCommands(query: string, limit: number = 20): RendererCommandSearchResult[] {
+export function searchRendererCommands(
+  query: string,
+  limit: number = 20
+): RendererCommandSearchResult[] {
   const normalizedQuery = query.trim().toLowerCase();
   const items = Array.from(commands.values()).filter((command) => command.isVisible !== false);
 

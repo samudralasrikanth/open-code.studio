@@ -36,7 +36,10 @@ export async function run() {
     // ── Interaction 2: Double Click (Permanent Tab) ──────────────────────────
     await harness.dblclick(readmeNode);
     await harness.takeScreenshot("double_click_permanent_tab");
-    harness.assert(await tabLocator.isVisible(), "Double Click pinned permanent tab in Editor area");
+    harness.assert(
+      await tabLocator.isVisible(),
+      "Double Click pinned permanent tab in Editor area"
+    );
 
     // ── Interaction 3: Expand / Collapse Directory ───────────────────────────
     const srcFolderNode = treeItems.filter({ hasText: "src" }).first();
@@ -45,7 +48,10 @@ export async function run() {
       await window.waitForTimeout(300);
       await harness.takeScreenshot("folder_expanded");
       const countAfterExpand = await treeItems.count();
-      harness.assert(countAfterExpand >= initialCount, `Expanding directory increased visible nodes (${countAfterExpand})`);
+      harness.assert(
+        countAfterExpand >= initialCount,
+        `Expanding directory increased visible nodes (${countAfterExpand})`
+      );
     }
 
     return await harness.finish();

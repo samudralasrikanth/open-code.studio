@@ -13,13 +13,19 @@ export async function run() {
 
     // Initialize real git repo on disk
     try {
-      execSync("git init && git config user.name 'Test' && git config user.email 'test@test.com' && git add . && git commit -m 'Initial commit'", { cwd: wsDir, stdio: "ignore" });
+      execSync(
+        "git init && git config user.name 'Test' && git config user.email 'test@test.com' && git add . && git commit -m 'Initial commit'",
+        { cwd: wsDir, stdio: "ignore" }
+      );
     } catch {
       // Ignore if git CLI not configured locally
     }
 
     // Modify file to produce a git diff
-    fs.writeFileSync(path.join(wsDir, "git-file.txt"), "Original git content\nMODIFIED GIT CONTENT\n");
+    fs.writeFileSync(
+      path.join(wsDir, "git-file.txt"),
+      "Original git content\nMODIFIED GIT CONTENT\n"
+    );
 
     const window = await harness.launchElectron();
     await harness.openWorkspaceInSetup();
@@ -39,7 +45,7 @@ export async function run() {
     }
 
     // ── Interaction 2: Click inside Source Control sidebar ───────────────────
-    const scPanel = window.locator('div').filter({ hasText: "SOURCE CONTROL" }).first();
+    const scPanel = window.locator("div").filter({ hasText: "SOURCE CONTROL" }).first();
     if (await scPanel.isVisible().catch(() => false)) {
       await harness.click(scPanel);
       harness.assert(true, "Source Control panel visible and clicked");
@@ -55,8 +61,14 @@ export async function run() {
     }, wsDir);
 
     harness.assert(gitStatus !== undefined, "Git Status API executed successfully");
-    harness.assert(fs.existsSync(path.join(wsDir, "git-file.txt")), "Modified git file exists on disk");
-    harness.assert(fs.readFileSync(path.join(wsDir, "git-file.txt"), "utf-8").includes("MODIFIED"), "File contains uncommitted modifications");
+    harness.assert(
+      fs.existsSync(path.join(wsDir, "git-file.txt")),
+      "Modified git file exists on disk"
+    );
+    harness.assert(
+      fs.readFileSync(path.join(wsDir, "git-file.txt"), "utf-8").includes("MODIFIED"),
+      "File contains uncommitted modifications"
+    );
 
     return await harness.finish();
   } catch (err) {

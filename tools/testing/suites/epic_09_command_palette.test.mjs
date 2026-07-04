@@ -41,7 +41,10 @@ export async function run() {
       return await window.ocs?.commands?.search?.("app");
     });
 
-    harness.assert(Array.isArray(searchResults), `Commands search API returned results array (${searchResults?.length || 0} items)`);
+    harness.assert(
+      Array.isArray(searchResults),
+      `Commands search API returned results array (${searchResults?.length || 0} items)`
+    );
     harness.assert(searchResults !== undefined, "Command search API returned valid response");
 
     return await harness.finish();

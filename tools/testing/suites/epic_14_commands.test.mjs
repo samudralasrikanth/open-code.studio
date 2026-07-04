@@ -20,20 +20,26 @@ export async function run() {
     // Verify search commands
     const searchResults = await window.evaluate(async () => {
       // @ts-ignore
-      return await window.ocs?.commands?.search?.("save") ?? [];
+      return (await window.ocs?.commands?.search?.("save")) ?? [];
     });
 
     harness.assert(Array.isArray(searchResults), "Commands search returned list array");
     harness.assert(searchResults.length > 0, "Found registered commands containing 'save'");
-    harness.assert(searchResults[0].command.id, `First matching command has id: ${searchResults[0]?.command?.id}`);
+    harness.assert(
+      searchResults[0].command.id,
+      `First matching command has id: ${searchResults[0]?.command?.id}`
+    );
 
     // Verify execute command (e.g. settings)
     const result = await window.evaluate(async () => {
       // @ts-ignore
-      return await window.ocs?.commands?.execute?.("settings:get-all") || {};
+      return (await window.ocs?.commands?.execute?.("settings:get-all")) || {};
     });
 
-    harness.assert(result && typeof result === "object", "Executed registered settings fetch command successfully");
+    harness.assert(
+      result && typeof result === "object",
+      "Executed registered settings fetch command successfully"
+    );
 
     return await harness.finish();
   } catch (err) {

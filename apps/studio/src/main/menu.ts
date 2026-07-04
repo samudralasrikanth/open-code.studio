@@ -1,5 +1,8 @@
 /* eslint-disable */
-import { Menu, shell, app } from "electron";
+import { Menu, shell, app, dialog } from "electron";
+import type { Container } from "@ocs/common";
+import type { RecentWorkspace } from "@ocs/workspace";
+import { uriToPath } from "@ocs/workspace";
 
 /**
  * Creates and sets the native application menu.
@@ -7,8 +10,94 @@ import { Menu, shell, app } from "electron";
  *  - macOS: App menu prefix added automatically by the OS
  *  - Windows/Linux: Standard File/Edit/View/Window/Help menu bar
  */
-export function createApplicationMenu(): void {
+export async function createApplicationMenu(container?: Container): Promise<void> {
   const isMac = process.platform === "darwin";
+
+  const openFolder = async (): Promise<void> => {
+    const { canceled, filePaths } = await dialog.showOpenDialog({
+      properties: ["openDirectory", "createDirectory"]
+    });
+    if (canceled || filePaths.length === 0 || !container) return;
+
+    try {
+      const workspaceService = container.resolve<any>(Symbol.for("workspace"));
+      if (workspaceService && typeof workspaceService.open === "function") {
+        await workspaceService.open(filePaths[0]);
+      }
+    } catch (error) {
+      console.error("Failed to open folder from menu:", error);
+    }
+  };
+
+  const openRecentEntry = async (entry: RecentWorkspace): Promise<void> => {
+    try {
+      if (!container) {
+        console.error("Unable to open recent workspace: container missing");
+        return;
+      }
+
+      const workspaceService = container.resolve<any>(Symbol.for("workspace"));
+      if (!workspaceService || typeof workspaceService.open !== "function") {
+        console.error("Unable to open recent workspace: workspaceService not available");
+        return;
+      }
+
+      const path = uriToPath(entry.uri);
+      await workspaceService.open(path);
+    } catch (error) {
+      console.error("Failed to open recent workspace from menu:", error);
+    }
+  };
+
+  const buildOpenRecentSubmenu = async (): Promise<Electron.MenuItemConstructorOptions[]> => {
+    if (!container) {
+      return [
+        {
+          label: "No recent workspaces",
+          enabled: false
+        }
+      ];
+    }
+
+    try {
+      const workspaceService = container.resolve<any>(Symbol.for("workspace"));
+      if (!workspaceService || typeof workspaceService.getRecent !== "function") {
+        return [
+          {
+            label: "No recent workspaces",
+            enabled: false
+          }
+        ];
+      }
+
+      const recentWorkspaces: readonly RecentWorkspace[] = workspaceService.getRecent();
+      if (!Array.isArray(recentWorkspaces) || recentWorkspaces.length === 0) {
+        return [
+          {
+            label: "No recent workspaces",
+            enabled: false
+          }
+        ];
+      }
+
+      return recentWorkspaces.map((entry) => ({
+        label: entry.displayName,
+        click: async (): Promise<void> => {
+          await openRecentEntry(entry);
+        }
+      }));
+    } catch (error) {
+      console.error("Failed to build Open Recent submenu:", error);
+      return [
+        {
+          label: "Unable to load recent workspaces",
+          enabled: false
+        }
+      ];
+    }
+  };
+
+  const openRecentSubmenu = await buildOpenRecentSubmenu();
 
   const template: Electron.MenuItemConstructorOptions[] = [
     // macOS App menu (first menu is always the app name)
@@ -38,11 +127,36 @@ export function createApplicationMenu(): void {
         {
           label: "New Window",
           accelerator: "CmdOrCtrl+Shift+N",
-          click: (): void => {
-            // EPIC-0004 will implement workspace management
+          click: async (): Promise<void> => {
+            try {
+              if (!container) {
+                console.error("Unable to create new window: container missing");
+                return;
+              }
+
+              const windowManager = container.resolve<any>(Symbol.for("windowManager"));
+              if (windowManager && typeof windowManager.createMainWindow === "function") {
+                windowManager.createMainWindow();
+              } else {
+                console.error("Unable to create new window: windowManager not available");
+              }
+            } catch (error) {
+              console.error("Failed to create new window from menu:", error);
+            }
           }
         },
-        { type: "separator" },
+        {
+          label: "Open Folder...",
+          accelerator: "CmdOrCtrl+O",
+          click: async (): Promise<void> => {
+            await openFolder();
+          }
+        },
+        {
+          label: "Open Recent",
+          submenu: openRecentSubmenu
+        },
+        { type: "separator" as const },
         isMac ? { role: "close" as const } : { role: "quit" as const }
       ]
     },

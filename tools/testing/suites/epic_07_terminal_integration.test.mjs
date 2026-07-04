@@ -19,11 +19,11 @@ export async function run() {
     await window.waitForTimeout(500);
     await harness.takeScreenshot("terminal_panel_toggled");
 
-    const bottomPanel = window.locator('footer').first();
+    const bottomPanel = window.locator("footer").first();
     harness.assert(await bottomPanel.isVisible(), "Bottom panel is visible in UI layout");
 
     // ── Interaction 2: Click into Terminal / Bottom Panel ─────────────
-    const panelArea = window.locator('div').filter({ hasText: "TERMINAL" }).first();
+    const panelArea = window.locator("div").filter({ hasText: "TERMINAL" }).first();
     if (await panelArea.isVisible().catch(() => false)) {
       await harness.click(panelArea);
       harness.assert(true, "Clicked into Terminal panel in UI");
@@ -52,7 +52,10 @@ export async function run() {
       // @ts-ignore
       return await window.ocs?.terminal?.list?.();
     });
-    harness.assert(Array.isArray(terminals), `Terminal API list returned array (${terminals?.length || 0} active PTY instances)`);
+    harness.assert(
+      Array.isArray(terminals),
+      `Terminal API list returned array (${terminals?.length || 0} active PTY instances)`
+    );
 
     return await harness.finish();
   } catch (err) {

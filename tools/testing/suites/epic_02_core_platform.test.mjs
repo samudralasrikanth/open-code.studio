@@ -13,7 +13,7 @@ export async function run() {
     harness.startActionPhase();
 
     // Interaction 1: Click Status Bar to trigger UI event bus update
-    const statusBar = window.locator('footer').first();
+    const statusBar = window.locator("footer").first();
     harness.assert(await statusBar.isVisible(), "Status Bar is visible in UI layout");
     await harness.click(statusBar);
 
@@ -31,21 +31,30 @@ export async function run() {
       // @ts-ignore
       return await window.ocs?.health?.check();
     });
-    harness.assert(health && health.status === "ok", `IPC Health Check returned status ok (${health?.status})`);
+    harness.assert(
+      health && health.status === "ok",
+      `IPC Health Check returned status ok (${health?.status})`
+    );
 
     // Verify Platform Info endpoint
     const platformInfo = await window.evaluate(async () => {
       // @ts-ignore
       return await window.ocs?.health?.platformInfo();
     });
-    harness.assert(platformInfo && platformInfo.platform, `IPC Platform Info returned platform (${platformInfo?.platform})`);
+    harness.assert(
+      platformInfo && platformInfo.platform,
+      `IPC Platform Info returned platform (${platformInfo?.platform})`
+    );
 
     // Verify Theme API endpoint
     const currentTheme = await window.evaluate(async () => {
       // @ts-ignore
       return await window.ocs?.theme?.get();
     });
-    harness.assert(typeof currentTheme === "string", `Theme API returned current theme ("${currentTheme}")`);
+    harness.assert(
+      typeof currentTheme === "string",
+      `Theme API returned current theme ("${currentTheme}")`
+    );
 
     return await harness.finish();
   } catch (err) {

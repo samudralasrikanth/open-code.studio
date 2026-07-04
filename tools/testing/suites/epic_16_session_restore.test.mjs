@@ -31,16 +31,17 @@ export async function run() {
             id: "group-1",
             activeTabUri: "file:///test/session-restore-test.txt",
             tabs: [
-              { uri: "file:///test/session-restore-test.txt", cursorPosition: { lineNumber: 5, column: 12 } }
+              {
+                uri: "file:///test/session-restore-test.txt",
+                cursorPosition: { lineNumber: 5, column: 12 }
+              }
             ]
           }
         ]
       },
       terminalState: {
         activeTabId: "term-1",
-        tabs: [
-          { id: "term-1", title: "PTY bash", cwd: "/test/path", shellType: "bash" }
-        ]
+        tabs: [{ id: "term-1", title: "PTY bash", cwd: "/test/path", shellType: "bash" }]
       },
       viewState: {
         sidebarWidth: 320,
@@ -68,12 +69,30 @@ export async function run() {
       return await window.ocs?.session?.load?.(wsId);
     }, workspaceId);
 
-    harness.assert(loadedSnapshot && typeof loadedSnapshot === "object", "Session Load API successfully returned session snapshot");
-    harness.assert(loadedSnapshot?.version === 1, `Loaded session matches version: ${loadedSnapshot?.version}`);
-    harness.assert(loadedSnapshot?.windowState?.width === 1440, `Loaded window width matches saved snapshot: ${loadedSnapshot?.windowState?.width}`);
-    harness.assert(loadedSnapshot?.editorLayout?.activeGroupId === "group-1", `Loaded editor group matches: ${loadedSnapshot?.editorLayout?.activeGroupId}`);
-    harness.assert(loadedSnapshot?.terminalState?.tabs[0]?.title === "PTY bash", `Loaded terminal title matches: ${loadedSnapshot?.terminalState?.tabs[0]?.title}`);
-    harness.assert(loadedSnapshot?.viewState?.sidebarWidth === 320, `Loaded sidebarWidth matches: ${loadedSnapshot?.viewState?.sidebarWidth}`);
+    harness.assert(
+      loadedSnapshot && typeof loadedSnapshot === "object",
+      "Session Load API successfully returned session snapshot"
+    );
+    harness.assert(
+      loadedSnapshot?.version === 1,
+      `Loaded session matches version: ${loadedSnapshot?.version}`
+    );
+    harness.assert(
+      loadedSnapshot?.windowState?.width === 1440,
+      `Loaded window width matches saved snapshot: ${loadedSnapshot?.windowState?.width}`
+    );
+    harness.assert(
+      loadedSnapshot?.editorLayout?.activeGroupId === "group-1",
+      `Loaded editor group matches: ${loadedSnapshot?.editorLayout?.activeGroupId}`
+    );
+    harness.assert(
+      loadedSnapshot?.terminalState?.tabs[0]?.title === "PTY bash",
+      `Loaded terminal title matches: ${loadedSnapshot?.terminalState?.tabs[0]?.title}`
+    );
+    harness.assert(
+      loadedSnapshot?.viewState?.sidebarWidth === 320,
+      `Loaded sidebarWidth matches: ${loadedSnapshot?.viewState?.sidebarWidth}`
+    );
 
     return await harness.finish();
   } catch (err) {

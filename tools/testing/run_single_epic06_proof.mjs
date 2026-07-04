@@ -63,17 +63,33 @@ async function runProof() {
     return {
       title: document.title,
       bodyText: document.body.innerText.substring(0, 500),
-      hasActivityBar: !!document.querySelector('[class*="activity"]') || !!document.querySelector('[class*="ActivityBar"]'),
-      hasSidebar: !!document.querySelector('[class*="sidebar"]') || !!document.querySelector('[class*="Sidebar"]'),
-      hasEditor: !!document.querySelector('[class*="editor"]') || !!document.querySelector('[class*="Editor"]') || !!document.querySelector('.monaco-editor'),
-      hasTerminal: !!document.querySelector('[class*="terminal"]') || !!document.querySelector('[class*="Terminal"]'),
-      allButtons: Array.from(document.querySelectorAll('button')).map(b => b.title || b.textContent || '').filter(Boolean).slice(0, 20),
-      allDataTestIds: Array.from(document.querySelectorAll('[data-testid]')).map(el => el.getAttribute('data-testid')).slice(0, 20),
-      allClassNames: Array.from(new Set(
-        Array.from(document.querySelectorAll('*'))
-          .flatMap(el => Array.from(el.classList))
-          .filter(c => c.length > 3)
-      )).slice(0, 40)
+      hasActivityBar:
+        !!document.querySelector('[class*="activity"]') ||
+        !!document.querySelector('[class*="ActivityBar"]'),
+      hasSidebar:
+        !!document.querySelector('[class*="sidebar"]') ||
+        !!document.querySelector('[class*="Sidebar"]'),
+      hasEditor:
+        !!document.querySelector('[class*="editor"]') ||
+        !!document.querySelector('[class*="Editor"]') ||
+        !!document.querySelector(".monaco-editor"),
+      hasTerminal:
+        !!document.querySelector('[class*="terminal"]') ||
+        !!document.querySelector('[class*="Terminal"]'),
+      allButtons: Array.from(document.querySelectorAll("button"))
+        .map((b) => b.title || b.textContent || "")
+        .filter(Boolean)
+        .slice(0, 20),
+      allDataTestIds: Array.from(document.querySelectorAll("[data-testid]"))
+        .map((el) => el.getAttribute("data-testid"))
+        .slice(0, 20),
+      allClassNames: Array.from(
+        new Set(
+          Array.from(document.querySelectorAll("*"))
+            .flatMap((el) => Array.from(el.classList))
+            .filter((c) => c.length > 3)
+        )
+      ).slice(0, 40)
     };
   });
   log(`  Page title: "${beforeState.title}"`);
@@ -100,11 +116,11 @@ async function runProof() {
   } else {
     log("  Explorer button not found by title. Trying other selectors...");
     // Try any clickable icon in sidebar
-    const buttons = await page.locator('button').all();
+    const buttons = await page.locator("button").all();
     log(`  Found ${buttons.length} buttons total on page.`);
     for (let i = 0; i < Math.min(buttons.length, 3); i++) {
-      const text = await buttons[i].textContent().catch(() => '');
-      const title = await buttons[i].getAttribute('title').catch(() => '');
+      const text = await buttons[i].textContent().catch(() => "");
+      const title = await buttons[i].getAttribute("title").catch(() => "");
       log(`    Button ${i}: text="${text?.trim()}" title="${title}"`);
     }
   }
@@ -112,8 +128,8 @@ async function runProof() {
   // ──────────── STEP 3: Try typing into any editor/textarea ────────────
   log("STEP 3: Attempting to type into editor...");
 
-  const monacoEditor = page.locator('.monaco-editor .view-lines').first();
-  const textarea = page.locator('textarea').first();
+  const monacoEditor = page.locator(".monaco-editor .view-lines").first();
+  const textarea = page.locator("textarea").first();
   const inputField = page.locator('input[type="text"]').first();
 
   if (await monacoEditor.isVisible({ timeout: 2000 }).catch(() => false)) {
@@ -132,7 +148,9 @@ async function runProof() {
     await inputField.fill("EPIC-0006 Proof");
     log("  Text typed into input field.");
   } else {
-    log("  WARNING: No editor, textarea, or input field found. The application may not have a file open.");
+    log(
+      "  WARNING: No editor, textarea, or input field found. The application may not have a file open."
+    );
     // Just click somewhere on the page to show we can interact
     await page.mouse.click(640, 400);
     log("  Clicked center of page.");
@@ -177,7 +195,7 @@ async function runProof() {
   log("  Browser closed.");
 
   // Rename video file
-  const videoFiles = fs.readdirSync(proofDir).filter(f => f.endsWith('.webm'));
+  const videoFiles = fs.readdirSync(proofDir).filter((f) => f.endsWith(".webm"));
   if (videoFiles.length > 0) {
     fs.renameSync(path.join(proofDir, videoFiles[0]), path.join(proofDir, "video.webm"));
     log("  video.webm saved.");
@@ -193,9 +211,9 @@ async function runProof() {
   log("Generating dashboard.html with embedded Base64 images...");
 
   const images = {};
-  for (const f of fs.readdirSync(proofDir).filter(f => f.endsWith('.png'))) {
+  for (const f of fs.readdirSync(proofDir).filter((f) => f.endsWith(".png"))) {
     const buf = fs.readFileSync(path.join(proofDir, f));
-    images[f] = `data:image/png;base64,${buf.toString('base64')}`;
+    images[f] = `data:image/png;base64,${buf.toString("base64")}`;
   }
 
   const html = `<!DOCTYPE html>
@@ -226,43 +244,51 @@ async function runProof() {
 <body>
   <h1>🛡️ EPIC-0006 Document Editor — Single Scenario Proof Package</h1>
   <p>Generated: ${new Date().toISOString()}</p>
-  <p>Before/After Identical: <span class="badge ${identical ? 'warn' : 'pass'}">${identical ? 'YES (no state change)' : 'NO (state changed ✅)'}</span></p>
+  <p>Before/After Identical: <span class="badge ${identical ? "warn" : "pass"}">${identical ? "YES (no state change)" : "NO (state changed ✅)"}</span></p>
 
   <h2>📷 BEFORE vs AFTER</h2>
   <div class="grid">
     <div class="card before">
       <h3>📷 BEFORE Action</h3>
       <p>Size: ${beforeSize} bytes</p>
-      ${images['before.png'] ? `<img src="${images['before.png']}" alt="Before" />` : '<p>Not captured</p>'}
+      ${images["before.png"] ? `<img src="${images["before.png"]}" alt="Before" />` : "<p>Not captured</p>"}
     </div>
     <div class="card after">
       <h3>📷 AFTER Action</h3>
       <p>Size: ${afterSize} bytes</p>
-      ${images['after.png'] ? `<img src="${images['after.png']}" alt="After" />` : '<p>Not captured</p>'}
+      ${images["after.png"] ? `<img src="${images["after.png"]}" alt="After" />` : "<p>Not captured</p>"}
     </div>
   </div>
 
   <h2>📷 Step-by-Step Screenshots</h2>
   <div class="grid">
-    ${Object.entries(images).filter(([k]) => k.startsWith('step')).map(([name, src]) => `
+    ${Object.entries(images)
+      .filter(([k]) => k.startsWith("step"))
+      .map(
+        ([name, src]) => `
     <div class="card">
       <h3>${name}</h3>
       <img src="${src}" alt="${name}" />
-    </div>`).join('')}
+    </div>`
+      )
+      .join("")}
   </div>
 
   <h2>📋 Playwright Execution Log</h2>
-  <pre>${playwrightLog.join('\n')}</pre>
+  <pre>${playwrightLog.join("\n")}</pre>
 
   <h2>🖥️ Browser Console Log</h2>
-  <pre>${consoleLogs.length > 0 ? consoleLogs.join('\n') : '(no console messages captured)'}</pre>
+  <pre>${consoleLogs.length > 0 ? consoleLogs.join("\n") : "(no console messages captured)"}</pre>
 
   <h2>📦 Artifacts in proof/</h2>
   <ul class="artifact-list">
-    ${fs.readdirSync(proofDir).map(f => {
-      const size = fs.statSync(path.join(proofDir, f)).size;
-      return `<li><a href="${f}">${f}</a> — ${(size / 1024).toFixed(1)} KB</li>`;
-    }).join('\n    ')}
+    ${fs
+      .readdirSync(proofDir)
+      .map((f) => {
+        const size = fs.statSync(path.join(proofDir, f)).size;
+        return `<li><a href="${f}">${f}</a> — ${(size / 1024).toFixed(1)} KB</li>`;
+      })
+      .join("\n    ")}
   </ul>
 
   <h2>🔎 DOM Inspection (Before State)</h2>
@@ -283,7 +309,7 @@ async function runProof() {
   }
 }
 
-runProof().catch(err => {
+runProof().catch((err) => {
   log(`FATAL ERROR: ${err.message}`);
   log(err.stack);
   fs.writeFileSync(path.join(proofDir, "playwright.log"), playwrightLog.join("\n"));

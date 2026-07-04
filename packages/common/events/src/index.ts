@@ -164,7 +164,8 @@ export const NotificationEventTypes = {
   NOTIFICATION_DISMISSED: "notification.dismissed"
 } as const;
 
-export type NotificationEventType = (typeof NotificationEventTypes)[keyof typeof NotificationEventTypes];
+export type NotificationEventType =
+  (typeof NotificationEventTypes)[keyof typeof NotificationEventTypes];
 
 export interface NotificationEventPayload {
   id: string;

@@ -1,4 +1,4 @@
-import type { Logger } from "@ocs/common";
+import type { Container, Logger } from "@ocs/common";
 
 import { createApplicationMenu } from "../menu.js";
 import { createWindowManager } from "../window-manager.js";
@@ -11,10 +11,13 @@ import type { WindowManager } from "../window-manager.js";
  *
  * Returns the WindowManager so callers can access the main window.
  */
-export function bootstrapDesktop(logger: Logger): WindowManager {
+export async function bootstrapDesktop(
+  logger: Logger,
+  container: Container
+): Promise<WindowManager> {
   logger.flow({ domain: "startup", source: "bootstrap", action: "desktop:start" });
 
-  createApplicationMenu();
+  await createApplicationMenu(container);
   const windowManager = createWindowManager(logger);
   windowManager.createMainWindow();
 

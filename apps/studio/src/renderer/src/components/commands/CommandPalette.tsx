@@ -68,7 +68,9 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
 
   const fetchResults = async (searchQuery: string) => {
     try {
-      const mainResults = window.ocs?.commands ? await window.ocs.commands.search(searchQuery, 20) : [];
+      const mainResults = window.ocs?.commands
+        ? await window.ocs.commands.search(searchQuery, 20)
+        : [];
       const rendererResults = searchRendererCommands(searchQuery, 20);
 
       const merged = [
@@ -151,10 +153,11 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                 key={result.command.id}
                 onClick={() => void executeCommand(result.command.id, result.source)}
                 onMouseEnter={() => setSelectedIndex(idx)}
-                className={`px-4 py-2 cursor-pointer flex justify-between items-center ${idx === selectedIndex
+                className={`px-4 py-2 cursor-pointer flex justify-between items-center ${
+                  idx === selectedIndex
                     ? "bg-[var(--ocs-color-bg-active)] text-[var(--ocs-color-text-active)]"
                     : "text-[var(--ocs-color-text)] hover:bg-[var(--ocs-color-bg-hover)]"
-                  }`}
+                }`}
               >
                 <div>
                   <span className="text-xs font-semibold mr-2 opacity-60 uppercase">

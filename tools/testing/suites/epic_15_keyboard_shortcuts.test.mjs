@@ -20,21 +20,25 @@ export async function run() {
     // Verify keybindings list returns default shortcuts
     const initialBindings = await window.evaluate(async () => {
       // @ts-ignore
-      return await window.ocs?.keybindings?.get?.() ?? [];
+      return (await window.ocs?.keybindings?.get?.()) ?? [];
     });
 
     harness.assert(Array.isArray(initialBindings), "Keybindings GET returned shortcut list array");
-    harness.assert(initialBindings.length > 0, "Found default registered shortcuts (e.g. Save, Command Palette)");
+    harness.assert(
+      initialBindings.length > 0,
+      "Found default registered shortcuts (e.g. Save, Command Palette)"
+    );
 
     // Register a user override keybinding
     const customBinding = { key: "Control+Shift+T", command: "workbench.action.toggleTerminal" };
     const updatedBindings = await window.evaluate(async (binding) => {
       // @ts-ignore
-      return await window.ocs?.keybindings?.set?.(binding) ?? [];
+      return (await window.ocs?.keybindings?.set?.(binding)) ?? [];
     }, customBinding);
 
     const hasCustom = updatedBindings.some(
-      (b) => b.key.toLowerCase() === "control+shift+t" && b.command === "workbench.action.toggleTerminal"
+      (b) =>
+        b.key.toLowerCase() === "control+shift+t" && b.command === "workbench.action.toggleTerminal"
     );
     harness.assert(hasCustom, "Successfully registered custom user keybinding override via API");
 

@@ -282,10 +282,12 @@ const ocsAPI = {
 
   // ── Notifications ──────────────────────────────────────────────────────────
   notifications: {
-    create: (opt: any): Promise<string> => ipcRenderer.invoke(IpcChannels.NOTIFICATIONS_CREATE, opt),
+    create: (opt: any): Promise<string> =>
+      ipcRenderer.invoke(IpcChannels.NOTIFICATIONS_CREATE, opt),
     update: (id: string, updates: any): Promise<void> =>
       ipcRenderer.invoke(IpcChannels.NOTIFICATIONS_UPDATE, id, updates),
-    dismiss: (id: string): Promise<void> => ipcRenderer.invoke(IpcChannels.NOTIFICATIONS_DISMISS, id),
+    dismiss: (id: string): Promise<void> =>
+      ipcRenderer.invoke(IpcChannels.NOTIFICATIONS_DISMISS, id),
     clear: (): Promise<void> => ipcRenderer.invoke(IpcChannels.NOTIFICATIONS_CLEAR),
     getActive: (): Promise<any[]> => ipcRenderer.invoke(IpcChannels.NOTIFICATIONS_GET_ACTIVE),
     getHistory: (): Promise<any[]> => ipcRenderer.invoke(IpcChannels.NOTIFICATIONS_GET_HISTORY),
@@ -304,7 +306,8 @@ const ocsAPI = {
 
   // ── Session ─────────────────────────────────────────────────────────────────
   session: {
-    load: (workspaceId: string): Promise<any> => ipcRenderer.invoke(IpcChannels.SESSION_LOAD, workspaceId),
+    load: (workspaceId: string): Promise<any> =>
+      ipcRenderer.invoke(IpcChannels.SESSION_LOAD, workspaceId),
     save: (snapshot: any, immediate?: boolean): Promise<void> =>
       ipcRenderer.invoke(IpcChannels.SESSION_SAVE, snapshot, immediate),
     onChanged: (callback: (snapshot: any) => void): (() => void) => {

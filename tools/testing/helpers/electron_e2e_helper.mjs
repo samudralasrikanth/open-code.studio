@@ -86,7 +86,9 @@ export class ElectronE2ETestHarness {
   }
 
   async launchElectron() {
-    this.log(`Launching Electron production binary (${path.join(studioRoot, "dist/main/index.js")})...`);
+    this.log(
+      `Launching Electron production binary (${path.join(studioRoot, "dist/main/index.js")})...`
+    );
     this.electronApp = await electron.launch({
       args: [path.join(studioRoot, "dist/main/index.js")],
       cwd: studioRoot,
@@ -121,8 +123,10 @@ export class ElectronE2ETestHarness {
     });
 
     // Start tracing
-    await this.window.context().tracing.start({ screenshots: true, snapshots: true, sources: true });
-    
+    await this.window
+      .context()
+      .tracing.start({ screenshots: true, snapshots: true, sources: true });
+
     // State-based wait for application shell mount
     await this.window.waitForSelector("#root > div", { state: "visible", timeout: 15000 });
     this.log("  Application shell mounted successfully.");
@@ -140,7 +144,9 @@ export class ElectronE2ETestHarness {
     }, this.testWorkspaceDir);
 
     // Wait for Explorer tree items to appear
-    await this.window.waitForSelector('[role="treeitem"]', { state: "visible", timeout: 10000 }).catch(() => {});
+    await this.window
+      .waitForSelector('[role="treeitem"]', { state: "visible", timeout: 10000 })
+      .catch(() => {});
   }
 
   startActionPhase() {
@@ -151,7 +157,7 @@ export class ElectronE2ETestHarness {
   // ── Physical UI Actions ──────────────────────────────────────────────────────
   async click(selector, options = {}) {
     if (this.phase === "ACTION") this.metrics.mouseClicks++;
-    this.log(`UI CLICK: ${typeof selector === 'string' ? selector : 'locator'}`);
+    this.log(`UI CLICK: ${typeof selector === "string" ? selector : "locator"}`);
     if (typeof selector === "string") {
       const loc = this.window.locator(selector).first();
       await loc.waitFor({ state: "visible", timeout: 8000 });
@@ -164,7 +170,7 @@ export class ElectronE2ETestHarness {
 
   async dblclick(selector) {
     if (this.phase === "ACTION") this.metrics.mouseClicks += 2;
-    this.log(`UI DBLCLICK: ${typeof selector === 'string' ? selector : 'locator'}`);
+    this.log(`UI DBLCLICK: ${typeof selector === "string" ? selector : "locator"}`);
     if (typeof selector === "string") {
       const loc = this.window.locator(selector).first();
       await loc.waitFor({ state: "visible", timeout: 8000 });
@@ -189,7 +195,7 @@ export class ElectronE2ETestHarness {
 
   async takeScreenshot(name) {
     this.metrics.screenshots++;
-    const filename = `${this.metrics.screenshots.toString().padStart(2, '0')}_${name}.png`;
+    const filename = `${this.metrics.screenshots.toString().padStart(2, "0")}_${name}.png`;
     const filepath = path.join(proofDir, filename);
     await this.window.screenshot({ path: filepath });
     const size = fs.statSync(filepath).size;
@@ -210,7 +216,10 @@ export class ElectronE2ETestHarness {
     }
 
     if (suiteError) {
-      this.assert(false, `Quality Gate: No fatal runtime errors during suite execution (${suiteError})`);
+      this.assert(
+        false,
+        `Quality Gate: No fatal runtime errors during suite execution (${suiteError})`
+      );
     } else {
       this.assert(true, "Quality Gate: No fatal runtime errors during suite execution");
     }
@@ -219,7 +228,10 @@ export class ElectronE2ETestHarness {
     if (this.consoleErrors.length > 0) {
       this.log(`FOUND CONSOLE ERRORS: ${JSON.stringify(this.consoleErrors, null, 2)}`);
     }
-    this.assert(this.consoleErrors.length === 0, `Quality Gate: Zero console/page errors (found ${this.consoleErrors.length})`);
+    this.assert(
+      this.consoleErrors.length === 0,
+      `Quality Gate: Zero console/page errors (found ${this.consoleErrors.length})`
+    );
 
     // Quality Gate 2: Physical Interaction Threshold (mouseClicks + keyboardEvents >= 1)
     const totalInteractions = this.metrics.mouseClicks + this.metrics.keyboardEvents;
@@ -238,7 +250,10 @@ export class ElectronE2ETestHarness {
     const tracePath = path.join(proofDir, `trace_${this.epicId.toLowerCase()}.zip`);
     await this.window.context().tracing.stop({ path: tracePath });
     const traceSize = fs.existsSync(tracePath) ? fs.statSync(tracePath).size : 0;
-    this.assert(traceSize > 50000, `Playwright trace artifact generated (${(traceSize / 1024).toFixed(1)} KB)`);
+    this.assert(
+      traceSize > 50000,
+      `Playwright trace artifact generated (${(traceSize / 1024).toFixed(1)} KB)`
+    );
 
     // Close app
     if (this.electronApp) {

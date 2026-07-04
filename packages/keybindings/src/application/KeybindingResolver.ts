@@ -10,7 +10,10 @@ export class KeybindingResolver {
     private readonly contextService: ContextService
   ) {}
 
-  public handleKeyboardEvent(event: KeyboardEvent, executeCommand: (commandId: string) => void): boolean {
+  public handleKeyboardEvent(
+    event: KeyboardEvent,
+    executeCommand: (commandId: string) => void
+  ): boolean {
     const keyCombination = this.parseKeyboardEvent(event);
     if (!keyCombination) return false;
 
@@ -34,8 +37,8 @@ export class KeybindingResolver {
 
     // Check if keyCombination is the first part of any chord binding
     const allBindings = this.registry.getAll();
-    const isFirstPartOfChord = allBindings.some(
-      (b) => b.key.toLowerCase().startsWith(`${keyCombination.toLowerCase()} `)
+    const isFirstPartOfChord = allBindings.some((b) =>
+      b.key.toLowerCase().startsWith(`${keyCombination.toLowerCase()} `)
     );
 
     if (isFirstPartOfChord) {

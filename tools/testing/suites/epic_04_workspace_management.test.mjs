@@ -17,7 +17,7 @@ export async function run() {
     harness.startActionPhase();
 
     // Interaction 1: Click Explorer Panel header to focus workspace
-    const explorerHeader = window.locator('text=EXPLORER').first();
+    const explorerHeader = window.locator("text=EXPLORER").first();
     if (await explorerHeader.isVisible().catch(() => false)) {
       await harness.click(explorerHeader);
     } else {
@@ -35,7 +35,10 @@ export async function run() {
       // @ts-ignore
       return await window.ocs?.workspace?.getActive();
     });
-    harness.assert(activeWs && activeWs.uri, `Active workspace API returned valid workspace URI (${activeWs?.uri})`);
+    harness.assert(
+      activeWs && activeWs.uri,
+      `Active workspace API returned valid workspace URI (${activeWs?.uri})`
+    );
     harness.assert(activeWs?.state === "open", `Active workspace state is "open"`);
 
     // Verify Recent Workspaces list API
@@ -43,7 +46,10 @@ export async function run() {
       // @ts-ignore
       return await window.ocs?.workspace?.getRecent();
     });
-    harness.assert(Array.isArray(recentWorkspaces), `Get recent workspaces returned array (${recentWorkspaces?.length} items)`);
+    harness.assert(
+      Array.isArray(recentWorkspaces),
+      `Get recent workspaces returned array (${recentWorkspaces?.length} items)`
+    );
 
     return await harness.finish();
   } catch (err) {

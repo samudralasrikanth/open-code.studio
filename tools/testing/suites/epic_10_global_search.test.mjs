@@ -2,7 +2,10 @@ import { ElectronE2ETestHarness } from "../helpers/electron_e2e_helper.mjs";
 import os from "os";
 
 export async function run() {
-  const harness = new ElectronE2ETestHarness("EPIC-0010", "Global Search Engine & Multi-File Replace");
+  const harness = new ElectronE2ETestHarness(
+    "EPIC-0010",
+    "Global Search Engine & Multi-File Replace"
+  );
 
   try {
     const wsDir = await harness.setupWorkspace({
