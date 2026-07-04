@@ -147,3 +147,37 @@ export interface EditorEventPayload {
   inputId: string;
   groupId: string;
 }
+
+export const ThemeEventTypes = {
+  THEME_CHANGED: "theme.changed"
+} as const;
+
+export type ThemeEventType = (typeof ThemeEventTypes)[keyof typeof ThemeEventTypes];
+
+export interface ThemeEventPayload {
+  themeId: string;
+}
+
+export const NotificationEventTypes = {
+  NOTIFICATION_CREATED: "notification.created",
+  NOTIFICATION_UPDATED: "notification.updated",
+  NOTIFICATION_DISMISSED: "notification.dismissed"
+} as const;
+
+export type NotificationEventType = (typeof NotificationEventTypes)[keyof typeof NotificationEventTypes];
+
+export interface NotificationEventPayload {
+  id: string;
+  notification: any;
+}
+
+export const SessionEventTypes = {
+  SESSION_MODIFIED: "session.modified"
+} as const;
+
+export type SessionEventType = (typeof SessionEventTypes)[keyof typeof SessionEventTypes];
+
+export interface SessionEventPayload {
+  workspaceId: string;
+  snapshot: any;
+}

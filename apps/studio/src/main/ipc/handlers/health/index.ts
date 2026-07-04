@@ -20,15 +20,6 @@ export function registerHealthHandlers(container: Container): void {
     appVersion: (await import("electron")).app.getVersion()
   }));
 
-  // ── Theme ──────────────────────────────────────────────────────────────────
-  ipcMain.handle(IpcChannels.THEME_GET, async () => "dark");
-
-  ipcMain.handle(IpcChannels.THEME_SET, async (_event, theme: "dark" | "light" | "system") => {
-    const { nativeTheme } = await import("electron");
-    nativeTheme.themeSource = theme === "system" ? "system" : theme;
-    return true;
-  });
-
   // ── Window controls ────────────────────────────────────────────────────────
   ipcMain.on(IpcChannels.APP_MINIMIZE, () => {
     const win = require("electron").BrowserWindow.getFocusedWindow();

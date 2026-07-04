@@ -10,6 +10,10 @@ import { registerTerminalHandlers } from "./terminal/index.js";
 import { registerGitHandlers } from "./git/gitHandlers.js";
 import { registerSearchHandlers } from "./search/searchHandlers.js";
 import { registerSettingsHandlers } from "./settings/settingsHandlers.js";
+import { registerThemeHandlers } from "./theme/themeHandlers.js";
+import { registerNotificationHandlers } from "./notifications/notificationHandlers.js";
+import { registerKeybindingHandlers } from "./keybindings/keybindingHandlers.js";
+import { registerSessionHandlers } from "./session/sessionHandlers.js";
 
 /**
  * Register all IPC handlers for the main process.
@@ -25,6 +29,10 @@ export function registerIpcHandlers(container: Container): void {
   registerGitHandlers(container);
   registerSearchHandlers(container);
   registerSettingsHandlers(container);
+  registerThemeHandlers(container);
+  registerNotificationHandlers(container);
+  registerKeybindingHandlers(container);
+  registerSessionHandlers(container);
 }
 
 export { restoreLastWorkspace };

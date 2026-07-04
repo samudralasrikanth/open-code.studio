@@ -11,7 +11,16 @@ export function registerCommandsHandlers(container: Container): void {
 
   ipcMain.handle(IpcChannels.COMMANDS_SEARCH, (_event, query: string, limit?: number) => {
     const results = searchEngine.search(query, limit);
-    return results;
+    return results.map((r) => ({
+      ...r,
+      command: {
+        id: r.command.id,
+        title: r.command.title,
+        category: r.command.category,
+        enableWhen: r.command.enableWhen,
+        isVisible: r.command.isVisible
+      }
+    }));
   });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

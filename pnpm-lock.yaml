@@ -89,15 +89,27 @@ importers:
       '@ocs/git':
         specifier: workspace:*
         version: link:../../packages/git
+      '@ocs/keybindings':
+        specifier: workspace:*
+        version: link:../../packages/keybindings
+      '@ocs/notifications':
+        specifier: workspace:*
+        version: link:../../packages/notifications
       '@ocs/search':
         specifier: workspace:*
         version: link:../../packages/search
+      '@ocs/session':
+        specifier: workspace:*
+        version: link:../../packages/session
       '@ocs/settings':
         specifier: workspace:^
         version: link:../../packages/settings
       '@ocs/terminal':
         specifier: workspace:*
         version: link:../../packages/terminal
+      '@ocs/theme':
+        specifier: workspace:*
+        version: link:../../packages/theme
       '@ocs/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -293,9 +305,21 @@ importers:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@20.19.43)
 
+  packages/keybindings:
+    dependencies:
+      '@ocs/common':
+        specifier: workspace:*
+        version: link:../common
+
   packages/knowledge: {}
 
   packages/memory: {}
+
+  packages/notifications:
+    dependencies:
+      '@ocs/common':
+        specifier: workspace:*
+        version: link:../common
 
   packages/policy: {}
 
@@ -331,6 +355,12 @@ importers:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@20.19.43)
 
+  packages/session:
+    dependencies:
+      '@ocs/common':
+        specifier: workspace:*
+        version: link:../common
+
   packages/settings:
     dependencies:
       '@ocs/common':
@@ -357,6 +387,12 @@ importers:
       vitest:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@22.20.0)
+
+  packages/theme:
+    dependencies:
+      '@ocs/common':
+        specifier: workspace:*
+        version: link:../common
 
   packages/ui:
     dependencies:
@@ -4210,6 +4246,14 @@ snapshots:
       chai: 5.3.3
       tinyrainbow: 1.2.0
 
+  '@vitest/mocker@2.1.9(vite@5.4.21(@types/node@20.19.43))':
+    dependencies:
+      '@vitest/spy': 2.1.9
+      estree-walker: 3.0.3
+      magic-string: 0.30.21
+    optionalDependencies:
+      vite: 5.4.21(@types/node@20.19.43)
+
   '@vitest/mocker@2.1.9(vite@5.4.21(@types/node@22.20.0))':
     dependencies:
       '@vitest/spy': 2.1.9
@@ -5828,7 +5872,7 @@ snapshots:
   vitest@2.1.9(@types/node@20.19.43):
     dependencies:
       '@vitest/expect': 2.1.9
-      '@vitest/mocker': 2.1.9(vite@5.4.21(@types/node@22.20.0))
+      '@vitest/mocker': 2.1.9(vite@5.4.21(@types/node@20.19.43))
       '@vitest/pretty-format': 2.1.9
       '@vitest/runner': 2.1.9
       '@vitest/snapshot': 2.1.9

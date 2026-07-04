@@ -1,82 +1,53 @@
-export const epicMetadata = {
-  epic: "EPIC-0004",
-  name: "Workspace Management",
-  phase: "Phase 1 – IDE Platform"
-};
+import { ElectronE2ETestHarness } from "../helpers/electron_e2e_helper.mjs";
 
-export const scenarios = [
-  {
-    id: "EPIC-0004-SC-001",
-    story: "STORY-004",
-    task: "TASK-001",
-    ac: "AC-01",
-    title: "Workspace Lifecycle - Open Folder Workflow",
-    risk: "Critical",
-    tags: ["@workspace", "@smoke"],
-    platform: ["macOS", "Windows", "Linux"],
-    async run({ window, tempWorkspace }) {
-      if (tempWorkspace && tempWorkspace.dirPath && window) {
-        await window.evaluate((dir) => {
-          window.location.hash = `#workspace/${encodeURIComponent(dir)}`;
-        }, tempWorkspace.dirPath);
-      }
-      return { pass: true };
+export async function run() {
+  const harness = new ElectronE2ETestHarness("EPIC-0004", "Workspace Management & Lifecycle");
+
+  try {
+    const wsDir = await harness.setupWorkspace({
+      "file1.txt": "Workspace file 1 content",
+      "file2.js": "console.log('workspace file 2');"
+    });
+
+    const window = await harness.launchElectron();
+
+    await harness.openWorkspaceInSetup();
+    await harness.takeScreenshot("workspace_opened");
+
+    harness.startActionPhase();
+
+    // Interaction 1: Click Explorer Panel header to focus workspace
+    const explorerHeader = window.locator('text=EXPLORER').first();
+    if (await explorerHeader.isVisible().catch(() => false)) {
+      await harness.click(explorerHeader);
+    } else {
+      await harness.click("#root");
     }
-  },
-  {
-    id: "EPIC-0004-SC-002",
-    story: "STORY-004",
-    task: "TASK-002",
-    ac: "AC-02",
-    title: "Workspace Lifecycle - Close Workspace",
-    risk: "High",
-    tags: ["@workspace"],
-    platform: ["macOS", "Windows", "Linux"],
-    dependsOn: ["EPIC-0004-SC-001"],
-    async run({ window }) {
-      return { pass: true };
-    }
-  },
-  {
-    id: "EPIC-0004-SC-003",
-    story: "STORY-004",
-    task: "TASK-003",
-    ac: "AC-03",
-    title: "Workspace Lifecycle - Reopen Workspace",
-    risk: "High",
-    tags: ["@workspace"],
-    platform: ["macOS", "Windows", "Linux"],
-    async run({ window, tempWorkspace }) {
-      await window.evaluate((dir) => {
-        window.location.hash = `#workspace/${encodeURIComponent(dir)}`;
-      }, tempWorkspace.dirPath);
-      return { pass: true };
-    }
-  },
-  {
-    id: "EPIC-0004-SC-004",
-    story: "STORY-004",
-    task: "TASK-004",
-    ac: "AC-04",
-    title: "Workspace Lifecycle - Recent Workspaces List Persistence",
-    risk: "Medium",
-    tags: ["@workspace"],
-    platform: ["macOS", "Windows", "Linux"],
-    async run({ window }) {
-      return { pass: true };
-    }
-  },
-  {
-    id: "EPIC-0004-SC-005",
-    story: "STORY-004",
-    task: "TASK-005",
-    ac: "AC-05",
-    title: "Session - Save & Restore Layout State",
-    risk: "High",
-    tags: ["@workspace", "@session"],
-    platform: ["macOS", "Windows", "Linux"],
-    async run({ window }) {
-      return { pass: true };
-    }
+
+    // Interaction 2: Click on tree item file
+    const treeItem = window.locator('[role="treeitem"]').first();
+    harness.assert(await treeItem.isVisible(), "Workspace file tree items are visible in sidebar");
+    await harness.click(treeItem);
+    await harness.takeScreenshot("workspace_treeitem_clicked");
+
+    // Verify Active Workspace via API
+    const activeWs = await window.evaluate(async () => {
+      // @ts-ignore
+      return await window.ocs?.workspace?.getActive();
+    });
+    harness.assert(activeWs && activeWs.uri, `Active workspace API returned valid workspace URI (${activeWs?.uri})`);
+    harness.assert(activeWs?.state === "open", `Active workspace state is "open"`);
+
+    // Verify Recent Workspaces list API
+    const recentWorkspaces = await window.evaluate(async () => {
+      // @ts-ignore
+      return await window.ocs?.workspace?.getRecent();
+    });
+    harness.assert(Array.isArray(recentWorkspaces), `Get recent workspaces returned array (${recentWorkspaces?.length} items)`);
+
+    return await harness.finish();
+  } catch (err) {
+    harness.log(`FATAL SUITE ERROR: ${err.message}`);
+    return await harness.finish(err.message);
   }
-];
+}

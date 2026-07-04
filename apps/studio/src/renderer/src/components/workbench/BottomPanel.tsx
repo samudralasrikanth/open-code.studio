@@ -7,12 +7,11 @@ import { TerminalView } from "../terminal/TerminalView.js";
 interface BottomPanelProps {
   height: number;
   isResizing: boolean;
+  activeTab: "problems" | "output" | "terminal" | "diagnostics";
+  onTabChange: (tab: "problems" | "output" | "terminal" | "diagnostics") => void;
 }
 
-export const BottomPanel: React.FC<BottomPanelProps> = ({ height, isResizing }) => {
-  const [activeTab, setActiveTab] = useState<"problems" | "output" | "terminal" | "diagnostics">(
-    "terminal"
-  );
+export const BottomPanel: React.FC<BottomPanelProps> = ({ height, isResizing, activeTab, onTabChange }) => {
   const [cwd, setCwd] = useState<string>("/");
 
   useEffect(() => {
@@ -105,7 +104,7 @@ export const BottomPanel: React.FC<BottomPanelProps> = ({ height, isResizing }) 
             padding: "8px 0",
             cursor: "pointer"
           }}
-          onClick={() => setActiveTab("diagnostics")}
+          onClick={() => onTabChange("diagnostics")}
         >
           Diagnostics
         </div>

@@ -1,9 +1,13 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 
-import { useEditor } from "../../hooks/useEditor.js";
 import { useWorkspace } from "../../hooks/useWorkspace.js";
+import { useKeybindings } from "../../hooks/useKeybindings.js";
 import { EditorArea } from "../editor/EditorArea.js";
-
+import { CommandPalette } from "../commands/CommandPalette.js";
+import {
+  registerRendererCommand,
+  unregisterRendererCommand
+} from "../../commands/RendererCommandRegistry.js";
 import { ActivityBar } from "./ActivityBar.js";
 import { BottomPanel } from "./BottomPanel.js";
 import { Resizer } from "./Resizer.js";
@@ -17,7 +21,12 @@ interface WorkbenchProps {
 
 export const Workbench: React.FC<WorkbenchProps> = ({ workspaceName }) => {
   const { workspace, updateSettings, openFolderDialog, open } = useWorkspace();
-  const { editorState } = useEditor();
+  useKeybindings();
+
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [activeBottomTab, setActiveBottomTab] = useState<"problems" | "output" | "terminal" | "diagnostics">(
+    "terminal"
+  );
 
   // Read width from settings or default to 280
   const settingsSidebarWidth = workspace?.configuration?.settings?.["sidebarWidth"] as
@@ -97,53 +106,77 @@ export const Workbench: React.FC<WorkbenchProps> = ({ workspaceName }) => {
     [bottomPanelHeight]
   );
 
-  const handleOpenFolder = async () => {
-    const res = await openFolderDialog();
-    if (!res.canceled && res.folderPath) {
-      await open(res.folderPath);
-    }
-  };
-
-  // Keyboard Shortcuts Listener
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0;
-      const modifier = isMac ? e.metaKey : e.ctrlKey;
-
-      // Toggle Sidebar: Ctrl+B or Cmd+B
-      if (modifier && e.key.toLowerCase() === "b") {
-        e.preventDefault();
-        setIsSidebarVisible((prev) => !prev);
-      }
-
-      // Open Folder: Ctrl+O or Cmd+O
-      if (modifier && e.key.toLowerCase() === "o" && !e.shiftKey) {
-        e.preventDefault();
-        void handleOpenFolder();
-      }
-
-      // Focus Explorer: Ctrl+Shift+E or Cmd+Shift+E
-      if (modifier && e.shiftKey && e.key.toLowerCase() === "e") {
-        e.preventDefault();
-        setIsSidebarVisible(true);
-        setActiveView("explorer");
-      }
-
-      // Save Active Document: Ctrl+S or Cmd+S
-      if (modifier && e.key.toLowerCase() === "s") {
-        e.preventDefault();
-        const activeGroupId = editorState?.activeGroup;
-        const activeGroup = editorState?.groups?.find((g) => g.id === activeGroupId);
-        const activeInput = activeGroup?.activeInput;
-        if (activeInput && window.ocs?.commands?.execute) {
-          void window.ocs.commands.execute("document.save", { uri: activeInput });
+    const localCommands = [
+      {
+        id: "workbench.action.showCommands",
+        title: "Show All Commands",
+        category: "Workbench",
+        execute: async () => {
+          setIsCommandPaletteOpen(true);
+        }
+      },
+      {
+        id: "workbench.action.toggleSidebar",
+        title: "View: Toggle Sidebar",
+        category: "Workbench",
+        execute: async () => {
+          setIsSidebarVisible((prev) => !prev);
+        }
+      },
+      {
+        id: "workbench.action.openFolder",
+        title: "File: Open Folder...",
+        category: "File",
+        execute: async () => {
+          const { canceled, folderPath } = await openFolderDialog();
+          if (!canceled && folderPath) {
+            await open(folderPath);
+          }
+        }
+      },
+      {
+        id: "workbench.action.showExplorer",
+        title: "View: Show Explorer",
+        category: "View",
+        execute: async () => {
+          setIsSidebarVisible(true);
+          setActiveView("explorer");
+        }
+      },
+      {
+        id: "workbench.action.showSearch",
+        title: "View: Show Search",
+        category: "View",
+        execute: async () => {
+          setIsSidebarVisible(true);
+          setActiveView("search");
+        }
+      },
+      {
+        id: "workbench.action.openSettings",
+        title: "Preferences: Open Settings",
+        category: "Workbench",
+        execute: async () => {
+          setIsSidebarVisible(true);
+          setActiveView("settings");
+        }
+      },
+      {
+        id: "workbench.action.toggleTerminal",
+        title: "View: Toggle Terminal",
+        category: "View",
+        execute: async () => {
+          setActiveBottomTab("terminal");
         }
       }
-    };
+    ];
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [workspace, openFolderDialog, open, editorState]);
+    localCommands.forEach(registerRendererCommand);
+    return () => {
+      localCommands.forEach((command) => unregisterRendererCommand(command.id));
+    };
+  }, [open, openFolderDialog]);
 
   return (
     <div
@@ -198,11 +231,21 @@ export const Workbench: React.FC<WorkbenchProps> = ({ workspaceName }) => {
           />
 
           {/* Bottom panel */}
-          <BottomPanel height={bottomPanelHeight} isResizing={isResizingBottom} />
+          <BottomPanel
+            height={bottomPanelHeight}
+            isResizing={isResizingBottom}
+            activeTab={activeBottomTab}
+            onTabChange={setActiveBottomTab}
+          />
         </div>
       </div>
 
       <StatusBar workspaceName={workspaceName} />
+
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+      />
     </div>
   );
 };

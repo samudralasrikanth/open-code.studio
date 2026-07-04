@@ -43,12 +43,14 @@ export class CommandSearch {
       // (fuzzysort as any).highlight returns an HTML-like string if we pass open/close tags
       // For UI use, we might just pass the raw score or simple string.
       // E.g., `result[0]` corresponds to the "title" match.
-      const highlightedTitle = (fuzzysort as any).highlight(result[0], "<b>", "</b>");
+      const highlightedTitle = result[0] && typeof (result[0] as any).highlight === "function"
+        ? (result[0] as any).highlight("<b>", "</b>")
+        : result.obj.title;
 
       return {
         command: result.obj,
         score: result.score,
-        highlightedTitle: highlightedTitle ?? result.obj.title
+        highlightedTitle
       };
     });
   }

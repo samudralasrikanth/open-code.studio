@@ -278,6 +278,40 @@ const ocsAPI = {
       ipcRenderer.on(IpcChannels.SETTINGS_CHANGED, handler);
       return () => ipcRenderer.off(IpcChannels.SETTINGS_CHANGED, handler);
     }
+  },
+
+  // ── Notifications ──────────────────────────────────────────────────────────
+  notifications: {
+    create: (opt: any): Promise<string> => ipcRenderer.invoke(IpcChannels.NOTIFICATIONS_CREATE, opt),
+    update: (id: string, updates: any): Promise<void> =>
+      ipcRenderer.invoke(IpcChannels.NOTIFICATIONS_UPDATE, id, updates),
+    dismiss: (id: string): Promise<void> => ipcRenderer.invoke(IpcChannels.NOTIFICATIONS_DISMISS, id),
+    clear: (): Promise<void> => ipcRenderer.invoke(IpcChannels.NOTIFICATIONS_CLEAR),
+    getActive: (): Promise<any[]> => ipcRenderer.invoke(IpcChannels.NOTIFICATIONS_GET_ACTIVE),
+    getHistory: (): Promise<any[]> => ipcRenderer.invoke(IpcChannels.NOTIFICATIONS_GET_HISTORY),
+    onChanged: (callback: (payload: { eventType: string; payload: any }) => void): (() => void) => {
+      const handler = (_: any, payload: any) => callback(payload);
+      ipcRenderer.on(IpcChannels.NOTIFICATIONS_CHANGED, handler);
+      return () => ipcRenderer.off(IpcChannels.NOTIFICATIONS_CHANGED, handler);
+    }
+  },
+
+  // ── Keybindings ────────────────────────────────────────────────────────────
+  keybindings: {
+    get: (): Promise<any[]> => ipcRenderer.invoke(IpcChannels.KEYBINDINGS_GET),
+    set: (binding: any): Promise<any[]> => ipcRenderer.invoke(IpcChannels.KEYBINDINGS_SET, binding)
+  },
+
+  // ── Session ─────────────────────────────────────────────────────────────────
+  session: {
+    load: (workspaceId: string): Promise<any> => ipcRenderer.invoke(IpcChannels.SESSION_LOAD, workspaceId),
+    save: (snapshot: any, immediate?: boolean): Promise<void> =>
+      ipcRenderer.invoke(IpcChannels.SESSION_SAVE, snapshot, immediate),
+    onChanged: (callback: (snapshot: any) => void): (() => void) => {
+      const handler = (_: any, snapshot: any) => callback(snapshot);
+      ipcRenderer.on(IpcChannels.SESSION_CHANGED, handler);
+      return () => ipcRenderer.off(IpcChannels.SESSION_CHANGED, handler);
+    }
   }
 };
 

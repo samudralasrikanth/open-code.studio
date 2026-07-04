@@ -50,3 +50,8 @@ desktop.ini
 .changeset/*.md
 !.changeset/config.json
 !.changeset/README.md
+
+# ── Test Artifacts ──────────────────────────────────────────────────────────────
+proof/
+tools/testing/artifacts/
+

@@ -93,7 +93,25 @@ export const IpcChannels = {
   SETTINGS_GET_ALL: "settings:get-all",
   SETTINGS_SET: "settings:set",
   SETTINGS_RESET: "settings:reset",
-  SETTINGS_CHANGED: "settings:changed"
+  SETTINGS_CHANGED: "settings:changed",
+
+  // Notifications
+  NOTIFICATIONS_CREATE: "notifications:create",
+  NOTIFICATIONS_UPDATE: "notifications:update",
+  NOTIFICATIONS_DISMISS: "notifications:dismiss",
+  NOTIFICATIONS_CLEAR: "notifications:clear",
+  NOTIFICATIONS_GET_ACTIVE: "notifications:get-active",
+  NOTIFICATIONS_GET_HISTORY: "notifications:get-history",
+  NOTIFICATIONS_CHANGED: "notifications:changed",
+
+  // Keybindings
+  KEYBINDINGS_GET: "keybindings:get",
+  KEYBINDINGS_SET: "keybindings:set",
+
+  // Session Restore
+  SESSION_LOAD: "session:load",
+  SESSION_SAVE: "session:save",
+  SESSION_CHANGED: "session:changed"
 } as const;
 
 export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels];

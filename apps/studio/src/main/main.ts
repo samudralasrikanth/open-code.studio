@@ -12,6 +12,7 @@ import {
   bootstrapCommands,
   bootstrapSearch,
   bootstrapSettings,
+  bootstrapThemeNotificationKeybindingSession,
   wireExplorerProvider,
   StartupCoordinator
 } from "./bootstrap/index.js";
@@ -111,8 +112,17 @@ coordinator.register({
 });
 
 coordinator.register({
+  name: "theme-notification-keybinding-session",
+  dependsOn: ["settings"],
+  execute: () => {
+    const eventBus = container.resolve(Symbol.for("events"));
+    bootstrapThemeNotificationKeybindingSession(container, logger, eventBus as any);
+  }
+});
+
+coordinator.register({
   name: "ipc",
-  dependsOn: ["explorer", "document", "terminal", "commands", "search", "settings"],
+  dependsOn: ["explorer", "document", "terminal", "commands", "search", "settings", "theme-notification-keybinding-session"],
   execute: () => {
     bootstrapIpc(container, logger);
   }

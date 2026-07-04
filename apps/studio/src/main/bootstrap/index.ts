@@ -9,3 +9,5 @@ export * from "./startup-coordinator.js";
 export * from "./commands.js";
 export * from "./search.js";
 export * from "./settings.js";
+export * from "./theme-notification-keybinding-session.js";
+

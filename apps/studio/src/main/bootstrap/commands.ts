@@ -44,4 +44,28 @@ export function bootstrapCommands(container: Container): void {
       eventBus.emit("git.commit_requested", {});
     }
   });
+
+  registry.register({
+    id: "document.save",
+    title: "Document: Save Current Document",
+    category: "File",
+    handler: async (args?: { uri?: string }) => {
+      if (args?.uri) {
+        const documentService = container.resolve<any>(Symbol.for("document"));
+        const { uriFromString } = await import("@ocs/workspace");
+        await documentService.saveDocument(uriFromString(args.uri));
+      }
+    }
+  });
+
+  registry.register({
+    id: "settings:get-all",
+    title: "Settings: Get All Settings",
+    category: "Settings",
+    handler: async () => {
+      const settingsService = container.resolve<any>(Symbol.for("SettingsService"));
+      return settingsService?.getAllResolved() || {};
+    }
+  });
 }
+

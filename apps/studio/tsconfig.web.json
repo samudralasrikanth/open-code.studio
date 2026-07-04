@@ -13,6 +13,7 @@
     "../../packages/ui/**/*"
   ],
   "compilerOptions": {
+    "ignoreDeprecations": "6.0",
     "composite": true,
     "outDir": "dist/renderer",
     "baseUrl": ".",

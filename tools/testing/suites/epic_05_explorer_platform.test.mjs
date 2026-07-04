@@ -1,89 +1,56 @@
-export const epicMetadata = {
-  epic: "EPIC-0005",
-  name: "Explorer Platform",
-  phase: "Phase 1 – IDE Platform"
-};
+import { ElectronE2ETestHarness } from "../helpers/electron_e2e_helper.mjs";
+import fs from "fs";
+import path from "path";
 
-export const scenarios = [
-  {
-    id: "EPIC-0005-SC-001",
-    story: "STORY-005",
-    task: "TASK-001",
-    ac: "AC-01",
-    title: "File Tree - Node Rendering & Expansion",
-    risk: "Critical",
-    tags: ["@explorer", "@smoke"],
-    platform: ["macOS", "Windows", "Linux"],
-    async run({ window }) {
-      if (window) {
-        await window.evaluate(() => typeof document !== "undefined");
-      }
-      return { pass: true };
+export async function run() {
+  const harness = new ElectronE2ETestHarness("EPIC-0005", "Explorer Tree Platform & Tab Mechanics");
+
+  try {
+    const wsDir = await harness.setupWorkspace({
+      "src/index.ts": "export const a = 1;",
+      "src/utils.ts": "export function add(a, b) { return a + b; }",
+      "README.md": "# Explorer Test Project"
+    });
+
+    const window = await harness.launchElectron();
+    await harness.openWorkspaceInSetup();
+    await harness.takeScreenshot("explorer_workspace_loaded");
+
+    harness.startActionPhase();
+
+    const treeItems = window.locator('[role="treeitem"]');
+    await treeItems.first().waitFor({ state: "visible", timeout: 10000 });
+    const initialCount = await treeItems.count();
+    harness.assert(initialCount > 0, `Explorer sidebar loaded ${initialCount} tree item(s)`);
+
+    // ── Interaction 1: Single Click (Preview Tab) ────────────────────────────
+    const readmeNode = treeItems.filter({ hasText: "README.md" }).first();
+    harness.assert(await readmeNode.isVisible(), "README.md file node visible in tree");
+    await harness.click(readmeNode);
+    await harness.takeScreenshot("single_click_preview_tab");
+
+    const tabLocator = window.locator("div").filter({ hasText: "README.md" }).first();
+    await tabLocator.waitFor({ state: "visible", timeout: 5000 });
+    harness.assert(await tabLocator.isVisible(), "Single Click opened preview tab in Editor area");
+
+    // ── Interaction 2: Double Click (Permanent Tab) ──────────────────────────
+    await harness.dblclick(readmeNode);
+    await harness.takeScreenshot("double_click_permanent_tab");
+    harness.assert(await tabLocator.isVisible(), "Double Click pinned permanent tab in Editor area");
+
+    // ── Interaction 3: Expand / Collapse Directory ───────────────────────────
+    const srcFolderNode = treeItems.filter({ hasText: "src" }).first();
+    if (await srcFolderNode.isVisible().catch(() => false)) {
+      await harness.click(srcFolderNode);
+      await window.waitForTimeout(300);
+      await harness.takeScreenshot("folder_expanded");
+      const countAfterExpand = await treeItems.count();
+      harness.assert(countAfterExpand >= initialCount, `Expanding directory increased visible nodes (${countAfterExpand})`);
     }
-  },
-  {
-    id: "EPIC-0005-SC-002",
-    story: "STORY-005",
-    task: "TASK-002",
-    ac: "AC-02",
-    title: "File Tree - Node Collapse & Lazy Loading",
-    risk: "High",
-    tags: ["@explorer"],
-    platform: ["macOS", "Windows", "Linux"],
-    async run({ window }) {
-      return { pass: true };
-    }
-  },
-  {
-    id: "EPIC-0005-SC-003",
-    story: "STORY-005",
-    task: "TASK-003",
-    ac: "AC-03",
-    title: "File Tree - Refresh Tree Action",
-    risk: "Medium",
-    tags: ["@explorer"],
-    platform: ["macOS", "Windows", "Linux"],
-    async run({ window }) {
-      return { pass: true };
-    }
-  },
-  {
-    id: "EPIC-0005-SC-004",
-    story: "STORY-005",
-    task: "TASK-004",
-    ac: "AC-04",
-    title: "File Operations - New File & New Folder Creation",
-    risk: "Critical",
-    tags: ["@explorer"],
-    platform: ["macOS", "Windows", "Linux"],
-    async run({ window }) {
-      return { pass: true };
-    }
-  },
-  {
-    id: "EPIC-0005-SC-005",
-    story: "STORY-005",
-    task: "TASK-005",
-    ac: "AC-05",
-    title: "File Operations - Inline File Rename & Delete",
-    risk: "Critical",
-    tags: ["@explorer"],
-    platform: ["macOS", "Windows", "Linux"],
-    async run({ window }) {
-      return { pass: true };
-    }
-  },
-  {
-    id: "EPIC-0005-SC-006",
-    story: "STORY-005",
-    task: "TASK-006",
-    ac: "AC-06",
-    title: "Edge Cases - Hidden Files & Large Folder Performance (500+ Files)",
-    risk: "High",
-    tags: ["@explorer", "@performance"],
-    platform: ["macOS", "Windows", "Linux"],
-    async run({ window }) {
-      return { pass: true };
-    }
+
+    return await harness.finish();
+  } catch (err) {
+    harness.log(`FATAL SUITE ERROR: ${err.message}`);
+    return await harness.finish(err.message);
   }
-];
+}

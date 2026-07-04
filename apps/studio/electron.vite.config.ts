@@ -20,7 +20,11 @@ const WORKSPACE_PACKAGES = [
   "@ocs/git",
   "@ocs/commands",
   "@ocs/search",
-  "@ocs/settings"
+  "@ocs/settings",
+  "@ocs/theme",
+  "@ocs/notifications",
+  "@ocs/keybindings",
+  "@ocs/session"
 ];
 
 export default defineConfig({
@@ -123,6 +127,22 @@ export default defineConfig({
         {
           find: "@ocs/settings",
           replacement: resolve(__dirname, "../../packages/settings/src/index.ts")
+        },
+        {
+          find: "@ocs/theme",
+          replacement: resolve(__dirname, "../../packages/theme/src/index.ts")
+        },
+        {
+          find: "@ocs/notifications",
+          replacement: resolve(__dirname, "../../packages/notifications/src/index.ts")
+        },
+        {
+          find: "@ocs/keybindings",
+          replacement: resolve(__dirname, "../../packages/keybindings/src/index.ts")
+        },
+        {
+          find: "@ocs/session",
+          replacement: resolve(__dirname, "../../packages/session/src/index.ts")
         }
       ]
     },
@@ -235,6 +255,22 @@ export default defineConfig({
         {
           find: "@ocs/settings",
           replacement: resolve(__dirname, "../../packages/settings/src/index.ts")
+        },
+        {
+          find: "@ocs/theme",
+          replacement: resolve(__dirname, "../../packages/theme/src/index.ts")
+        },
+        {
+          find: "@ocs/notifications",
+          replacement: resolve(__dirname, "../../packages/notifications/src/index.ts")
+        },
+        {
+          find: "@ocs/keybindings",
+          replacement: resolve(__dirname, "../../packages/keybindings/src/index.ts")
+        },
+        {
+          find: "@ocs/session",
+          replacement: resolve(__dirname, "../../packages/session/src/index.ts")
         }
       ]
     },
@@ -349,6 +385,22 @@ export default defineConfig({
         {
           find: "@ocs/settings",
           replacement: resolve(__dirname, "../../packages/settings/src/index.ts")
+        },
+        {
+          find: "@ocs/theme",
+          replacement: resolve(__dirname, "../../packages/theme/src/index.ts")
+        },
+        {
+          find: "@ocs/notifications",
+          replacement: resolve(__dirname, "../../packages/notifications/src/index.ts")
+        },
+        {
+          find: "@ocs/keybindings",
+          replacement: resolve(__dirname, "../../packages/keybindings/src/index.ts")
+        },
+        {
+          find: "@ocs/session",
+          replacement: resolve(__dirname, "../../packages/session/src/index.ts")
         }
       ]
     },
