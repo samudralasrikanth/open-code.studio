@@ -1,7 +1,7 @@
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
-import { launchElectronApp, captureDiagnosticArtifacts } from "./helpers/electron.mjs";
+import { launchElectronApp } from "./helpers/electron.mjs";
 import { createTempWorkspace } from "./builders/workspaceBuilder.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -9,19 +9,20 @@ const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, "../../");
 const testingDir = __dirname;
 const reportsDir = path.join(testingDir, "reports");
+const screenshotsDir = path.join(reportsDir, "screenshots");
 
-if (!fs.existsSync(reportsDir)) {
-  fs.mkdirSync(reportsDir, { recursive: true });
+// Clear previous run reports & screenshots before starting
+if (fs.existsSync(reportsDir)) {
+  fs.rmSync(reportsDir, { recursive: true, force: true });
 }
+fs.mkdirSync(reportsDir, { recursive: true });
+fs.mkdirSync(screenshotsDir, { recursive: true });
 
 console.log("================================================================================");
 console.log("          OPEN-CODE.STUDIO EPIC VALIDATION PLATFORM RUNNER                      ");
 console.log("================================================================================");
 
 async function runPlatformSuites() {
-  const manifestPath = path.join(testingDir, "manifest/epic-manifest.json");
-  const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
-
   const suitesDir = path.join(testingDir, "suites");
   const suiteFiles = fs
     .readdirSync(suitesDir)
@@ -35,10 +36,8 @@ async function runPlatformSuites() {
   const results = [];
   const startTime = Date.now();
 
-  // Create workspace fixture
   const tempWorkspace = createTempWorkspace("runner-fixture");
 
-  // Launch Electron App instance
   console.log("🚀 Launching Electron Application Runtime...");
   let appInstance = null;
 
@@ -78,6 +77,18 @@ async function runPlatformSuites() {
 
         const duration = Date.now() - sStart;
         epicPassed++;
+
+        // Capture base64 screenshot proof for visual verification scenarios
+        let screenshotBase64 = null;
+        if (scenario.tags && scenario.tags.includes("@smoke") && appInstance.window) {
+          try {
+            const shotPath = path.join(screenshotsDir, `${scenario.id}.png`);
+            await appInstance.window.screenshot({ path: shotPath });
+            const buffer = fs.readFileSync(shotPath);
+            screenshotBase64 = `data:image/png;base64,${buffer.toString("base64")}`;
+          } catch {}
+        }
+
         results.push({
           epic: epicMetadata.epic,
           epicName: epicMetadata.name,
@@ -85,15 +96,23 @@ async function runPlatformSuites() {
           title: scenario.title,
           status: "PASSED",
           duration,
-          error: null
+          error: null,
+          screenshotBase64
         });
         console.log(`   ✅ [${scenario.id}] ${scenario.title} (${duration}ms)`);
       } catch (err) {
         const duration = Date.now() - sStart;
         epicFailed++;
-        const artifactPath = appInstance
-          ? await captureDiagnosticArtifacts(appInstance.window, scenario.id, reportsDir)
-          : null;
+
+        let screenshotBase64 = null;
+        if (appInstance && appInstance.window) {
+          try {
+            const shotPath = path.join(screenshotsDir, `${scenario.id}_error.png`);
+            await appInstance.window.screenshot({ path: shotPath });
+            const buffer = fs.readFileSync(shotPath);
+            screenshotBase64 = `data:image/png;base64,${buffer.toString("base64")}`;
+          } catch {}
+        }
 
         results.push({
           epic: epicMetadata.epic,
@@ -103,7 +122,7 @@ async function runPlatformSuites() {
           status: "FAILED",
           duration,
           error: err.message,
-          artifactPath
+          screenshotBase64
         });
         console.log(
           `   ❌ [${scenario.id}] ${scenario.title} (${duration}ms) - Error: ${err.message}`
@@ -115,7 +134,6 @@ async function runPlatformSuites() {
     console.log(`   Summary: ${epicPassed} Passed, ${epicFailed} Failed (${epicDuration}ms)\n`);
   }
 
-  // Teardown
   if (appInstance) {
     await appInstance.close();
     console.log("🛑 Electron Application closed.");
@@ -135,7 +153,6 @@ async function runPlatformSuites() {
   console.log(` Total Execution Time     : ${(totalDuration / 1000).toFixed(2)}s`);
   console.log("================================================================================\n");
 
-  // Generate HTML Dashboard Report
   generateHtmlDashboard(results, totalDuration, reportsDir);
   generateJunitXml(results, reportsDir);
 
@@ -164,6 +181,17 @@ function generateHtmlDashboard(results, totalDuration, reportsDir) {
     )
     .join("");
 
+  const visualCards = results
+    .filter((r) => r.screenshotBase64)
+    .map(
+      (r) => `
+    <div style="background: #252526; border: 1px solid #3c3c3c; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+      <h3 style="margin-top: 0; color: #569cd6;">[${r.epic}] ${r.scenarioId}: ${r.title}</h3>
+      <img src="${r.screenshotBase64}" style="max-width: 100%; border-radius: 4px; border: 1px solid #555;" alt="Visual Proof" />
+    </div>`
+    )
+    .join("");
+
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -174,7 +202,7 @@ function generateHtmlDashboard(results, totalDuration, reportsDir) {
     h1 { color: #569cd6; }
     .card { background: #252526; padding: 20px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 40px; }
     .metric { font-size: 24px; font-weight: bold; }
-    table { width: 100%; border-collapse: collapse; background: #252526; border-radius: 8px; overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; background: #252526; border-radius: 8px; overflow: hidden; margin-bottom: 30px; }
     th { background: #333; text-align: left; padding: 12px; color: #9cdcfe; }
   </style>
 </head>
@@ -187,6 +215,8 @@ function generateHtmlDashboard(results, totalDuration, reportsDir) {
     <div><div>Failed</div><div class="metric" style="color: #dc3545;">${failed}</div></div>
     <div><div>Execution Time</div><div class="metric">${(totalDuration / 1000).toFixed(2)}s</div></div>
   </div>
+
+  <h2>📊 Test Scenario Matrix</h2>
   <table>
     <thead>
       <tr>
@@ -202,11 +232,18 @@ function generateHtmlDashboard(results, totalDuration, reportsDir) {
       ${rows}
     </tbody>
   </table>
+
+  <h2>🖼️ Visual Execution Proof Gallery (Embedded Base64 Screenshots)</h2>
+  <div>
+    ${visualCards || "<p>No screenshots captured.</p>"}
+  </div>
 </body>
 </html>`;
 
   fs.writeFileSync(htmlPath, html);
-  console.log(`📊 HTML Dashboard Report generated at: ${htmlPath}`);
+  console.log(
+    `📊 HTML Dashboard Report generated with embedded Base64 screenshots at: ${htmlPath}`
+  );
 }
 
 function generateJunitXml(results, reportsDir) {

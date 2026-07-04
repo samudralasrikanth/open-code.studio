@@ -15,7 +15,7 @@ export async function launchElectronApp(
 
   const window = await app.firstWindow();
   await window.waitForLoadState("domcontentloaded");
-  await window.waitForTimeout(1500);
+  await window.waitForTimeout(3000);
 
   return {
     app,

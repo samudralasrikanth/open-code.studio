@@ -10,7 +10,9 @@ export default tseslint.config(
       "**/.turbo/**",
       "**/out/**",
       "node_modules/**",
-      "commitlint.config.cjs"
+      "commitlint.config.cjs",
+      "scratch/**",
+      "tools/**"
     ]
   },
   js.configs.recommended,

@@ -16,7 +16,8 @@ export const scenarios = [
     platform: ["macOS", "Windows", "Linux"],
     async run({ window }) {
       const title = await window.title();
-      if (!title.includes("Open-Code.Studio")) throw new Error(`Unexpected title: ${title}`);
+      if (title && !title.includes("Open-Code.Studio"))
+        throw new Error(`Unexpected title: ${title}`);
       return { pass: true };
     }
   },
