@@ -9,8 +9,8 @@
       },
       "primarySidebar": {
         "visible": true,
-        "width": 337,
-        "activePanelId": "extensions",
+        "width": 311,
+        "activePanelId": "explorer",
         "panelIds": ["explorer", "search", "source-control"]
       },
       "secondarySidebar": {
@@ -20,7 +20,7 @@
       },
       "bottomPanel": {
         "visible": true,
-        "height": 318,
+        "height": 410,
         "activePanelId": "terminal",
         "panelIds": ["problems", "output", "terminal", "diagnostics"]
       },

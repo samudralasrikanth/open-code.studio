@@ -153,12 +153,26 @@ export class OpenVSXProvider implements MarketplaceProvider {
     }
   }
 
-  async download(id: string): Promise<Buffer> {
-    const details = await this.getDetails(id);
-    if (!details || !details._files?.download) {
-      throw new Error(`Cannot find download URL for ${id}`);
+  async download(id: string, version?: string): Promise<Buffer> {
+    let downloadUrl: string | undefined;
+
+    if (version) {
+      const [namespace, name] = id.split(".");
+      const response = await fetch(`${this.registryUrl}/${namespace}/${name}/${version}`);
+      if (response.ok) {
+        const data = (await response.json()) as { files?: { download?: string } };
+        downloadUrl = data.files?.download;
+      }
+    } else {
+      const details = await this.getDetails(id);
+      downloadUrl = details?._files?.download;
     }
-    const response = await fetch(details._files.download);
+
+    if (!downloadUrl) {
+      throw new Error(`Cannot find download URL for ${id}${version ? `@${version}` : ""}`);
+    }
+
+    const response = await fetch(downloadUrl);
     if (!response.ok) {
       throw new Error(`Failed to download extension: ${response.statusText}`);
     }
@@ -180,9 +194,19 @@ export class OpenVSXProvider implements MarketplaceProvider {
     ]);
   }
 
-  getVersions(): Promise<string[]> {
-    // Stub implementation for now
-    return Promise.resolve([]);
+  async getVersions(id: string): Promise<string[]> {
+    const [namespace, name] = id.split(".");
+    try {
+      const response = await fetch(`${this.registryUrl}/${namespace}/${name}`);
+      if (!response.ok) return [];
+      const data = (await response.json()) as { allVersions?: Record<string, string> };
+      if (!data.allVersions) return [];
+
+      // Filter out 'latest' if it's just an alias
+      return Object.keys(data.allVersions).filter((v) => v !== "latest");
+    } catch {
+      return [];
+    }
   }
 
   async getReadme(id: string): Promise<string> {

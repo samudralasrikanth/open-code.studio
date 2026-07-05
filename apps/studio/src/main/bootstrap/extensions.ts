@@ -1,5 +1,10 @@
 import type { Container, Logger } from "@ocs/common";
-import { ExtensionService, OpenVSXProvider } from "@ocs/extensions";
+import {
+  ExtensionService,
+  OpenVSXProvider,
+  ExtensionRegistry,
+  IconThemeService
+} from "@ocs/extensions";
 import type { SettingsService } from "@ocs/settings";
 
 export function bootstrapExtensions(container: Container, logger: Logger): void {
@@ -15,9 +20,18 @@ export function bootstrapExtensions(container: Container, logger: Logger): void 
     itemUrl
   });
 
-  const service = new ExtensionService(provider);
+  const registry = new ExtensionRegistry();
+  // Pre-load registry in background (startup scan)
+  registry.load().catch((err) => {
+    logger.error("Failed to load extension registry on startup", err);
+  });
 
+  const service = new ExtensionService(provider, registry);
+  const iconThemeService = new IconThemeService(registry, logger);
+
+  container.singleton(Symbol.for("extensionsRegistry"), () => registry);
   container.singleton(Symbol.for("extensionsService"), () => service);
+  container.singleton(Symbol.for("iconThemeService"), () => iconThemeService);
 
   logger.flow({ domain: "startup", source: "bootstrap", action: "extensions:done" });
 }

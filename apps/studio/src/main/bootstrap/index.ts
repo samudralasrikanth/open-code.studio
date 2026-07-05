@@ -11,3 +11,4 @@ export * from "./search.js";
 export * from "./settings.js";
 export * from "./theme-notification-keybinding-session.js";
 export * from "./extensions.js";
+export * from "./protocol.js";

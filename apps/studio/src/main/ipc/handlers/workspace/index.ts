@@ -179,6 +179,43 @@ export function registerWorkspaceHandlers(container: Container): void {
     }
     return [];
   });
+
+  ipcMain.handle("workspace:addExtensionRecommendation", async (_, extensionId: string) => {
+    const current = workspaceService.getActive();
+    if (!current) {
+      return { success: false, error: { message: "No active workspace" } };
+    }
+
+    try {
+      const fs = await import("fs/promises");
+      const path = await import("path");
+      const fsPath = uriToPath(current.uri);
+      const vscodeDir = path.join(fsPath, ".vscode");
+      const extensionsJsonPath = path.join(vscodeDir, "extensions.json");
+
+      await fs.mkdir(vscodeDir, { recursive: true });
+
+      let extensionsConfig: { recommendations?: string[] } = {};
+      try {
+        const content = await fs.readFile(extensionsJsonPath, "utf-8");
+        // Using a loose parse because JSON might have comments (this is a simple implementation)
+        extensionsConfig = JSON.parse(content);
+      } catch {
+        // file doesn't exist or isn't valid JSON, start fresh
+      }
+
+      extensionsConfig.recommendations = extensionsConfig.recommendations || [];
+      if (!extensionsConfig.recommendations.includes(extensionId)) {
+        extensionsConfig.recommendations.push(extensionId);
+        await fs.writeFile(extensionsJsonPath, JSON.stringify(extensionsConfig, null, 2), "utf-8");
+      }
+
+      return { success: true };
+    } catch (error: unknown) {
+      const err = error as { message: string };
+      return { success: false, error: { message: err.message || "Unknown error" } };
+    }
+  });
 }
 
 /** Restore the last workspace on startup. */

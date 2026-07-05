@@ -110,7 +110,12 @@ const ocsAPI = {
       ipcRenderer.invoke(IpcChannels.WORKSPACE_REMOVE_RECENT, id),
 
     updateSettings: (settings: Record<string, unknown>): Promise<void> =>
-      ipcRenderer.invoke(IpcChannels.WORKSPACE_UPDATE_SETTINGS, settings)
+      ipcRenderer.invoke(IpcChannels.WORKSPACE_UPDATE_SETTINGS, settings),
+
+    addExtensionRecommendation: (
+      id: string
+    ): Promise<{ success: boolean; error?: { message: string } }> =>
+      ipcRenderer.invoke("workspace:addExtensionRecommendation", id)
   },
 
   // ── Explorer ────────────────────────────────────────────────────────────────
@@ -329,11 +334,34 @@ const ocsAPI = {
   extensions: {
     search: (query: any): Promise<{ success: boolean; data?: any; error?: any }> =>
       ipcRenderer.invoke(IpcChannels.EXTENSIONS_SEARCH, query),
-    install: (id: string): Promise<any> => ipcRenderer.invoke(IpcChannels.EXTENSIONS_INSTALL, id),
     getDetails: (id: string): Promise<{ success: boolean; data?: any; error?: any }> =>
       ipcRenderer.invoke(IpcChannels.EXTENSIONS_GET_DETAILS, id),
     isInstalled: (id: string): Promise<{ success: boolean; data?: boolean; error?: any }> =>
-      ipcRenderer.invoke(IpcChannels.EXTENSIONS_IS_INSTALLED, id)
+      ipcRenderer.invoke(IpcChannels.EXTENSIONS_IS_INSTALLED, id),
+    getInstalled: (): Promise<{ success: boolean; data?: any[]; error?: any }> =>
+      ipcRenderer.invoke("extensions:getInstalled"),
+    install: (
+      id: string,
+      version?: string
+    ): Promise<{ success: boolean; error?: { message: string } }> =>
+      ipcRenderer.invoke("extensions:install", id, version),
+    uninstall: (id: string): Promise<{ success: boolean; error?: { message: string } }> =>
+      ipcRenderer.invoke("extensions:uninstall", id),
+    enable: (id: string): Promise<{ success: boolean; error?: { message: string } }> =>
+      ipcRenderer.invoke("extensions:enable", id),
+    disable: (id: string): Promise<{ success: boolean; error?: { message: string } }> =>
+      ipcRenderer.invoke("extensions:disable", id),
+    getVersions: (
+      id: string
+    ): Promise<{ success: boolean; data?: string[]; error?: { message: string } }> =>
+      ipcRenderer.invoke("extensions:getVersions", id),
+    downloadVSIX: (
+      id: string,
+      version?: string
+    ): Promise<{ success: boolean; error?: { message: string } }> =>
+      ipcRenderer.invoke("extensions:downloadVSIX", id, version),
+    getActiveIconTheme: (): Promise<{ success: boolean; data?: any; error?: any }> =>
+      ipcRenderer.invoke(IpcChannels.EXTENSIONS_GET_ACTIVE_ICON_THEME)
   }
 };
 

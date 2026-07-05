@@ -106,11 +106,8 @@ export class TerminalService {
   public sendInput(id: string, data: string): void {
     const pty = this.ptyProcesses.get(id);
     if (!pty) {
-      throw new PlatformError({
-        category: "workspace",
-        code: "OCS-TERMINAL-NOT-FOUND",
-        message: `Terminal session ${id} not found or inactive`
-      });
+      this.logger.warn(`Terminal session ${id} not found or inactive for sendInput`);
+      return;
     }
     pty.write(data);
     this.events?.publish(TerminalEventTypes.INPUT, { id, data });
@@ -119,11 +116,8 @@ export class TerminalService {
   public resize(id: string, cols: number, rows: number): void {
     const pty = this.ptyProcesses.get(id);
     if (!pty) {
-      throw new PlatformError({
-        category: "workspace",
-        code: "OCS-TERMINAL-NOT-FOUND",
-        message: `Terminal session ${id} not found or inactive`
-      });
+      this.logger.warn(`Terminal session ${id} not found or inactive for resize`);
+      return;
     }
     pty.resize(cols, rows);
     this.events?.publish(TerminalEventTypes.LAYOUT_CHANGED, { id, cols, rows });

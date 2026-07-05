@@ -37,7 +37,13 @@ export const IPCChannels = {
   workspace: {
     open: "workspace:open",
     getRecent: "workspace:getRecent",
-    state: "workspace:state"
+    state: "workspace:state",
+    addExtensionRecommendation: "workspace:addExtensionRecommendation"
+  },
+  extensions: {
+    getVersions: "extensions:getVersions",
+    installVersion: "extensions:installVersion",
+    downloadVSIX: "extensions:downloadVSIX"
   }
 } as const;
 

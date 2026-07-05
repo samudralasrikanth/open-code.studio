@@ -103,6 +103,12 @@ export const WorkbenchRegion: React.FC<WorkbenchRegionProps> = ({
               </button>
             );
           })}
+
+          <div style={{ flex: 1 }} />
+          <div
+            id={`workbench-panel-actions-${position}`}
+            style={{ display: "flex", alignItems: "center" }}
+          ></div>
         </div>
       )}
 

@@ -1,8 +1,10 @@
 import { useEffect } from "react";
+
 import {
   registerRendererCommand,
   unregisterRendererCommand
 } from "../commands/RendererCommandRegistry.js";
+
 import type { UseWorkbenchLayoutReturn } from "./useWorkbenchLayout.js";
 
 interface UseWorkbenchCommandsProps {
@@ -50,6 +52,15 @@ export function useWorkbenchCommands({
       execute: () => layoutManager.toggleRegion("bottomPanel")
     });
     registerRendererCommand({
+      id: "workbench.action.maximizeBottomPanel",
+      title: "Maximize Bottom Panel",
+      category: "View",
+      execute: () => {
+        const currentHeight = layoutManager.layout.bottomPanel.height || 220;
+        layoutManager.setRegionSize("bottomPanel", currentHeight >= 360 ? 220 : 420);
+      }
+    });
+    registerRendererCommand({
       id: "workbench.action.openFolder",
       title: "Open Folder...",
       category: "File",
@@ -86,6 +97,7 @@ export function useWorkbenchCommands({
       unregisterRendererCommand("workbench.action.toggleSidebar");
       unregisterRendererCommand("workbench.action.toggleSecondarySidebar");
       unregisterRendererCommand("workbench.action.toggleBottomPanel");
+      unregisterRendererCommand("workbench.action.maximizeBottomPanel");
       unregisterRendererCommand("workbench.action.openFolder");
       unregisterRendererCommand("workbench.action.showExplorer");
       unregisterRendererCommand("workbench.action.showSearch");

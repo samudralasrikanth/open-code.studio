@@ -1,6 +1,20 @@
 /* eslint-disable */
-import { app, BrowserWindow, shell } from "electron";
+import { app, BrowserWindow, shell, protocol } from "electron";
 import { createContainer, createLifecycleManager, createLogger } from "@ocs/common";
+
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: "ocs-ext",
+    privileges: {
+      secure: true,
+      standard: true,
+      supportFetchAPI: true,
+      bypassCSP: true,
+      stream: true,
+      corsEnabled: true
+    }
+  }
+]);
 
 import {
   bootstrapDesktop,
@@ -14,6 +28,7 @@ import {
   bootstrapSettings,
   bootstrapThemeNotificationKeybindingSession,
   bootstrapExtensions,
+  bootstrapProtocol,
   wireExplorerProvider,
   StartupCoordinator
 } from "./bootstrap/index.js";
@@ -42,6 +57,7 @@ coordinator.register({
   name: "desktop",
   dependsOn: [],
   execute: async () => {
+    bootstrapProtocol(logger);
     const windowManager = await bootstrapDesktop(logger, container);
     container.singleton(Symbol.for("windowManager"), () => windowManager);
 

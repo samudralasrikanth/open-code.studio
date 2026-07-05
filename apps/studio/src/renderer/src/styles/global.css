@@ -267,3 +267,341 @@ body {
 .editor-tab:hover .tab-action-container .close-btn {
   display: flex !important;
 }
+
+/* ── Integrated Terminal ─────────────────────────────────── */
+
+.ocs-terminal {
+  --terminal-bg: #1e1e1e;
+  --terminal-chrome: #252526;
+  --terminal-chrome-strong: #2d2d30;
+  --terminal-border: #343434;
+  --terminal-hover: #333337;
+  --terminal-active: #3b3b42;
+  --terminal-text: #cccccc;
+  --terminal-muted: #969696;
+  --terminal-accent: #007acc;
+  --terminal-green: #7ed321;
+
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--terminal-bg);
+  color: var(--terminal-text);
+}
+
+.ocs-terminal__toolbar {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  height: 34px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--terminal-border);
+  background: var(--terminal-chrome);
+  padding: 0 8px 0 12px;
+}
+
+.ocs-terminal__selectorGroup,
+.ocs-terminal__actions,
+.ocs-terminal__tabs {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+}
+
+.ocs-terminal__selectorGroup {
+  gap: 8px;
+}
+
+.ocs-terminal__actions {
+  flex-shrink: 0;
+  gap: 1px;
+}
+
+.ocs-terminal button {
+  font: inherit;
+}
+
+.ocs-terminal__shellSelector,
+.ocs-terminal__iconButton,
+.ocs-terminal__newSession,
+.ocs-terminal__tab,
+.ocs-terminal__railButton,
+.ocs-terminal__menu button {
+  border: 0;
+  color: inherit;
+}
+
+.ocs-terminal__shellSelector {
+  display: inline-flex;
+  max-width: 190px;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: transparent;
+  padding: 4px 7px;
+  color: var(--terminal-text);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.ocs-terminal__shellSelector span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ocs-terminal__shellSelector:hover,
+.ocs-terminal__iconButton:hover:not(:disabled),
+.ocs-terminal__newSession:hover,
+.ocs-terminal__tab:hover,
+.ocs-terminal__railButton:hover,
+.ocs-terminal__menu button:hover:not(:disabled) {
+  background: var(--terminal-hover);
+  color: #ffffff;
+}
+
+.ocs-terminal__cwd {
+  max-width: 220px;
+  overflow: hidden;
+  color: var(--terminal-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ocs-terminal__iconButton {
+  display: inline-flex;
+  width: 26px;
+  height: 26px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--terminal-muted);
+  cursor: pointer;
+}
+
+.ocs-terminal__iconButton--narrow {
+  width: 18px;
+  margin-left: -4px;
+}
+
+.ocs-terminal__iconButton:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.ocs-terminal__divider {
+  width: 1px;
+  height: 16px;
+  margin: 0 5px;
+  background: var(--terminal-border);
+}
+
+.ocs-terminal__menu {
+  position: absolute;
+  top: 30px;
+  min-width: 220px;
+  border: 1px solid #4a4a4a;
+  border-radius: 6px;
+  background: #2b2b2b;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.42);
+  padding: 5px;
+}
+
+.ocs-terminal__menu--profiles {
+  right: 8px;
+}
+
+.ocs-terminal__menu--more {
+  right: 160px;
+}
+
+.ocs-terminal__menu button {
+  display: flex;
+  width: 100%;
+  min-height: 28px;
+  align-items: center;
+  border-radius: 4px;
+  background: transparent;
+  padding: 4px 10px;
+  color: #dedede;
+  cursor: pointer;
+  font-size: 13px;
+  text-align: left;
+}
+
+.ocs-terminal__menu button:disabled {
+  color: #888888;
+  cursor: default;
+}
+
+.ocs-terminal__menuSeparator {
+  display: block;
+  height: 1px;
+  margin: 5px 2px;
+  background: #454545;
+}
+
+.ocs-terminal__tabClose {
+  display: inline-flex;
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--terminal-muted);
+  cursor: pointer;
+}
+
+.ocs-terminal__tabClose:hover {
+  background: #464646;
+  color: #ffffff;
+}
+
+.ocs-terminal__body {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+.ocs-terminal__surface {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--terminal-bg);
+  padding: 8px 0 0 0;
+}
+
+.ocs-terminal__xterm {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.ocs-terminal__xterm .xterm {
+  height: 100%;
+  padding: 0 8px;
+}
+
+.ocs-terminal__xterm .xterm-viewport {
+  background: transparent !important;
+}
+
+.ocs-terminal__rail {
+  display: flex;
+  width: 46px;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  border-left: 1px solid var(--terminal-border);
+  background: #202020;
+  padding: 7px 4px;
+}
+
+.ocs-terminal__railButton {
+  position: relative;
+  display: inline-flex;
+  width: 32px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--terminal-muted);
+  cursor: pointer;
+}
+
+.ocs-terminal__railButton.is-active {
+  background: var(--terminal-active);
+  color: #ffffff;
+}
+
+.ocs-terminal__railButton.is-active::before {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: -4px;
+  width: 2px;
+  border-radius: 0 2px 2px 0;
+  background: var(--terminal-accent);
+  content: "";
+}
+
+.ocs-terminal__railWarning {
+  position: absolute;
+  right: 4px;
+  bottom: 3px;
+  color: var(--color-warning);
+}
+
+.ocs-terminal__sessionDetails {
+  position: absolute;
+  right: 38px;
+  top: -10px;
+  display: none;
+  width: 320px;
+  border: 1px solid #494949;
+  border-radius: 6px;
+  background: #252526;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  color: #cccccc;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.ocs-terminal__sessionDetails strong,
+.ocs-terminal__sessionDetails span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ocs-terminal__sessionDetails strong {
+  margin-bottom: 8px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ocs-terminal__sessionDetails span {
+  min-height: 24px;
+  border-top: 1px solid #393939;
+  padding-top: 6px;
+  font-size: 12px;
+}
+
+.ocs-terminal__railButton:hover .ocs-terminal__sessionDetails {
+  display: block;
+}
+
+@media (max-width: 780px) {
+  .ocs-terminal__cwd,
+  .ocs-terminal__newSession span {
+    display: none;
+  }
+
+  .ocs-terminal__menu--profiles,
+  .ocs-terminal__menu--more {
+    right: 8px;
+  }
+
+  .ocs-terminal__sessionDetails {
+    width: 260px;
+  }
+}

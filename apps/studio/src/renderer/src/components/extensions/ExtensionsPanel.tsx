@@ -1,9 +1,11 @@
-import { SearchIcon } from "@ocs/ui";
+import type { InstalledExtension } from "@ocs/extensions";
+import { SearchIcon, SparklesIcon } from "@ocs/ui";
 import React, { useState, useRef, useCallback, useEffect } from "react";
 
 import { useExtensions } from "./useExtensions.js";
 
-const formatDownloads = (num: number): string => {
+const formatDownloads = (num?: number): string => {
+  if (num === undefined || num === null) return "0";
   if (num >= 1000000) return (num / 1000000).toFixed(1).replace(/\.0$/, "") + "M";
   if (num >= 1000) return (num / 1000).toFixed(1).replace(/\.0$/, "") + "K";
   return num.toString();
@@ -11,76 +13,157 @@ const formatDownloads = (num: number): string => {
 
 interface InstallButtonProps {
   extId: string;
+  initialInstalled?: boolean;
+  initialEnabled?: boolean;
+  onStateChange?: () => void;
 }
 
-const InstallButton: React.FC<InstallButtonProps> = ({ extId }) => {
-  const [installed, setInstalled] = useState(false);
-  const [installing, setInstalling] = useState(false);
+export const InstallButton: React.FC<InstallButtonProps> = ({
+  extId,
+  initialInstalled,
+  initialEnabled,
+  onStateChange
+}) => {
+  const [installed, setInstalled] = useState(initialInstalled ?? false);
+  const [enabled, setEnabled] = useState(initialEnabled ?? true);
+  const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
     let mounted = true;
+    if (initialInstalled !== undefined) return; // Skip fetch if passed via props
+
     void (async () => {
       try {
-        const res = (await (window as any).ocs.extensions.isInstalled(extId)) as {
-          success: boolean;
-          data?: boolean;
-        };
+        const getInstalled = window.ocs.extensions.getInstalled;
+        if (!getInstalled) return;
+
+        const res = await getInstalled();
         if (mounted && res.success && res.data) {
-          setInstalled(true);
+          const installedList = res.data as InstalledExtension[];
+          const ext = installedList.find((e) => e.id === extId);
+          if (ext) {
+            setInstalled(true);
+            setEnabled(ext.enabled);
+          }
         }
-      } catch (e) {
+      } catch {
         // ignore
       }
     })();
     return () => {
       mounted = false;
     };
-  }, [extId]);
+  }, [extId, initialInstalled]);
 
-  const handleInstall = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (installed || installing) return;
+  const handleInstall = async (event: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
+    event.stopPropagation();
+    if (installed || processing) return;
 
-    setInstalling(true);
+    setProcessing(true);
     try {
-      const res = (await (window as any).ocs.extensions.install(extId)) as {
-        success: boolean;
-        error?: { message: string };
-      };
+      const res = await window.ocs.extensions.install(extId);
       if (res.success) {
         setInstalled(true);
+        setEnabled(true);
+        onStateChange?.();
       } else {
         alert("Install failed: " + (res.error?.message || "Unknown error"));
       }
     } catch (err) {
       alert("Install failed: " + (err instanceof Error ? err.message : "Unknown error"));
     } finally {
-      setInstalling(false);
+      setProcessing(false);
+    }
+  };
+
+  const handleToggleEnable = async (event: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
+    event.stopPropagation();
+    if (!installed || processing) return;
+
+    setProcessing(true);
+    try {
+      const api = window.ocs.extensions;
+      const res = enabled ? await api.disable(extId) : await api.enable(extId);
+
+      if (res?.success) {
+        setEnabled(!enabled);
+        onStateChange?.();
+      }
+    } catch (err) {
+      alert("Toggle failed: " + (err instanceof Error ? err.message : "Unknown error"));
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleUninstall = async (event: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
+    event.stopPropagation();
+    if (!installed || processing) return;
+
+    if (!confirm("Are you sure you want to uninstall this extension?")) return;
+
+    setProcessing(true);
+    try {
+      const api = window.ocs.extensions;
+      const res = await api.uninstall(extId);
+      if (res.success) {
+        setInstalled(false);
+        onStateChange?.();
+      } else {
+        alert("Uninstall failed: " + (res?.error?.message || "Unknown error"));
+      }
+    } catch (err) {
+      alert("Uninstall failed: " + (err instanceof Error ? err.message : "Unknown error"));
+    } finally {
+      setProcessing(false);
     }
   };
 
   if (installed) {
     return (
-      <button
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          backgroundColor: "var(--color-bg-tertiary)",
-          color: "var(--workbench-text-muted)",
-          border: "none",
-          padding: "2px 10px",
-          borderRadius: "2px",
-          fontSize: "12px",
-          cursor: "default"
-        }}
-      >
-        Installed
-      </button>
+      <div style={{ display: "flex", gap: "6px" }}>
+        <button
+          onClick={(e) => void handleToggleEnable(e)}
+          disabled={processing}
+          style={{
+            backgroundColor: "var(--color-bg-tertiary)",
+            color: "var(--workbench-text)",
+            border: "none",
+            padding: "2px 8px",
+            borderRadius: "2px",
+            fontSize: "12px",
+            cursor: processing ? "default" : "pointer",
+            opacity: processing ? 0.7 : 1
+          }}
+        >
+          {enabled ? "Disable" : "Enable"}
+        </button>
+        <button
+          onClick={(e) => void handleUninstall(e)}
+          disabled={processing}
+          style={{
+            backgroundColor: "var(--color-bg-tertiary)",
+            color: "var(--color-deleted)",
+            border: "none",
+            padding: "2px 8px",
+            borderRadius: "2px",
+            fontSize: "12px",
+            cursor: processing ? "default" : "pointer",
+            opacity: processing ? 0.7 : 1
+          }}
+        >
+          Uninstall
+        </button>
+      </div>
     );
   }
 
   return (
     <button
-      onClick={handleInstall}
+      onClick={(event) => {
+        void handleInstall(event);
+      }}
+      disabled={processing}
       style={{
         backgroundColor: "#007acc",
         color: "#fff",
@@ -88,12 +171,12 @@ const InstallButton: React.FC<InstallButtonProps> = ({ extId }) => {
         padding: "2px 10px",
         borderRadius: "2px",
         fontSize: "12px",
-        cursor: "pointer",
+        cursor: processing ? "default" : "pointer",
         lineHeight: "18px",
-        opacity: installing ? 0.7 : 1
+        opacity: processing ? 0.7 : 1
       }}
     >
-      {installing ? "Installing..." : "Install"}
+      {processing ? "Installing..." : "Install"}
     </button>
   );
 };
@@ -118,6 +201,189 @@ export const ExtensionsPanel: React.FC = () => {
     },
     [state, loadMore]
   );
+
+  const [installedExtensions, setInstalledExtensions] = useState<InstalledExtension[]>([]);
+  const [installedExpanded, setInstalledExpanded] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    void (async () => {
+      try {
+        const getInstalled = window.ocs.extensions.getInstalled;
+        if (!getInstalled) return;
+
+        const res = await getInstalled();
+        if (mounted && res.success && res.data) {
+          setInstalledExtensions(res.data as InstalledExtension[]);
+        }
+      } catch {
+        // ignore
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const renderInstalledSection = () => {
+    if (query.trim() !== "") return null;
+    if (installedExtensions.length === 0) return null;
+
+    return (
+      <div style={{ marginBottom: "16px" }}>
+        <div
+          onClick={() => setInstalledExpanded(!installedExpanded)}
+          style={{
+            padding: "4px 14px",
+            fontSize: "11px",
+            fontWeight: 600,
+            textTransform: "uppercase",
+            color: "var(--workbench-text-muted)",
+            marginBottom: "4px",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: "4px"
+          }}
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="currentColor"
+            style={{
+              transform: installedExpanded ? "rotate(90deg)" : "rotate(0deg)",
+              transition: "transform 0.1s"
+            }}
+          >
+            <path d="M6.22 3.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L9.94 8 6.22 4.28a.75.75 0 0 1 0-1.06z" />
+          </svg>
+          INSTALLED ({installedExtensions.length})
+        </div>
+
+        {installedExpanded && (
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            {installedExtensions.map((ext) => (
+              <div
+                key={ext.id}
+                onClick={() => {
+                  if (window.ocs?.editor?.open) {
+                    void window.ocs.editor.open("extension://" + ext.id, {
+                      preview: false,
+                      active: true
+                    });
+                  }
+                }}
+                style={{
+                  display: "flex",
+                  gap: "10px",
+                  padding: "var(--spacing-sm) var(--spacing-md)",
+                  cursor: "pointer",
+                  transition: "background-color var(--transition-fast)",
+                  position: "relative"
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.backgroundColor = "var(--color-bg-hover)")
+                }
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+              >
+                {/* Icon Fallback */}
+                <div
+                  style={{
+                    width: "42px",
+                    height: "42px",
+                    flexShrink: 0,
+                    backgroundColor: "var(--color-bg-tertiary)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "20px",
+                    color: "var(--workbench-text-muted)"
+                  }}
+                >
+                  {ext.name.substring(0, 1).toUpperCase()}
+                </div>
+
+                {/* Details */}
+                <div
+                  style={{
+                    flex: 1,
+                    minWidth: 0,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "2px"
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "baseline"
+                    }}
+                  >
+                    <h3
+                      style={{
+                        margin: 0,
+                        fontSize: "12px",
+                        fontWeight: 600,
+                        color: "var(--workbench-text)",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        opacity: ext.enabled ? 1 : 0.6
+                      }}
+                    >
+                      {ext.name}
+                    </h3>
+                    <span style={{ fontSize: "10px", color: "var(--workbench-text-muted)" }}>
+                      v{ext.version}
+                    </span>
+                  </div>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: "12px",
+                      color: "var(--workbench-text-muted)",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis"
+                    }}
+                  >
+                    {ext.manifest.description || "No description"}
+                  </p>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      marginTop: "2px",
+                      alignItems: "center"
+                    }}
+                  >
+                    <div style={{ fontSize: "12px", color: "var(--workbench-text-muted)" }}>
+                      {ext.publisher}
+                    </div>
+                    <InstallButton
+                      extId={ext.id}
+                      initialInstalled={true}
+                      initialEnabled={ext.enabled}
+                      onStateChange={() => {
+                        // Refresh the list when state changes
+                        void window.ocs.extensions.getInstalled().then((res) => {
+                          if (res.success && res.data) {
+                            setInstalledExtensions(res.data as InstalledExtension[]);
+                          }
+                        });
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   const renderEmptyState = () => {
     if (state === "loading-first") {
@@ -325,6 +591,8 @@ export const ExtensionsPanel: React.FC = () => {
 
       {/* Extension List */}
       <div style={{ flex: 1, overflowY: "auto" }}>
+        {renderInstalledSection()}
+
         <div
           style={{
             padding: "4px 14px",
@@ -349,7 +617,7 @@ export const ExtensionsPanel: React.FC = () => {
                     onClick={() => {
                       if (window.ocs?.editor?.open) {
                         void window.ocs.editor.open("extension://" + ext.id, {
-                          preview: true,
+                          preview: false,
                           active: true
                         });
                       }
@@ -460,7 +728,7 @@ export const ExtensionsPanel: React.FC = () => {
                                   d="M8 12.3l-4.14 2.5 1.1-4.72L1.24 6.8l4.84-.4L8 2l1.92 4.4 4.84.4-3.72 3.28 1.1 4.72L8 12.3z"
                                 />
                               </svg>
-                              {ext.rating.toFixed(1)}
+                              {(ext.rating ?? 0).toFixed(1)}
                             </span>
                           )}
                         </div>

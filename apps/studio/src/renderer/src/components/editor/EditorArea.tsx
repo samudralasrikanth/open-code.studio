@@ -5,6 +5,7 @@ import { type SplitNode, useEditor } from "../../hooks/useEditor.js";
 
 import { Breadcrumbs } from "./Breadcrumbs.js";
 import { MonacoEditorView } from "./MonacoEditorView.js";
+import { ExtensionEditorView } from "../extensions/ExtensionEditorView.js";
 
 export const EditorArea: React.FC = () => {
   const { editorState, isLoading, open, close } = useEditor();
@@ -396,7 +397,11 @@ export const EditorArea: React.FC = () => {
           {activeInputId && (
             <>
               <Breadcrumbs activeInputId={activeInputId} />
-              <MonacoEditorView input={{ id: activeInputId }} />
+              {activeInputId.startsWith("extension://") ? (
+                <ExtensionEditorView input={{ id: activeInputId }} />
+              ) : (
+                <MonacoEditorView input={{ id: activeInputId }} />
+              )}
             </>
           )}
         </div>

@@ -24,4 +24,10 @@ describe("terminal session helpers", () => {
     expect(getNextActiveSessionId(sessions, "three")).toBe("two");
     expect(getNextActiveSessionId([sessions[0], sessions[1]], "one")).toBe("two");
   });
+
+  it("returns no active session after closing the only terminal", () => {
+    expect(
+      getNextActiveSessionId([{ id: "one", name: "one", buffer: "", exited: false }], "one")
+    ).toBeNull();
+  });
 });

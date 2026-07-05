@@ -119,7 +119,8 @@ export const IpcChannels = {
   EXTENSIONS_SEARCH: "extensions:search",
   EXTENSIONS_INSTALL: "extensions:install",
   EXTENSIONS_GET_DETAILS: "extensions:getDetails",
-  EXTENSIONS_IS_INSTALLED: "extensions:isInstalled"
+  EXTENSIONS_IS_INSTALLED: "extensions:isInstalled",
+  EXTENSIONS_GET_ACTIVE_ICON_THEME: "extensions:getActiveIconTheme"
 } as const;
 
 export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels];

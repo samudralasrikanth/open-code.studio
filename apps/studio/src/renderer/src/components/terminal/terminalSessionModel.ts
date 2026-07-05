@@ -34,12 +34,8 @@ export function getNextActiveSessionId(
   sessions: readonly TerminalSessionItem[],
   activeId: string
 ): string | null {
-  if (sessions.length === 0) return null;
-
   const remaining = sessions.filter((session) => session.id !== activeId);
-  if (remaining.length === 0) {
-    return sessions[0]?.id ?? null;
-  }
+  if (remaining.length === 0) return null;
 
   return remaining[remaining.length - 1]?.id ?? null;
 }

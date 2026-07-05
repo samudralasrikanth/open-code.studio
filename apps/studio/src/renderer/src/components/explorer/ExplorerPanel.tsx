@@ -13,6 +13,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import React, { useState, useRef } from "react";
 
 import { useExplorer } from "../../hooks/useExplorer.js";
+import { useIconTheme } from "../../hooks/useIconTheme.js";
 
 import { ExplorerContextMenu, type ContextMenuItem } from "./ExplorerContextMenu.js";
 
@@ -22,6 +23,7 @@ const ROW_HEIGHT = 26;
 export const ExplorerPanel: React.FC = () => {
   const { nodes, selectNode, collapseNode, expandNode, executeCommand, revealInFinder } =
     useExplorer();
+  const { getIconUrl } = useIconTheme();
   const [focusedIndex, setFocusedIndex] = useState(0);
   const [contextMenu, setContextMenu] = useState<{
     x: number;
@@ -493,6 +495,25 @@ export const ExplorerPanel: React.FC = () => {
 
                       {(() => {
                         const nodeName = visibleNode.node.name.toLowerCase();
+
+                        // Check custom icon theme
+                        const customIconUrl = getIconUrl(
+                          nodeName,
+                          visibleNode.node.isDirectory,
+                          visibleNode.isExpanded
+                        );
+                        if (customIconUrl) {
+                          return (
+                            <img
+                              src={customIconUrl}
+                              width={16}
+                              height={16}
+                              style={{ marginRight: "6px" }}
+                              alt=""
+                            />
+                          );
+                        }
+
                         let Icon: React.ElementType = visibleNode.node.isDirectory
                           ? visibleNode.isExpanded
                             ? FolderOpenIcon

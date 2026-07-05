@@ -21,6 +21,32 @@ export function registerEditorHandlers(container: Container): void {
       inputStr: string,
       options?: { preview?: boolean; active?: boolean; group?: string | EditorGroup }
     ) => {
+      console.log(`[EDITOR_OPEN] Called with inputStr: ${inputStr}`);
+
+      if (inputStr.startsWith("extension://")) {
+        console.log(`[EDITOR_OPEN] Handling extension scheme`);
+        // Create a dummy extension EditorInput dynamically since it's not in @ocs/editor
+        const { EditorInput } = await import("@ocs/editor");
+        class ExtensionEditorInput extends EditorInput {
+          public readonly id = inputStr;
+          public readonly uri = inputStr as any; // Cast as any because it's not a true WorkspaceUri
+          public getName(): string {
+            return inputStr.replace("extension://", "");
+          }
+          public getTooltip(): string | undefined {
+            return `Extension: ${this.getName()}`;
+          }
+          public isDirty(): boolean {
+            return false;
+          }
+          public isReadonly(): boolean {
+            return true;
+          }
+        }
+        editorService.openEditor(new ExtensionEditorInput(), options);
+        return;
+      }
+
       const uri = uriFromString(inputStr);
       const doc = await documentService.openDocument(uri);
       const { DocumentEditorInput } = await import("@ocs/editor");
