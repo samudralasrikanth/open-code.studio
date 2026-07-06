@@ -1,7 +1,7 @@
 export * from "./workspace.js";
 export * from "./terminal.js";
 export * from "./git.js";
-export * from "./explorer.js";
+export { bootstrapExplorer } from "./explorer.js";
 export * from "./document.js";
 export * from "./desktop.js";
 export * from "./ipc.js";

@@ -24,6 +24,11 @@ export interface IFileSystem {
   stat(path: string): Promise<StatResult>;
 
   /**
+   * Reads directory contents.
+   */
+  readDirectory(path: string): Promise<{ name: string; isDirectory: boolean }[]>;
+
+  /**
    * Returns true if the path exists and is accessible, false otherwise.
    * Never throws.
    */

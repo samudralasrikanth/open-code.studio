@@ -1,0 +1,295 @@
+
+> open-code.studio@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio
+> turbo run typecheck
+
+• turbo 2.10.1
+
+   • Packages in scope: @ocs/agents, @ocs/app-browser, @ocs/app-cli, @ocs/app-enterprise-console, @ocs/app-studio, @ocs/commands, @ocs/common, @ocs/configuration, @ocs/document, @ocs/editor, @ocs/editor-monaco, @ocs/event-bus, @ocs/explorer, @ocs/extensions, @ocs/gateway, @ocs/git, @ocs/keybindings, @ocs/knowledge, @ocs/memory, @ocs/notifications, @ocs/policy, @ocs/runtime, @ocs/sdk-agent, @ocs/sdk-plugin, @ocs/sdk-provider, @ocs/sdk-workflow, @ocs/search, @ocs/service-indexing, @ocs/service-model-manager, @ocs/service-update-service, @ocs/session, @ocs/settings, @ocs/telemetry, @ocs/terminal, @ocs/theme, @ocs/tooling-build, @ocs/tooling-codegen, @ocs/tooling-generators, @ocs/tooling-lint, @ocs/tooling-release, @ocs/ui, @ocs/workflow, @ocs/workspace
+   • Running typecheck in 43 packages
+   • Remote caching disabled
+
+@ocs/common:typecheck: cache miss, executing f9083099df375799
+@ocs/tooling-release:typecheck: cache hit, replaying logs df158745b0c70050
+@ocs/tooling-release:typecheck: 
+@ocs/tooling-release:typecheck: > @ocs/tooling-release@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/tooling/release
+@ocs/tooling-release:typecheck: > tsc -b --pretty false
+@ocs/tooling-release:typecheck: 
+@ocs/app-enterprise-console:typecheck: cache hit, replaying logs fab78f9c7357b371
+@ocs/app-enterprise-console:typecheck: 
+@ocs/app-enterprise-console:typecheck: > @ocs/app-enterprise-console@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/enterprise-console
+@ocs/app-enterprise-console:typecheck: > tsc -b --pretty false
+@ocs/app-enterprise-console:typecheck: 
+@ocs/app-browser:typecheck: cache hit, replaying logs 8ac63fe063d51dcc
+@ocs/app-browser:typecheck: 
+@ocs/app-browser:typecheck: > @ocs/app-browser@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/browser
+@ocs/app-browser:typecheck: > tsc -b --pretty false
+@ocs/app-browser:typecheck: 
+@ocs/service-indexing:typecheck: cache hit, replaying logs 59c95e8b081e3d91
+@ocs/service-indexing:typecheck: 
+@ocs/service-indexing:typecheck: > @ocs/service-indexing@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/services/indexing
+@ocs/service-indexing:typecheck: > tsc -b --pretty false
+@ocs/service-indexing:typecheck: 
+@ocs/service-model-manager:typecheck: cache hit, replaying logs ed87c54010fee80c
+@ocs/service-model-manager:typecheck: 
+@ocs/service-model-manager:typecheck: > @ocs/service-model-manager@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/services/model-manager
+@ocs/service-model-manager:typecheck: > tsc -b --pretty false
+@ocs/service-model-manager:typecheck: 
+@ocs/app-cli:typecheck: cache hit, replaying logs 7ed3dc8ce43aa48c
+@ocs/telemetry:typecheck: cache hit, replaying logs 4ddfeb4aab00789e
+@ocs/app-cli:typecheck: 
+@ocs/app-cli:typecheck: > @ocs/app-cli@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/cli
+@ocs/app-cli:typecheck: > tsc -b --pretty false
+@ocs/app-cli:typecheck: 
+@ocs/runtime:typecheck: cache hit, replaying logs 02d8d38a2e484c4e
+@ocs/telemetry:typecheck: 
+@ocs/telemetry:typecheck: > @ocs/telemetry@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/telemetry
+@ocs/telemetry:typecheck: > tsc -b --pretty false
+@ocs/telemetry:typecheck: 
+@ocs/ui:build: cache hit, replaying logs 0cfbc7debbe62699
+@ocs/runtime:typecheck: 
+@ocs/runtime:typecheck: > @ocs/runtime@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/runtime
+@ocs/runtime:typecheck: > tsc -b --pretty false
+@ocs/runtime:typecheck: 
+@ocs/ui:typecheck: cache hit, replaying logs 88108dee98617dbd
+@ocs/sdk-agent:typecheck: cache hit, replaying logs 8f31c2e70b67d22d
+@ocs/tooling-codegen:typecheck: cache hit, replaying logs 2b247a409fbad68a
+@ocs/ui:build: 
+@ocs/ui:build: > @ocs/ui@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/ui
+@ocs/ui:build: > tsc -b
+@ocs/ui:build: 
+@ocs/ui:typecheck: 
+@ocs/ui:typecheck: > @ocs/ui@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/ui
+@ocs/ui:typecheck: > tsc -b --pretty false
+@ocs/gateway:typecheck: cache hit, replaying logs a245d95a20ac82eb
+@ocs/ui:typecheck: 
+@ocs/tooling-codegen:typecheck: 
+@ocs/tooling-codegen:typecheck: > @ocs/tooling-codegen@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/tooling/codegen
+@ocs/sdk-workflow:typecheck: cache hit, replaying logs 5b5063027a4d7421
+@ocs/sdk-agent:typecheck: 
+@ocs/policy:typecheck: cache hit, replaying logs a68389d6eb420286
+@ocs/tooling-codegen:typecheck: > tsc -b --pretty false
+@ocs/tooling-codegen:typecheck: 
+@ocs/sdk-agent:typecheck: > @ocs/sdk-agent@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/sdk-agent
+@ocs/sdk-agent:typecheck: > tsc -b --pretty false
+@ocs/sdk-agent:typecheck: 
+@ocs/policy:typecheck: 
+@ocs/policy:typecheck: > @ocs/policy@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/policy
+@ocs/policy:typecheck: > tsc -b --pretty false
+@ocs/policy:typecheck: 
+@ocs/gateway:typecheck: 
+@ocs/gateway:typecheck: > @ocs/gateway@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/gateway
+@ocs/gateway:typecheck: > tsc -b --pretty false
+@ocs/gateway:typecheck: 
+@ocs/event-bus:typecheck: cache hit, replaying logs 7436de2e64d9fe37
+@ocs/event-bus:typecheck: 
+@ocs/event-bus:typecheck: > @ocs/event-bus@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/event-bus
+@ocs/event-bus:typecheck: > tsc -b --pretty false
+@ocs/event-bus:typecheck: 
+@ocs/memory:typecheck: cache hit, replaying logs 245734b202b83cd3
+@ocs/memory:typecheck: 
+@ocs/memory:typecheck: > @ocs/memory@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/memory
+@ocs/memory:typecheck: > tsc -b --pretty false
+@ocs/memory:typecheck: 
+@ocs/sdk-workflow:typecheck: 
+@ocs/sdk-workflow:typecheck: > @ocs/sdk-workflow@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/sdk-workflow
+@ocs/sdk-workflow:typecheck: > tsc -b --pretty false
+@ocs/sdk-workflow:typecheck: 
+@ocs/sdk-plugin:typecheck: cache hit, replaying logs c5945f1ebe6c8846
+@ocs/knowledge:typecheck: cache hit, replaying logs c8343146c770f16c
+@ocs/tooling-lint:typecheck: cache hit, replaying logs 0e605d64cd845fd6
+@ocs/configuration:typecheck: cache hit, replaying logs 8abc67704a835030
+@ocs/tooling-lint:typecheck: 
+@ocs/tooling-lint:typecheck: > @ocs/tooling-lint@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/tooling/lint
+@ocs/tooling-lint:typecheck: > tsc -b --pretty false
+@ocs/tooling-lint:typecheck: 
+@ocs/service-update-service:typecheck: cache hit, replaying logs ac5ebb5f269e95a2
+@ocs/configuration:typecheck: 
+@ocs/configuration:typecheck: > @ocs/configuration@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/configuration
+@ocs/configuration:typecheck: > tsc -b --pretty false
+@ocs/configuration:typecheck: 
+@ocs/knowledge:typecheck: 
+@ocs/knowledge:typecheck: > @ocs/knowledge@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/knowledge
+@ocs/knowledge:typecheck: > tsc -b --pretty false
+@ocs/knowledge:typecheck: 
+@ocs/workflow:typecheck: cache hit, replaying logs 365a66bfc54f99c8
+@ocs/workflow:typecheck: 
+@ocs/workflow:typecheck: > @ocs/workflow@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/workflow
+@ocs/workflow:typecheck: > tsc -b --pretty false
+@ocs/workflow:typecheck: 
+@ocs/agents:typecheck: cache hit, replaying logs 1516523af27fe1d0
+@ocs/agents:typecheck: 
+@ocs/agents:typecheck: > @ocs/agents@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/agents
+@ocs/agents:typecheck: > tsc -b --pretty false
+@ocs/agents:typecheck: 
+@ocs/common:build: cache hit, replaying logs e15cf475ab9aa4fe
+@ocs/sdk-plugin:typecheck: 
+@ocs/sdk-plugin:typecheck: > @ocs/sdk-plugin@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/sdk-plugin
+@ocs/sdk-plugin:typecheck: > tsc -b --pretty false
+@ocs/sdk-plugin:typecheck: 
+@ocs/service-update-service:typecheck: 
+@ocs/common:build: 
+@ocs/common:build: > @ocs/common@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/common
+@ocs/tooling-generators:typecheck: cache hit, replaying logs 4ea4a1b68ff5ce26
+@ocs/common:build: > tsc -b
+@ocs/common:build: 
+@ocs/sdk-provider:typecheck: cache hit, replaying logs 68695f598b6717eb
+@ocs/tooling-build:typecheck: cache hit, replaying logs 365d3744ca88e225
+@ocs/service-update-service:typecheck: > @ocs/service-update-service@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/services/update-service
+@ocs/service-update-service:typecheck: > tsc -b --pretty false
+@ocs/service-update-service:typecheck: 
+@ocs/sdk-provider:typecheck: 
+@ocs/sdk-provider:typecheck: > @ocs/sdk-provider@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/sdk-provider
+@ocs/sdk-provider:typecheck: > tsc -b --pretty false
+@ocs/sdk-provider:typecheck: 
+@ocs/tooling-generators:typecheck: 
+@ocs/tooling-generators:typecheck: > @ocs/tooling-generators@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/tooling/generators
+@ocs/tooling-generators:typecheck: > tsc -b --pretty false
+@ocs/tooling-generators:typecheck: 
+@ocs/tooling-build:typecheck: 
+@ocs/tooling-build:typecheck: > @ocs/tooling-build@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/tooling/build
+@ocs/tooling-build:typecheck: > tsc -b --pretty false
+@ocs/tooling-build:typecheck: 
+@ocs/settings:typecheck: cache miss, executing d68682617ba72504
+@ocs/search:typecheck: cache miss, executing fb47f3d42832e5df
+@ocs/theme:typecheck: cache miss, executing 766d7260090d698a
+@ocs/extensions:typecheck: cache miss, executing cf05b487394fa451
+@ocs/session:build: cache hit, replaying logs 130a8f2dee03687b
+@ocs/keybindings:typecheck: cache miss, executing e56a08a9b9fb4ea5
+@ocs/session:typecheck: cache miss, executing eb158d16207c7619
+@ocs/notifications:typecheck: cache miss, executing fe9a8ef47e3cb961
+@ocs/workspace:build: cache hit, replaying logs cce88bfce2938494
+@ocs/workspace:build: 
+@ocs/workspace:build: > @ocs/workspace@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/workspace
+@ocs/workspace:build: > tsc -b
+@ocs/workspace:build: 
+@ocs/session:build: 
+@ocs/session:build: > @ocs/session@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/session
+@ocs/session:build: > tsc -b
+@ocs/session:build: 
+@ocs/keybindings:build: cache hit, replaying logs e467cc2877e316f9
+@ocs/notifications:build: cache hit, replaying logs 903905d9fb8cc381
+@ocs/notifications:build: 
+@ocs/notifications:build: > @ocs/notifications@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/notifications
+@ocs/notifications:build: > tsc -b
+@ocs/notifications:build: 
+@ocs/keybindings:build: 
+@ocs/keybindings:build: > @ocs/keybindings@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/keybindings
+@ocs/keybindings:build: > tsc -b
+@ocs/keybindings:build: 
+@ocs/workspace:typecheck: cache miss, executing cfdb0f65a2fb07a9
+@ocs/settings:build: cache hit, replaying logs 08b9e218481a11f0
+@ocs/settings:build: 
+@ocs/settings:build: > @ocs/settings@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/settings
+@ocs/settings:build: > tsc -b
+@ocs/settings:build: 
+@ocs/git:typecheck: cache miss, executing 0191de4a5284ba6d
+@ocs/extensions:typecheck: 
+@ocs/extensions:typecheck: > @ocs/extensions@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/extensions
+@ocs/extensions:typecheck: > tsc -b --pretty false
+@ocs/extensions:typecheck: 
+@ocs/keybindings:typecheck: 
+@ocs/keybindings:typecheck: > @ocs/keybindings@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/keybindings
+@ocs/keybindings:typecheck: > tsc -b --pretty false
+@ocs/keybindings:typecheck: 
+@ocs/theme:typecheck: 
+@ocs/theme:typecheck: > @ocs/theme@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/theme
+@ocs/theme:typecheck: > tsc -b --pretty false
+@ocs/theme:typecheck: 
+@ocs/workspace:typecheck: 
+@ocs/workspace:typecheck: > @ocs/workspace@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/workspace
+@ocs/workspace:typecheck: > tsc -b --pretty false
+@ocs/workspace:typecheck: 
+@ocs/common:typecheck: 
+@ocs/common:typecheck: > @ocs/common@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/common
+@ocs/common:typecheck: > tsc -b --pretty false
+@ocs/common:typecheck: 
+@ocs/settings:typecheck: 
+@ocs/settings:typecheck: > @ocs/settings@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/settings
+@ocs/settings:typecheck: > tsc -b --pretty false
+@ocs/settings:typecheck: 
+@ocs/search:typecheck: 
+@ocs/search:typecheck: > @ocs/search@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/search
+@ocs/search:typecheck: > tsc -b --pretty false
+@ocs/search:typecheck: 
+@ocs/git:typecheck: 
+@ocs/git:typecheck: > @ocs/git@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/git
+@ocs/git:typecheck: > tsc -b --pretty false
+@ocs/git:typecheck: 
+@ocs/session:typecheck: 
+@ocs/session:typecheck: > @ocs/session@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/session
+@ocs/session:typecheck: > tsc -b --pretty false
+@ocs/session:typecheck: 
+@ocs/notifications:typecheck: 
+@ocs/notifications:typecheck: > @ocs/notifications@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/notifications
+@ocs/notifications:typecheck: > tsc -b --pretty false
+@ocs/notifications:typecheck: 
+@ocs/search:build: cache hit, replaying logs e8e85b7dd56a9e1d
+@ocs/search:build: 
+@ocs/search:build: > @ocs/search@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/search
+@ocs/search:build: > tsc -b
+@ocs/search:build: 
+@ocs/commands:build: cache hit, replaying logs 4359cb859bab018e
+@ocs/commands:build: 
+@ocs/commands:build: > @ocs/commands@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/commands
+@ocs/commands:build: > tsc -b
+@ocs/commands:build: 
+@ocs/extensions:build: cache hit, replaying logs 90278fe4a27e003d
+@ocs/extensions:build: 
+@ocs/extensions:build: > @ocs/extensions@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/extensions
+@ocs/extensions:build: > tsc -b
+@ocs/extensions:build: 
+@ocs/commands:typecheck: cache miss, executing 296a8f89ed1e5098
+@ocs/git:build: cache hit, replaying logs f7bab5d41b105455
+@ocs/git:build: 
+@ocs/git:build: > @ocs/git@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/git
+@ocs/git:build: > tsc -b
+@ocs/git:build: 
+@ocs/theme:build: cache hit, replaying logs fd2f8b4cabf5ff26
+@ocs/theme:build: 
+@ocs/theme:build: > @ocs/theme@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/theme
+@ocs/theme:build: > tsc -b
+@ocs/theme:build: 
+@ocs/terminal:build: cache hit, replaying logs 2b9844c5794193f1
+@ocs/terminal:build: 
+@ocs/terminal:build: > @ocs/terminal@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/terminal
+@ocs/terminal:build: > tsc -b
+@ocs/terminal:build: 
+@ocs/document:build: cache hit, replaying logs fe9da64ca6009d1e
+@ocs/terminal:typecheck: cache miss, executing fbd7bc3edf6692e9
+@ocs/document:build: 
+@ocs/document:build: > @ocs/document@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/document
+@ocs/document:build: > tsc -b
+@ocs/document:build: 
+@ocs/explorer:build: cache hit, replaying logs a13e40df4013230d
+@ocs/explorer:build: 
+@ocs/explorer:build: > @ocs/explorer@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/explorer
+@ocs/explorer:build: > tsc -b
+@ocs/explorer:build: 
+@ocs/editor:build: cache hit, replaying logs ae1aa98aa4875e68
+@ocs/editor:build: 
+@ocs/editor:build: > @ocs/editor@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/editor
+@ocs/editor:build: > tsc -b
+@ocs/editor:build: 
+@ocs/editor-monaco:build: cache hit, replaying logs b04bb3f99e694419
+@ocs/editor-monaco:build: 
+@ocs/editor-monaco:build: > @ocs/editor-monaco@0.0.1 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/editor-monaco
+@ocs/editor-monaco:build: > tsc -b
+@ocs/editor-monaco:build: 
+@ocs/app-studio:typecheck: cache miss, executing 2cd4045dc83aff92
+@ocs/terminal:typecheck: 
+@ocs/terminal:typecheck: > @ocs/terminal@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/terminal
+@ocs/terminal:typecheck: > tsc -b --pretty false
+@ocs/terminal:typecheck: 
+@ocs/commands:typecheck: 
+@ocs/commands:typecheck: > @ocs/commands@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/commands
+@ocs/commands:typecheck: > tsc -b --pretty false
+@ocs/commands:typecheck: 
+@ocs/app-studio:typecheck: 
+@ocs/app-studio:typecheck: > @ocs/app-studio@0.1.0 typecheck /Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio
+@ocs/app-studio:typecheck: > tsc --noEmit
+@ocs/app-studio:typecheck: 
+
+ Tasks:    56 successful, 56 total
+Cached:    43 cached, 56 total
+  Time:    1.537s 
+

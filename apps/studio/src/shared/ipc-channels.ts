@@ -59,6 +59,9 @@ export const IpcChannels = {
   EDITOR_CLOSE: "editor:close",
   EDITOR_GET_STATE: "editor:get-state",
   EDITOR_STATE_CHANGED: "editor:state-changed",
+  EDITOR_REQUEST_FLUSH: "editor:request-flush",
+  EDITOR_FLUSH_COMPLETE: "editor:flush-complete",
+  EDITOR_REVEAL: "editor:reveal",
 
   // Commands
   COMMANDS_SEARCH: "commands:search",
@@ -85,6 +88,9 @@ export const IpcChannels = {
   SEARCH_START: "search:start",
   SEARCH_CANCEL: "search:cancel",
   SEARCH_REPLACE: "search:replace",
+  SEARCH_REPLACE_ALL: "search:replace-all",
+  SEARCH_REPLACE_IN_FILE: "search:replace-in-file",
+  SEARCH_REPLACE_MATCH: "search:replace-match",
   SEARCH_RESULT_FOUND: "search:result-found",
   SEARCH_PROGRESS: "search:progress",
   SEARCH_COMPLETED: "search:completed",

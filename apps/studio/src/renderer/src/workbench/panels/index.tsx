@@ -15,9 +15,7 @@ import { DeveloperDiagnosticsPanel } from "../../components/explorer/DeveloperDi
 import { ExtensionsPanel } from "../../components/extensions/ExtensionsPanel.js";
 import { SourceControlPanel } from "../../components/git/SourceControlPanel.js";
 import { SearchSidebar } from "../../components/search/SearchSidebar.js";
-
 import type { PanelRegistryImpl } from "../PanelRegistry.js";
-
 import { ExplorerPanelWrapper } from "./ExplorerPanelWrapper.js";
 import { TerminalPanelWrapper } from "./TerminalPanelWrapper.js";
 

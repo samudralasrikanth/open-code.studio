@@ -86,11 +86,11 @@ export const EditorInputTabs: React.FC<EditorInputTabsProps> = ({ group }) => {
             >
               {name}
             </span>
-            {/* Dirty indicator placeholder */}
+            {/* Dirty indicator */}
             <div
               className="dirty-dot"
               style={{
-                display: "none",
+                display: group.dirtyInputs?.includes(id) ? "block" : "none",
                 width: "8px",
                 height: "8px",
                 borderRadius: "50%",

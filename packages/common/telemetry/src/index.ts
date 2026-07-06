@@ -1,4 +1,4 @@
-import { performance } from "node:perf_hooks";
+// use global performance object
 
 import type { EventBus } from "../../events/src/index.js";
 
@@ -23,11 +23,12 @@ export class MetricRegistry {
   }
 
   public async time<T>(name: string, operation: () => T | Promise<T>): Promise<T> {
-    const started = performance.now();
+    const perf = typeof performance !== "undefined" ? performance : Date;
+    const started = perf.now();
     try {
       return await operation();
     } finally {
-      await this.setMetric({ name, type: "timer", value: performance.now() - started });
+      await this.setMetric({ name, type: "timer", value: perf.now() - started });
     }
   }
 

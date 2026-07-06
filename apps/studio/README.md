@@ -1,5 +1,6 @@
 # @ocs/app-studio
 
+foofoo
 Open-Code.Studio desktop shell.
 
 ## Purpose

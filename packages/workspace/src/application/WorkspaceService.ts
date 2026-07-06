@@ -23,6 +23,9 @@ import type { EventBus } from "@ocs/common/events";
 import type { RecentWorkspace, Workspace } from "../domain/WorkspaceMetadata.js";
 import { WorkspaceStateMachine } from "../domain/WorkspaceState.js";
 import { uriDisplayName, uriFromPath, uriToPath } from "../domain/WorkspaceUri.js";
+import { ImmutableWorkspaceTree } from "../domain/WorkspaceTree.js";
+import type { WorkspaceTree } from "../domain/WorkspaceTree.js";
+import { URI } from "@ocs/common";
 import { WorkspaceEventTypes } from "../events/WorkspaceEvents.js";
 import type { IFileSystem } from "../infrastructure/IFileSystem.js";
 
@@ -36,6 +39,7 @@ export interface WorkspaceServiceOptions {
 
 export class WorkspaceService {
   private _workspace: Workspace | null = null;
+  private _tree: WorkspaceTree = new ImmutableWorkspaceTree([]);
   private readonly state = new WorkspaceStateMachine();
   private readonly wsConfig: WorkspaceConfiguration;
 
@@ -52,6 +56,27 @@ export class WorkspaceService {
 
   public getActive(): Workspace | null {
     return this._workspace;
+  }
+
+  public getTree(): WorkspaceTree {
+    return this._tree;
+  }
+
+  public addRoot(uri: URI): void {
+    const newRoots = [...this._tree.roots];
+    if (!newRoots.find((r) => r.uri.toString() === uri.toString())) {
+      newRoots.push({
+        uri,
+        name: uri.path.split("/").pop() || "",
+        isDirectory: true
+      });
+      this._tree = new ImmutableWorkspaceTree(newRoots);
+    }
+  }
+
+  public removeRoot(uri: URI): void {
+    const newRoots = this._tree.roots.filter((r) => r.uri.toString() !== uri.toString());
+    this._tree = new ImmutableWorkspaceTree(newRoots);
   }
 
   public isOpen(): boolean {
@@ -166,6 +191,8 @@ export class WorkspaceService {
       // ── Step 3: Transition → open ─────────────────────────────────────────
       this.state.transition("open");
       this._workspace = workspace;
+      this._tree = new ImmutableWorkspaceTree([]);
+      this.addRoot(URI.parse(uri));
 
       await this.publishStateChanged("opening", "open", workspace.id);
       await this.events?.publish(WorkspaceEventTypes.OPENED, { workspace });
@@ -207,6 +234,7 @@ export class WorkspaceService {
     await this.publishStateChanged(previousState, "closing", workspace?.id);
 
     this._workspace = null;
+    this._tree = new ImmutableWorkspaceTree([]);
     this.state.transition("closed");
 
     await this.publishStateChanged("closing", "closed", workspace?.id);

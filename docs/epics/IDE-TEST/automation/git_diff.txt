@@ -1,0 +1,2490 @@
+diff --git a/.ocs/workspace.json b/.ocs/workspace.json
+index a19e9af..6c6a26f 100644
+--- a/.ocs/workspace.json
++++ b/.ocs/workspace.json
+@@ -9,9 +9,13 @@
+       },
+       "primarySidebar": {
+         "visible": true,
+-        "width": 311,
++        "width": 255,
+         "activePanelId": "explorer",
+-        "panelIds": ["explorer", "search", "source-control"]
++        "panelIds": [
++          "explorer",
++          "search",
++          "source-control"
++        ]
+       },
+       "secondarySidebar": {
+         "visible": false,
+@@ -20,9 +24,14 @@
+       },
+       "bottomPanel": {
+         "visible": true,
+-        "height": 410,
++        "height": 284,
+         "activePanelId": "terminal",
+-        "panelIds": ["problems", "output", "terminal", "diagnostics"]
++        "panelIds": [
++          "problems",
++          "output",
++          "terminal",
++          "diagnostics"
++        ]
+       },
+       "statusBar": {
+         "visible": true
+@@ -30,4 +39,4 @@
+     }
+   },
+   "schemaVersion": 1
+-}
++}
+\ No newline at end of file
+diff --git a/apps/studio/README.md b/apps/studio/README.md
+index 35e09fe..7493620 100644
+--- a/apps/studio/README.md
++++ b/apps/studio/README.md
+@@ -1,5 +1,5 @@
+ # @ocs/app-studio
+-
++foofoo
+ Open-Code.Studio desktop shell.
+ 
+ ## Purpose
+diff --git a/apps/studio/src/main/bootstrap/document.ts b/apps/studio/src/main/bootstrap/document.ts
+index 4fb973c..d06ce14 100644
+--- a/apps/studio/src/main/bootstrap/document.ts
++++ b/apps/studio/src/main/bootstrap/document.ts
+@@ -10,7 +10,8 @@ import {
+   PinEditorCommand,
+   SplitRightCommand,
+   SplitDownCommand,
+-  RevertDocumentCommand
++  RevertDocumentCommand,
++  SaveActiveEditorCommand
+ } from "@ocs/editor/application";
+ 
+ /**
+@@ -33,6 +34,7 @@ export function bootstrapDocument(container: Container, logger: Logger): void {
+   const editorService = new EditorService();
+   const commandRegistry = new CommandRegistry();
+   commandRegistry.registerCommand(new SaveDocumentCommand(documentService));
++  commandRegistry.registerCommand(new SaveActiveEditorCommand(editorService));
+ 
+   commandRegistry.registerCommand(new OpenEditorCommand(editorService, documentService));
+   commandRegistry.registerCommand(new CloseEditorCommand(editorService));
+diff --git a/apps/studio/src/main/ipc/handlers/editor/index.ts b/apps/studio/src/main/ipc/handlers/editor/index.ts
+index e38bb77..1e042e1 100644
+--- a/apps/studio/src/main/ipc/handlers/editor/index.ts
++++ b/apps/studio/src/main/ipc/handlers/editor/index.ts
+@@ -19,7 +19,7 @@ export function registerEditorHandlers(container: Container): void {
+     async (
+       _,
+       inputStr: string,
+-      options?: { preview?: boolean; active?: boolean; group?: string | EditorGroup }
++      options?: { preview?: boolean; active?: boolean; group?: string | EditorGroup; selection?: any }
+     ) => {
+       console.log(`[EDITOR_OPEN] Called with inputStr: ${inputStr}`);
+ 
+@@ -50,7 +50,36 @@ export function registerEditorHandlers(container: Container): void {
+       const uri = uriFromString(inputStr);
+       const doc = await documentService.openDocument(uri);
+       const { DocumentEditorInput } = await import("@ocs/editor");
+-      editorService.openEditor(new DocumentEditorInput(doc), options);
++
++      const syncProvider = async (): Promise<void> => {
++        return new Promise<void>((resolve) => {
++          const timeout = setTimeout(() => {
++            console.warn("[EDITOR_REQUEST_FLUSH] Timeout waiting for flush");
++            ipcMain.removeHandler(IpcChannels.EDITOR_FLUSH_COMPLETE);
++            resolve();
++          }, 1000);
++
++          ipcMain.handleOnce(IpcChannels.EDITOR_FLUSH_COMPLETE, () => {
++            clearTimeout(timeout);
++            resolve();
++          });
++
++          webContents.getAllWebContents().forEach((wc) => {
++            wc.send(IpcChannels.EDITOR_REQUEST_FLUSH);
++          });
++        });
++      };
++
++      editorService.openEditor(new DocumentEditorInput(doc, documentService, syncProvider), options);
++
++      if (options?.selection) {
++        webContents.getAllWebContents().forEach((wc) => {
++          wc.send(IpcChannels.EDITOR_REVEAL, { uri: inputStr, selection: options.selection });
++        });
++      }
++
++      return { success: true };
++
+     }
+   );
+ 
+diff --git a/apps/studio/src/main/ipc/handlers/explorer/index.ts b/apps/studio/src/main/ipc/handlers/explorer/index.ts
+index 72075ab..88c9449 100644
+--- a/apps/studio/src/main/ipc/handlers/explorer/index.ts
++++ b/apps/studio/src/main/ipc/handlers/explorer/index.ts
+@@ -40,82 +40,15 @@ export async function setupWorkspaceExplorer(
+     correlationId,
+     context: { workspaceId: workspace.id, workspaceUri: workspace.uri }
+   });
+-  const provider = explorerService.getProvider<WorkspaceProvider>("explorer.provider.workspace");
+-  if (!provider) {
+-    throw new Error("Workspace explorer provider is not registered.");
+-  }
+ 
+-  logger.flow({
+-    domain: "workspace",
+-    source: "main",
+-    action: "explorer-setup:set-root",
+-    correlationId,
+-    context: { workspaceUri: workspace.uri }
+-  });
+-  provider.setRoot(workspace.uri);
+-
+-  logger.flow({
+-    domain: "workspace",
+-    source: "main",
+-    action: "explorer-setup:open-root:start",
+-    correlationId
+-  });
+-  await explorerService.openWorkspaceRoot();
+-  logger.flow({
+-    domain: "workspace",
+-    source: "main",
+-    action: "explorer-setup:open-root:done",
+-    correlationId,
+-    context: {
+-      rootId: explorerService.treeModel.getRootId(),
+-      visibleNodes: explorerService.treeModel.getVisibleNodes().length
+-    }
+-  });
++  explorerService.refreshRoots();
+ 
+-  if (activeWatcher && watchedUri) {
+-    await teardownWorkspaceExplorer(container, logger, correlationId);
+-  }
+-
+-  activeWatcher = new NodeWatcher();
+-  watchedUri = workspace.uri;
+-  try {
+-    logger.flow({
+-      domain: "workspace",
+-      source: "main",
+-      action: "explorer-setup:watch:start",
+-      correlationId,
+-      context: { watchedUri }
+-    });
+-    await activeWatcher.watch(workspace.uri, (events) => {
+-      logger.flow({
+-        domain: "explorer",
+-        source: "main",
+-        action: "watch:events",
+-        context: { count: events.length }
+-      });
+-      void explorerService.handleFileWatchEvents(events);
+-    });
+-    logger.flow({
+-      domain: "workspace",
+-      source: "main",
+-      action: "explorer-setup:watch:done",
+-      correlationId,
+-      context: { watchedUri }
+-    });
+-  } catch (error) {
+-    activeWatcher = null;
+-    watchedUri = null;
+-    logger.error("[flow:workspace] main: explorer-setup:watch:failed", {
+-      error: error instanceof Error ? error.message : String(error)
+-    });
+-  }
+   logger.flow({
+     domain: "workspace",
+     source: "main",
+     action: "explorer-setup:done",
+     correlationId,
+     context: {
+-      rootId: explorerService.treeModel.getRootId(),
+       visibleNodes: explorerService.treeModel.getVisibleNodes().length
+     }
+   });
+@@ -123,21 +56,10 @@ export async function setupWorkspaceExplorer(
+ 
+ export async function teardownWorkspaceExplorer(
+   _container: Container,
+-  logger: Logger,
+-  correlationId: string
++  _logger: Logger,
++  _correlationId: string
+ ): Promise<void> {
+-  if (activeWatcher && watchedUri) {
+-    logger.flow({
+-      domain: "workspace",
+-      source: "main",
+-      action: "explorer-setup:unwatch-previous",
+-      correlationId,
+-      context: { watchedUri }
+-    });
+-    await activeWatcher.unwatch(watchedUri as import("@ocs/workspace").WorkspaceUri);
+-    activeWatcher = null;
+-    watchedUri = null;
+-  }
++  // No-op for now since watcher is handled elsewhere or not at all in this simple version
+ }
+ 
+ export function getExplorerWatcherState(): {
+@@ -169,16 +91,17 @@ export function registerExplorerHandlers(container: Container): void {
+   ipcMain.handle(
+     IpcChannels.EXPLORER_EXPAND_NODE,
+     async (_, providerId: string, nodeId: string) => {
+-      await explorerService.expandNode(providerId, nodeId);
++      // providerId is ignored now as we parse nodeId as URI
++      await explorerService.expandNode(uriFromString(nodeId));
+     }
+   );
+ 
+   ipcMain.handle(IpcChannels.EXPLORER_COLLAPSE_NODE, (_, nodeId: string) => {
+-    explorerService.collapseNode(nodeId);
++    explorerService.collapseNode(uriFromString(nodeId));
+   });
+ 
+   ipcMain.handle(IpcChannels.EXPLORER_SELECT_NODE, (_, nodeId: string, multi: boolean) => {
+-    explorerService.selectNode(nodeId, multi);
++    explorerService.selectNode(uriFromString(nodeId), multi);
+   });
+ 
+   ipcMain.handle(
+@@ -192,10 +115,7 @@ export function registerExplorerHandlers(container: Container): void {
+         await createFileHandler.execute(
+           new CreateFileCommand(uriFromString(args.uri), args.isDirectory ?? false)
+         );
+-        const parentId = args.uri.slice(0, args.uri.lastIndexOf("/"));
+-        if (explorerService.treeModel.getNode(parentId)) {
+-          await explorerService.refresh(explorerService.getProviderId(), parentId);
+-        }
++        explorerService.refreshRoots();
+         return;
+       }
+ 
+@@ -210,8 +130,7 @@ export function registerExplorerHandlers(container: Container): void {
+         await renameFileHandler.execute(
+           new RenameFileCommand(uriFromString(args.uri), uriFromString(args.targetUri))
+         );
+-        await explorerService.refresh(explorerService.getProviderId(), null);
+-        await explorerService.openWorkspaceRoot();
++        explorerService.refreshRoots();
+         return;
+       }
+ 
+diff --git a/apps/studio/src/main/ipc/handlers/search/searchHandlers.ts b/apps/studio/src/main/ipc/handlers/search/searchHandlers.ts
+index 39602ab..35c820f 100644
+--- a/apps/studio/src/main/ipc/handlers/search/searchHandlers.ts
++++ b/apps/studio/src/main/ipc/handlers/search/searchHandlers.ts
+@@ -30,4 +30,11 @@ export function registerSearchHandlers(container: Container): void {
+   ipcMain.handle(IpcChannels.SEARCH_REPLACE, async (_, operation: ReplaceOperation) => {
+     await replaceService.executeReplace(operation);
+   });
++
++  ipcMain.handle(IpcChannels.SEARCH_REPLACE_ALL, async (_, { queryId, replaceText }: { queryId: string, replaceText: string }) => {
++    const results = searchService.getCachedResults(queryId);
++    if (results && results.length > 0) {
++      await replaceService.executeReplaceAll(queryId, results, replaceText);
++    }
++  });
+ }
+diff --git a/apps/studio/src/main/menu.ts b/apps/studio/src/main/menu.ts
+index ff50fd7..e6cbe25 100644
+--- a/apps/studio/src/main/menu.ts
++++ b/apps/studio/src/main/menu.ts
+@@ -157,6 +157,19 @@ export async function createApplicationMenu(container?: Container): Promise<void
+           submenu: openRecentSubmenu
+         },
+         { type: "separator" as const },
++        {
++          label: "Save",
++          accelerator: "CmdOrCtrl+S",
++          click: async (): Promise<void> => {
++            if (container) {
++              const commandRegistry = container.resolve<any>(Symbol.for("commands"));
++              if (commandRegistry) {
++                await commandRegistry.executeCommand("workbench.action.files.save");
++              }
++            }
++          }
++        },
++        { type: "separator" as const },
+         isMac ? { role: "close" as const } : { role: "quit" as const }
+       ]
+     },
+diff --git a/apps/studio/src/preload/preload.ts b/apps/studio/src/preload/preload.ts
+index 6659937..8c2e574 100644
+--- a/apps/studio/src/preload/preload.ts
++++ b/apps/studio/src/preload/preload.ts
+@@ -177,10 +177,22 @@ const ocsAPI = {
+     close: (input: any, groupId?: string): Promise<void> =>
+       ipcRenderer.invoke(IpcChannels.EDITOR_CLOSE, input, groupId),
+     getState: (): Promise<any> => ipcRenderer.invoke(IpcChannels.EDITOR_GET_STATE),
++    onRequestFlush: (callback: () => void): (() => void) => {
++      const handler = () => callback();
++      ipcRenderer.on(IpcChannels.EDITOR_REQUEST_FLUSH, handler);
++      return () => ipcRenderer.off(IpcChannels.EDITOR_REQUEST_FLUSH, handler);
++    },
++    sendFlushComplete: (): Promise<void> =>
++      ipcRenderer.invoke(IpcChannels.EDITOR_FLUSH_COMPLETE),
+     onStateChanged: (callback: (payload: any) => void): (() => void) => {
+       const handler = (_: any, payload: any) => callback(payload);
+       ipcRenderer.on(IpcChannels.EDITOR_STATE_CHANGED, handler);
+       return () => ipcRenderer.off(IpcChannels.EDITOR_STATE_CHANGED, handler);
++    },
++    onReveal: (callback: (payload: { uri: string; selection: any }) => void): (() => void) => {
++      const handler = (_: any, payload: any) => callback(payload);
++      ipcRenderer.on(IpcChannels.EDITOR_REVEAL, handler);
++      return () => ipcRenderer.off(IpcChannels.EDITOR_REVEAL, handler);
+     }
+   },
+ 
+@@ -254,6 +266,8 @@ const ocsAPI = {
+       ipcRenderer.invoke(IpcChannels.SEARCH_CANCEL, queryId),
+     replace: (operation: any): Promise<void> =>
+       ipcRenderer.invoke(IpcChannels.SEARCH_REPLACE, operation),
++    replaceAll: (operation: { queryId: string; replaceText: string }): Promise<void> =>
++      ipcRenderer.invoke(IpcChannels.SEARCH_REPLACE_ALL, operation),
+     onResultFound: (callback: (payload: any) => void): (() => void) => {
+       const handler = (_: any, payload: any) => callback(payload);
+       ipcRenderer.on(IpcChannels.SEARCH_RESULT_FOUND, handler);
+diff --git a/apps/studio/src/renderer/src/components/editor/EditorInputTabs.tsx b/apps/studio/src/renderer/src/components/editor/EditorInputTabs.tsx
+index aed1791..116519e 100644
+--- a/apps/studio/src/renderer/src/components/editor/EditorInputTabs.tsx
++++ b/apps/studio/src/renderer/src/components/editor/EditorInputTabs.tsx
+@@ -86,11 +86,11 @@ export const EditorInputTabs: React.FC<EditorInputTabsProps> = ({ group }) => {
+             >
+               {name}
+             </span>
+-            {/* Dirty indicator placeholder */}
++            {/* Dirty indicator */}
+             <div
+               className="dirty-dot"
+               style={{
+-                display: "none",
++                display: group.dirtyInputs?.includes(id) ? "block" : "none",
+                 width: "8px",
+                 height: "8px",
+                 borderRadius: "50%",
+diff --git a/apps/studio/src/renderer/src/components/editor/MonacoEditorView.tsx b/apps/studio/src/renderer/src/components/editor/MonacoEditorView.tsx
+index 1061828..c7d15d3 100644
+--- a/apps/studio/src/renderer/src/components/editor/MonacoEditorView.tsx
++++ b/apps/studio/src/renderer/src/components/editor/MonacoEditorView.tsx
+@@ -33,6 +33,21 @@ export const MonacoEditorView: React.FC<MonacoEditorViewProps> = ({ input }) =>
+     };
+   }, []);
+ 
++  useEffect(() => {
++    const unsub = window.ocs.editor.onReveal((payload) => {
++      if (input && payload.uri === input.id && adapterRef.current) {
++        const editor = adapterRef.current.getEditor();
++        if (editor && payload.selection) {
++          editor.revealLineInCenter(payload.selection.startLineNumber);
++          editor.setSelection(payload.selection);
++          editor.focus();
++        }
++      }
++    });
++
++    return () => unsub();
++  }, [input]);
++
+   useEffect(() => {
+     if (!input) return;
+ 
+diff --git a/apps/studio/src/renderer/src/components/explorer/ExplorerPanel.tsx b/apps/studio/src/renderer/src/components/explorer/ExplorerPanel.tsx
+index fb8e7cf..ff5c95b 100644
+--- a/apps/studio/src/renderer/src/components/explorer/ExplorerPanel.tsx
++++ b/apps/studio/src/renderer/src/components/explorer/ExplorerPanel.tsx
+@@ -75,65 +75,47 @@ export const ExplorerPanel: React.FC = () => {
+     }
+   };
+ 
+-  const buildContextMenuItems = (visibleNode: VisibleNode): ContextMenuItem[] => {
+-    const nodeData = visibleNode.node as { uri?: { toString: () => string }; id: string };
++  const buildContextMenuItems = (visibleNode: any): ContextMenuItem[] => {
++    const nodeData = visibleNode.node as { uri?: { toString: () => string }; id: string, capabilities?: any };
+     const uri: string = nodeData.uri ? nodeData.uri.toString() : visibleNode.node.id;
+     const isDir = visibleNode.node.isDirectory;
++    const caps = nodeData.capabilities || { canRename: true, canDelete: true };
+ 
+     return [
+       {
+         label: "New File",
+         disabled: !isDir,
+         action: () => {
+-          const name = window.prompt("New file name:");
+-          if (name) {
+-            void executeCommand("explorer.command.createFile", {
+-              uri: `${uri}/${name}`,
+-              isDirectory: false
+-            });
+-          }
++          void executeCommand("workbench.action.files.newFile", { uri });
+         }
+       },
+       {
+         label: "New Folder",
+         disabled: !isDir,
+         action: () => {
+-          const name = window.prompt("New folder name:");
+-          if (name) {
+-            void executeCommand("explorer.command.createFile", {
+-              uri: `${uri}/${name}`,
+-              isDirectory: true
+-            });
+-          }
++          void executeCommand("workbench.action.files.newFolder", { uri });
+         }
+       },
+       { label: "", separator: true, action: () => {} },
+       {
+         label: "Rename",
++        disabled: !caps.canRename,
+         action: () => {
+-          const newName = window.prompt("Rename to:", visibleNode.node.name);
+-          if (newName && newName !== visibleNode.node.name) {
+-            const parentUri = uri.slice(0, uri.lastIndexOf("/"));
+-            void executeCommand("explorer.command.renameFile", {
+-              uri,
+-              targetUri: `${parentUri}/${newName}`
+-            });
+-          }
++          void executeCommand("workbench.action.files.rename", { uri });
+         }
+       },
+       {
+         label: "Delete",
++        disabled: !caps.canDelete,
+         action: () => {
+-          if (window.confirm(`Delete "${visibleNode.node.name}"?`)) {
+-            void executeCommand("explorer.command.deleteFile", { uri });
+-          }
++          void executeCommand("workbench.action.files.delete", { uri });
+         }
+       },
+       { label: "", separator: true, action: () => {} },
+       {
+         label: "Reveal in Finder",
+         action: () => {
+-          void revealInFinder(uri);
++          void executeCommand("workbench.action.files.revealInFinder", { uri });
+         }
+       },
+       {
+diff --git a/apps/studio/src/renderer/src/components/search/SearchSidebar.tsx b/apps/studio/src/renderer/src/components/search/SearchSidebar.tsx
+index 93f3dc3..33f574b 100644
+--- a/apps/studio/src/renderer/src/components/search/SearchSidebar.tsx
++++ b/apps/studio/src/renderer/src/components/search/SearchSidebar.tsx
+@@ -1,6 +1,34 @@
+ /* eslint-disable */
+-import React, { useState, useEffect, useRef } from "react";
+-import { FileIcon } from "@ocs/ui";
++import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
++import { useVirtualizer } from "@tanstack/react-virtual";
++import { FileIcon, ChevronDownIcon, CloseIcon, Button, IconButton } from "@ocs/ui";
++
++function useSearchKeyboard(
++  itemCount: number,
++  onSelect: (index: number) => void
++) {
++  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
++
++  const handleKeyDown = useCallback(
++    (e: React.KeyboardEvent) => {
++      if (itemCount === 0) return;
++
++      if (e.key === "ArrowDown") {
++        e.preventDefault();
++        setSelectedIndex((prev) => (prev < itemCount - 1 ? prev + 1 : prev));
++      } else if (e.key === "ArrowUp") {
++        e.preventDefault();
++        setSelectedIndex((prev) => (prev > 0 ? prev - 1 : 0));
++      } else if (e.key === "Enter" && selectedIndex >= 0) {
++        e.preventDefault();
++        onSelect(selectedIndex);
++      }
++    },
++    [itemCount, selectedIndex, onSelect]
++  );
++
++  return { selectedIndex, setSelectedIndex, handleKeyDown };
++}
+ 
+ export const SearchSidebar: React.FC = () => {
+   const [query, setQuery] = useState("");
+@@ -9,12 +37,54 @@ export const SearchSidebar: React.FC = () => {
+   const [matchCase, setMatchCase] = useState(false);
+   const [matchWholeWord, setMatchWholeWord] = useState(false);
+ 
++  const [showReplace, setShowReplace] = useState(false);
++  const [showFilters, setShowFilters] = useState(false);
++  const [includePatterns, setIncludePatterns] = useState("");
++  const [excludePatterns, setExcludePatterns] = useState("");
++
+   const [results, setResults] = useState<any[]>([]);
+   const [isSearching, setIsSearching] = useState(false);
+   const [filesScanned, setFilesScanned] = useState(0);
+   const [matchesFound, setMatchesFound] = useState(0);
++  const [isReplacing, setIsReplacing] = useState(false);
+ 
+   const queryIdRef = useRef<string | null>(null);
++  const scrollParentRef = useRef<HTMLDivElement>(null);
++
++  const flatItems = useMemo(() => {
++    const items: any[] = [];
++    for (const result of results) {
++      items.push({ type: "file", result });
++      for (const match of result.matches) {
++        items.push({ type: "match", result, match });
++      }
++    }
++    return items;
++  }, [results]);
++
++  const virtualizer = useVirtualizer({
++    count: flatItems.length,
++    getScrollElement: () => scrollParentRef.current,
++    estimateSize: () => 24,
++    overscan: 20
++  });
++
++  const { selectedIndex, setSelectedIndex, handleKeyDown } = useSearchKeyboard(
++    flatItems.length,
++    (index) => {
++      const item = flatItems[index];
++      if (item.type === "match") {
++        openFile(item.result.file, item.match.lineNumber, item.match.column, item.match.length);
++      }
++    }
++  );
++
++  // Scroll to selected item when it changes via keyboard
++  useEffect(() => {
++    if (selectedIndex >= 0) {
++      virtualizer.scrollToIndex(selectedIndex, { align: "auto" });
++    }
++  }, [selectedIndex, virtualizer]);
+ 
+   useEffect(() => {
+     // Listeners for IPC events
+@@ -77,7 +147,9 @@ export const SearchSidebar: React.FC = () => {
+         isRegex,
+         matchCase,
+         matchWholeWord,
+-        replaceText
++        replaceText,
++        includePatterns: includePatterns ? includePatterns.split(",").map((s) => s.trim()).filter(Boolean) : undefined,
++        excludePatterns: excludePatterns ? excludePatterns.split(",").map((s) => s.trim()).filter(Boolean) : undefined
+       },
+       cwd
+     );
+@@ -90,10 +162,102 @@ export const SearchSidebar: React.FC = () => {
+     }
+   };
+ 
+-  const openFile = async (file: string, _line: number, _column: number) => {
+-    // In a real implementation we would go to the line/column
++  const openFile = async (file: string, line: number, column: number, length: number) => {
+     await window.ocs.document.open(file);
+-    await window.ocs.editor.open(file);
++    await window.ocs.editor.open(file, {
++      selection: {
++        startLineNumber: line,
++        startColumn: column,
++        endLineNumber: line,
++        endColumn: column + length
++      },
++      active: true,
++      preview: true
++    });
++  };
++
++  const handleReplaceFile = async (fileResult: any) => {
++    if (!queryIdRef.current) return;
++    setIsReplacing(true);
++    try {
++      const replacementMatches = fileResult.matches.map((m: any) => ({
++        lineNumber: m.lineNumber,
++        column: m.column,
++        length: m.length,
++        replacementText: replaceText
++      }));
++
++      await window.ocs.search.replace({
++        searchQueryId: queryIdRef.current,
++        file: fileResult.file,
++        replacementMatches
++      });
++
++      // Remove the file from the results
++      setResults((prev) => prev.filter((r) => r.file !== fileResult.file));
++      setMatchesFound((prev) => prev - fileResult.matches.length);
++    } catch (e) {
++      console.error("Failed to replace in file", e);
++    } finally {
++      setIsReplacing(false);
++    }
++  };
++
++  const handleReplaceNext = async () => {
++    if (!queryIdRef.current || results.length === 0) return;
++    setIsReplacing(true);
++    try {
++      const firstResultIndex = results.findIndex(r => r.matches && r.matches.length > 0);
++      if (firstResultIndex >= 0) {
++        const firstResult = results[firstResultIndex];
++        const firstMatch = firstResult.matches[0];
++        
++        await window.ocs.search.replace({
++          searchQueryId: queryIdRef.current,
++          file: firstResult.file,
++          replacementMatches: [{
++            lineNumber: firstMatch.lineNumber,
++            column: firstMatch.column,
++            length: firstMatch.length,
++            replacementText: replaceText
++          }]
++        });
++
++        setResults((prev) => {
++          const newResults = [...prev];
++          const newResult = { ...newResults[firstResultIndex] };
++          newResult.matches = [...newResult.matches.slice(1)];
++          if (newResult.matches.length === 0) {
++            newResults.splice(firstResultIndex, 1);
++          } else {
++            newResults[firstResultIndex] = newResult;
++          }
++          return newResults;
++        });
++        setMatchesFound((prev) => prev - 1);
++      }
++    } catch (e) {
++      console.error("Failed to replace next", e);
++    } finally {
++      setIsReplacing(false);
++    }
++  };
++
++  const handleReplaceAll = async () => {
++    if (!queryIdRef.current || results.length === 0) return;
++    setIsReplacing(true);
++    try {
++      await window.ocs.search.replaceAll({
++        queryId: queryIdRef.current,
++        replaceText: replaceText
++      });
++      // Re-run search to get fresh results
++      await handleSearch();
++    } catch (e) {
++      console.error("Failed to replace all", e);
++    } finally {
++      setIsReplacing(false);
++    }
+   };
+ 
+   return (
+@@ -107,113 +271,181 @@ export const SearchSidebar: React.FC = () => {
+       }}
+     >
+       <div style={{ marginBottom: "10px" }}>
+-        <input
+-          className="ocs-focus-ring"
+-          type="text"
+-          value={query}
+-          onChange={(e) => setQuery(e.target.value)}
+-          onKeyDown={(e) => {
+-            if (e.key === "Enter") handleSearch();
+-          }}
+-          placeholder="Search"
+-          style={{
+-            width: "100%",
+-            padding: "5px 8px",
+-            marginBottom: "5px",
+-            backgroundColor: "var(--color-bg-hover)",
+-            color: "var(--workbench-text)",
+-            border: "1px solid var(--workbench-border-strong)",
+-            borderRadius: "8px",
+-            outline: "none",
+-            transition: "all var(--transition-fast)"
+-          }}
+-        />
+-        <input
+-          className="ocs-focus-ring"
+-          type="text"
+-          value={replaceText}
+-          onChange={(e) => setReplaceText(e.target.value)}
+-          placeholder="Replace"
+-          style={{
+-            width: "100%",
+-            padding: "5px 8px",
+-            marginBottom: "5px",
+-            backgroundColor: "var(--color-bg-hover)",
+-            color: "var(--workbench-text)",
+-            border: "1px solid var(--workbench-border-strong)",
+-            borderRadius: "8px",
+-            outline: "none",
+-            transition: "all var(--transition-fast)"
+-          }}
+-        />
+-        <div
+-          style={{
+-            display: "flex",
+-            gap: "6px",
+-            fontSize: "11px",
+-            marginBottom: "10px",
+-            fontFamily: "var(--font-mono)",
+-            fontWeight: 600
+-          }}
+-        >
+-          <button
+-            onClick={() => setMatchCase(!matchCase)}
+-            style={{
+-              padding: "2px 6px",
+-              borderRadius: "4px",
+-              border: "1px solid transparent",
+-              backgroundColor: matchCase ? "var(--workbench-accent-muted)" : "transparent",
+-              color: matchCase ? "var(--workbench-accent)" : "var(--workbench-text-muted)",
+-              cursor: "pointer",
+-              transition: "all var(--transition-fast)"
+-            }}
+-            className="hover:bg-[var(--color-bg-hover)]"
+-            title="Match Case"
++        {/* Search Input Row */}
++        <div style={{ display: "flex", alignItems: "center", gap: "4px", marginBottom: "5px" }}>
++          <IconButton
++            onClick={() => setShowReplace(!showReplace)}
++            style={{ padding: 0 }}
++            title="Toggle Replace"
+           >
+-            Aa
+-          </button>
+-          <button
+-            onClick={() => setMatchWholeWord(!matchWholeWord)}
+-            style={{
+-              padding: "2px 6px",
+-              borderRadius: "4px",
+-              border: "1px solid transparent",
+-              backgroundColor: matchWholeWord ? "var(--workbench-accent-muted)" : "transparent",
+-              color: matchWholeWord ? "var(--workbench-accent)" : "var(--workbench-text-muted)",
+-              cursor: "pointer",
+-              transition: "all var(--transition-fast)"
+-            }}
+-            className="hover:bg-[var(--color-bg-hover)]"
+-            title="Match Whole Word"
+-          >
+-            \b
+-          </button>
+-          <button
+-            onClick={() => setIsRegex(!isRegex)}
+-            style={{
+-              padding: "2px 6px",
+-              borderRadius: "4px",
+-              border: "1px solid transparent",
+-              backgroundColor: isRegex ? "var(--workbench-accent-muted)" : "transparent",
+-              color: isRegex ? "var(--workbench-accent)" : "var(--workbench-text-muted)",
+-              cursor: "pointer",
+-              transition: "all var(--transition-fast)"
+-            }}
+-            className="hover:bg-[var(--color-bg-hover)]"
+-            title="Use Regular Expression"
++            <div
++              style={{
++                transform: showReplace ? "rotate(0deg)" : "rotate(-90deg)",
++                transition: "transform 0.1s"
++              }}
++            >
++              <ChevronDownIcon size={16} />
++            </div>
++          </IconButton>
++          <div style={{ position: "relative", flex: 1 }}>
++            <input
++              className="ocs-focus-ring"
++              type="text"
++              value={query}
++              onChange={(e) => setQuery(e.target.value)}
++              onKeyDown={(e) => {
++                if (e.key === "Enter") handleSearch();
++              }}
++              placeholder="Search"
++              style={{
++                width: "100%",
++                padding: "5px 60px 5px 8px", // space for buttons
++                backgroundColor: "var(--color-bg-hover)",
++                color: "var(--workbench-text)",
++                border: "1px solid var(--workbench-border-strong)",
++                borderRadius: "4px",
++                outline: "none",
++                transition: "all var(--transition-fast)"
++              }}
++            />
++            <div
++              style={{
++                position: "absolute",
++                right: "4px",
++                top: "50%",
++                transform: "translateY(-50%)",
++                display: "flex",
++                gap: "2px"
++              }}
++            >
++              <IconButton
++                active={matchCase}
++                onClick={() => setMatchCase(!matchCase)}
++                title="Match Case"
++                style={{ padding: "2px 4px", fontSize: "11px", fontWeight: "bold" }}
++              >
++                Aa
++              </IconButton>
++              <IconButton
++                active={matchWholeWord}
++                onClick={() => setMatchWholeWord(!matchWholeWord)}
++                title="Match Whole Word"
++                style={{ padding: "2px 4px", fontSize: "11px", fontWeight: "bold" }}
++              >
++                \b
++              </IconButton>
++              <IconButton
++                active={isRegex}
++                onClick={() => setIsRegex(!isRegex)}
++                title="Use Regular Expression"
++                style={{ padding: "2px 4px", fontSize: "11px", fontWeight: "bold" }}
++              >
++                .*
++              </IconButton>
++            </div>
++          </div>
++        </div>
++
++        {/* Replace Input Row */}
++        {showReplace && (
++          <div style={{ display: "flex", alignItems: "center", gap: "4px", marginBottom: "5px" }}>
++            <div style={{ width: "16px", flexShrink: 0 }} />
++            <div style={{ display: "flex", flex: 1, gap: "4px" }}>
++              <input
++                className="ocs-focus-ring"
++                type="text"
++                value={replaceText}
++                onChange={(e) => setReplaceText(e.target.value)}
++                placeholder="Replace"
++                style={{
++                  flex: 1,
++                  padding: "5px 8px",
++                  backgroundColor: "var(--color-bg-hover)",
++                  color: "var(--workbench-text)",
++                  border: "1px solid var(--workbench-border-strong)",
++                  borderRadius: "4px",
++                  outline: "none",
++                  transition: "all var(--transition-fast)"
++                }}
++              />
++              <Button
++                disabled={!queryIdRef.current || results.length === 0 || isReplacing}
++                onClick={handleReplaceNext}
++                title="Replace Next"
++                style={{ padding: "4px 8px" }}
++              >
++                Replace
++              </Button>
++              <Button
++                disabled={!queryIdRef.current || results.length === 0 || isReplacing}
++                onClick={handleReplaceAll}
++                title="Replace All"
++                style={{ padding: "4px 8px" }}
++              >
++                All
++              </Button>
++            </div>
++          </div>
++        )}
++
++        {/* Filters Toggle */}
++        <div style={{ marginLeft: "20px", display: "flex", alignItems: "center", gap: "4px" }}>
++          <IconButton
++            onClick={() => setShowFilters(!showFilters)}
++            title="Toggle Search Details"
++            style={{ fontSize: "12px", color: "var(--workbench-text-muted)" }}
+           >
+-            .*
+-          </button>
++            ...
++          </IconButton>
+         </div>
++
++        {/* Filters Section */}
++        {showFilters && (
++          <div style={{ marginLeft: "20px", marginTop: "5px", display: "flex", flexDirection: "column", gap: "5px" }}>
++            <div style={{ fontSize: "11px", color: "var(--workbench-text-muted)" }}>files to include</div>
++            <input
++              className="ocs-focus-ring"
++              type="text"
++              value={includePatterns}
++              onChange={(e) => setIncludePatterns(e.target.value)}
++              placeholder="e.g. *.ts, src/**/include"
++              style={{
++                width: "100%",
++                padding: "4px 6px",
++                backgroundColor: "var(--color-bg-hover)",
++                color: "var(--workbench-text)",
++                border: "1px solid var(--workbench-border-strong)",
++                borderRadius: "4px",
++                outline: "none",
++                fontSize: "12px"
++              }}
++            />
++            <div style={{ fontSize: "11px", color: "var(--workbench-text-muted)" }}>files to exclude</div>
++            <input
++              className="ocs-focus-ring"
++              type="text"
++              value={excludePatterns}
++              onChange={(e) => setExcludePatterns(e.target.value)}
++              placeholder="e.g. *.js, node_modules"
++              style={{
++                width: "100%",
++                padding: "4px 6px",
++                backgroundColor: "var(--color-bg-hover)",
++                color: "var(--workbench-text)",
++                border: "1px solid var(--workbench-border-strong)",
++                borderRadius: "4px",
++                outline: "none",
++                fontSize: "12px"
++              }}
++            />
++          </div>
++        )}
+       </div>
+ 
+       {isSearching ? (
+-        <button
+-          onClick={handleStop}
+-          style={{ padding: "5px", marginBottom: "10px", cursor: "pointer" }}
+-        >
++        <Button onClick={handleStop} style={{ marginBottom: "10px" }} variant="secondary">
+           Stop Search
+-        </button>
++        </Button>
+       ) : null}
+ 
+       <div
+@@ -224,94 +456,139 @@ export const SearchSidebar: React.FC = () => {
+           fontFamily: "var(--font-sans)"
+         }}
+       >
+-        {matchesFound} matches in {filesScanned} files
++        {matchesFound} matches in {results.length} files
+       </div>
+ 
+-      <div style={{ flex: 1, overflowY: "auto", fontSize: "13px" }}>
+-        {results.map((result, i) => (
+-          <div key={i} style={{ marginBottom: "10px" }}>
+-            <div
+-              style={{
+-                fontWeight: "bold",
+-                wordBreak: "break-all",
+-                padding: "4px 0",
+-                color: "var(--workbench-text)",
+-                fontFamily: "var(--font-sans)",
+-                fontSize: "12px",
+-                display: "flex",
+-                alignItems: "center",
+-                gap: "6px"
+-              }}
+-            >
+-              <FileIcon size={14} />
+-              {result.file}
+-            </div>
+-            {result.matches.slice(0, 5).map((m, j) => (
++      <div
++        ref={scrollParentRef}
++        tabIndex={0}
++        onKeyDown={handleKeyDown}
++        style={{ flex: 1, overflowY: "auto", fontSize: "13px", outline: "none" }}
++      >
++        <div
++          style={{
++            height: `${virtualizer.getTotalSize()}px`,
++            width: "100%",
++            position: "relative"
++          }}
++        >
++          {virtualizer.getVirtualItems().map((virtualItem) => {
++            const item = flatItems[virtualItem.index];
++            const isSelected = selectedIndex === virtualItem.index;
++
++            return (
+               <div
+-                key={j}
++                key={virtualItem.key}
++                ref={virtualizer.measureElement}
++                data-index={virtualItem.index}
+                 style={{
+-                  cursor: "pointer",
+-                  color: "var(--workbench-text-secondary)",
+-                  display: "flex",
+-                  padding: "2px 0",
+-                  fontFamily: "var(--font-mono)",
+-                  fontSize: "11px"
++                  position: "absolute",
++                  top: 0,
++                  left: 0,
++                  width: "100%",
++                  transform: `translateY(${virtualItem.start}px)`,
++                  backgroundColor: isSelected ? "var(--color-bg-hover)" : "transparent"
+                 }}
+-                onClick={() => openFile(result.file, m.lineNumber, m.column)}
+-                className="hover:bg-[var(--color-bg-hover)]"
+               >
+-                <span
+-                  style={{
+-                    minWidth: "30px",
+-                    color: "var(--workbench-text-muted)",
+-                    display: "inline-block",
+-                    textAlign: "right",
+-                    marginRight: "8px"
+-                  }}
+-                >
+-                  {m.lineNumber}
+-                </span>
+-                <span
+-                  style={{
+-                    whiteSpace: "pre-wrap",
+-                    overflow: "hidden",
+-                    textOverflow: "ellipsis",
+-                    flex: 1
+-                  }}
+-                >
+-                  {m.text.trim().length > 0 ? (
++                {item.type === "file" ? (
++                  <div
++                    style={{
++                      fontWeight: "bold",
++                      wordBreak: "break-all",
++                      padding: "4px 8px",
++                      color: "var(--workbench-text)",
++                      fontFamily: "var(--font-sans)",
++                      fontSize: "12px",
++                      display: "flex",
++                      alignItems: "center",
++                      justifyContent: "space-between",
++                      gap: "6px",
++                      cursor: "pointer"
++                    }}
++                    onClick={() => setSelectedIndex(virtualItem.index)}
++                    className="group"
++                  >
++                    <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
++                      <FileIcon size={14} />
++                      {item.result.file}
++                    </div>
++                    {showReplace && (
++                      <IconButton
++                        title="Replace in File"
++                        onClick={(e) => {
++                          e.stopPropagation();
++                          handleReplaceFile(item.result);
++                        }}
++                        style={{ opacity: 0.6, padding: "2px" }}
++                        className="hover:opacity-100"
++                      >
++                        <CloseIcon size={12} style={{ transform: "rotate(45deg)" }} />
++                      </IconButton>
++                    )}
++                  </div>
++                ) : (
++                  <div
++                    style={{
++                      cursor: "pointer",
++                      color: "var(--workbench-text-secondary)",
++                      display: "flex",
++                      padding: "2px 8px 2px 32px",
++                      fontFamily: "var(--font-mono)",
++                      fontSize: "11px"
++                    }}
++                    onClick={() => {
++                      setSelectedIndex(virtualItem.index);
++                      openFile(
++                        item.result.file,
++                        item.match.lineNumber,
++                        item.match.column,
++                        item.match.length
++                      );
++                    }}
++                    className={!isSelected ? "hover:bg-[var(--color-bg-hover)]" : ""}
++                  >
+                     <span
+                       style={{
+-                        backgroundColor: "rgba(168, 85, 247, 0.2)",
+-                        padding: "0 2px",
+-                        borderRadius: "2px",
+-                        color: "var(--color-hyper-purple)"
++                        minWidth: "30px",
++                        color: "var(--workbench-text-muted)",
++                        display: "inline-block",
++                        textAlign: "right",
++                        marginRight: "8px"
+                       }}
+                     >
+-                      {m.text}
++                      {item.match.lineNumber}
+                     </span>
+-                  ) : (
+-                    result.preview.slice(0, 100) + "..."
+-                  )}
+-                </span>
+-              </div>
+-            ))}
+-            {result.matches.length > 5 && (
+-              <div
+-                style={{
+-                  color: "var(--workbench-text-muted)",
+-                  fontStyle: "italic",
+-                  padding: "2px 0",
+-                  fontSize: "11px",
+-                  marginLeft: "38px"
+-                }}
+-              >
+-                + {result.matches.length - 5} more matches
++                    <span
++                      style={{
++                        whiteSpace: "pre-wrap",
++                        overflow: "hidden",
++                        textOverflow: "ellipsis",
++                        flex: 1
++                      }}
++                    >
++                      {item.match.text.trim().length > 0 ? (
++                        <span
++                          style={{
++                            backgroundColor: "rgba(168, 85, 247, 0.2)",
++                            padding: "0 2px",
++                            borderRadius: "2px",
++                            color: "var(--color-hyper-purple)"
++                          }}
++                        >
++                          {item.match.text}
++                        </span>
++                      ) : (
++                        item.result.preview.slice(0, 100) + "..."
++                      )}
++                    </span>
++                  </div>
++                )}
+               </div>
+-            )}
+-          </div>
+-        ))}
++            );
++          })}
++        </div>
+       </div>
+     </div>
+   );
+ };
++
+diff --git a/apps/studio/src/renderer/src/components/terminal/TerminalPanel.tsx b/apps/studio/src/renderer/src/components/terminal/TerminalPanel.tsx
+index 5e8d3d3..88a5236 100644
+--- a/apps/studio/src/renderer/src/components/terminal/TerminalPanel.tsx
++++ b/apps/studio/src/renderer/src/components/terminal/TerminalPanel.tsx
+@@ -59,186 +59,6 @@ export const TerminalPanel: React.FC = () => {
+         backgroundColor: "#1e1e1e"
+       }}
+     >
+-      {/* Terminal Toolbar */}
+-      <div
+-        style={{
+-          display: "flex",
+-          justifyContent: "space-between",
+-          alignItems: "center",
+-          backgroundColor: "var(--workbench-background)",
+-          padding: "0 12px 0 16px",
+-          height: "35px",
+-          borderTop: "1px solid var(--workbench-border)",
+-          borderBottom: "1px solid var(--workbench-border)"
+-        }}
+-      >
+-        <div style={{ display: "flex", alignItems: "center", gap: "16px", height: "100%" }}>
+-          <span
+-            style={{
+-              fontSize: "11px",
+-              textTransform: "uppercase",
+-              fontWeight: 700,
+-              color: "var(--workbench-text-muted)",
+-              letterSpacing: "0.05em"
+-            }}
+-          >
+-            Terminal
+-          </span>
+-        </div>
+-        <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
+-          {/* Shell Selector */}
+-          <button
+-            style={{
+-              display: "flex",
+-              alignItems: "center",
+-              gap: "4px",
+-              background: "none",
+-              border: "none",
+-              color: "var(--workbench-text-secondary)",
+-              padding: "4px 8px",
+-              cursor: "pointer",
+-              borderRadius: "4px",
+-              fontSize: "12px",
+-              fontFamily: "var(--font-mono)"
+-            }}
+-            className="hover:bg-[var(--color-bg-hover)] hover:text-[var(--workbench-text)]"
+-          >
+-            <span>{`>_ zsh`}</span>
+-            <ChevronDownIcon size={12} />
+-          </button>
+-
+-          <div
+-            style={{
+-              width: "1px",
+-              height: "14px",
+-              backgroundColor: "var(--workbench-border)",
+-              margin: "0 4px"
+-            }}
+-          />
+-
+-          {/* Actions */}
+-          <button
+-            style={{
+-              display: "flex",
+-              alignItems: "center",
+-              gap: "2px",
+-              background: "none",
+-              border: "none",
+-              color: "var(--workbench-text-secondary)",
+-              padding: "4px",
+-              cursor: "pointer",
+-              borderRadius: "4px"
+-            }}
+-            className="hover:bg-[var(--color-bg-hover)] hover:text-[var(--workbench-text)]"
+-            title="New Terminal"
+-          >
+-            <PlusIcon size={14} />
+-            <ChevronDownIcon size={12} />
+-          </button>
+-          <button
+-            style={{
+-              display: "flex",
+-              alignItems: "center",
+-              justifyContent: "center",
+-              background: "none",
+-              border: "none",
+-              color: "var(--workbench-text-secondary)",
+-              width: "24px",
+-              height: "24px",
+-              cursor: "pointer",
+-              borderRadius: "4px"
+-            }}
+-            className="hover:bg-[var(--color-bg-hover)] hover:text-[var(--workbench-text)]"
+-            title="Split Terminal"
+-          >
+-            <SplitHorizontalIcon size={14} />
+-          </button>
+-          <button
+-            style={{
+-              display: "flex",
+-              alignItems: "center",
+-              justifyContent: "center",
+-              background: "none",
+-              border: "none",
+-              color: "var(--workbench-text-secondary)",
+-              width: "24px",
+-              height: "24px",
+-              cursor: "pointer",
+-              borderRadius: "4px"
+-            }}
+-            className="hover:bg-[var(--color-bg-hover)] hover:text-[var(--workbench-text)]"
+-            title="Kill Terminal"
+-          >
+-            <TrashIcon size={14} />
+-          </button>
+-          <button
+-            style={{
+-              display: "flex",
+-              alignItems: "center",
+-              justifyContent: "center",
+-              background: "none",
+-              border: "none",
+-              color: "var(--workbench-text-secondary)",
+-              width: "24px",
+-              height: "24px",
+-              cursor: "pointer",
+-              borderRadius: "4px"
+-            }}
+-            className="hover:bg-[var(--color-bg-hover)] hover:text-[var(--workbench-text)]"
+-            title="More Actions..."
+-          >
+-            <MoreHorizontalIcon size={14} />
+-          </button>
+-
+-          <div
+-            style={{
+-              width: "1px",
+-              height: "14px",
+-              backgroundColor: "var(--workbench-border)",
+-              margin: "0 4px"
+-            }}
+-          />
+-
+-          <button
+-            style={{
+-              display: "flex",
+-              alignItems: "center",
+-              justifyContent: "center",
+-              background: "none",
+-              border: "none",
+-              color: "var(--workbench-text-secondary)",
+-              width: "24px",
+-              height: "24px",
+-              cursor: "pointer",
+-              borderRadius: "4px"
+-            }}
+-            className="hover:bg-[var(--color-bg-hover)] hover:text-[var(--workbench-text)]"
+-            title="Maximize Panel"
+-          >
+-            <MaximizeIcon size={14} />
+-          </button>
+-          <button
+-            onClick={() => setIsOpen(false)}
+-            style={{
+-              display: "flex",
+-              alignItems: "center",
+-              justifyContent: "center",
+-              background: "none",
+-              border: "none",
+-              color: "var(--workbench-text-secondary)",
+-              width: "24px",
+-              height: "24px",
+-              cursor: "pointer",
+-              borderRadius: "4px"
+-            }}
+-            className="hover:bg-[var(--color-bg-hover)] hover:text-[var(--workbench-text)]"
+-            title="Close Panel"
+-          >
+-            <CloseIcon size={14} />
+-          </button>
+-        </div>
+-      </div>
+-
+       {/* Terminal Content Area with Right Sidebar */}
+       <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+         {/* Main Terminal View */}
+diff --git a/apps/studio/src/renderer/src/components/terminal/TerminalView.tsx b/apps/studio/src/renderer/src/components/terminal/TerminalView.tsx
+index d9a20c4..6fe3f54 100644
+--- a/apps/studio/src/renderer/src/components/terminal/TerminalView.tsx
++++ b/apps/studio/src/renderer/src/components/terminal/TerminalView.tsx
+@@ -16,6 +16,7 @@ import { Terminal } from "xterm";
+ import "xterm/css/xterm.css";
+ 
+ import { executeRendererCommand } from "../../commands/RendererCommandRegistry.js";
++import { CancellationTokenSource } from "@ocs/common";
+ 
+ import {
+   getDisplayTerminalName,
+@@ -75,6 +76,7 @@ export const TerminalView: React.FC<TerminalViewProps> = ({ cwd = "/", shell })
+   const cleanupFnsRef = useRef<Record<string, Array<() => void>>>({});
+   const activeSessionIdRef = useRef<string | null>(null);
+   const isDisposedRef = useRef(false);
++  const creationTokenRef = useRef<CancellationTokenSource | null>(null);
+ 
+   const [sessions, setSessions] = useState<TerminalSessionItem[]>([]);
+   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+@@ -204,16 +206,19 @@ export const TerminalView: React.FC<TerminalViewProps> = ({ cwd = "/", shell })
+       setOpenMenu(null);
+ 
+       const requestedShell = options?.shell ?? shell;
++      const cts = new CancellationTokenSource();
++      creationTokenRef.current = cts;
+ 
+       try {
+         const session = (await terminalApi.create({
+           cwd,
+           ...(requestedShell ? { shell: requestedShell } : {}),
+           cols: term.cols || 80,
+-          rows: term.rows || 24
++          rows: term.rows || 24,
++          token: cts.token
+         })) as CreatedTerminalSession;
+ 
+-        if (isDisposedRef.current) {
++        if (isDisposedRef.current || cts.token.isCancellationRequested) {
+           void terminalApi.close(session.id);
+           return;
+         }
+@@ -275,6 +280,10 @@ export const TerminalView: React.FC<TerminalViewProps> = ({ cwd = "/", shell })
+         } else {
+           term.write("\r\n\x1b[31mError spawning terminal\x1b[0m\r\n");
+         }
++      } finally {
++        if (creationTokenRef.current === cts) {
++          creationTokenRef.current = null;
++        }
+       }
+     },
+     [cwd, disposeSessionListeners, replaceSessions, setActiveSession, shell, updateSessions]
+@@ -395,6 +404,9 @@ export const TerminalView: React.FC<TerminalViewProps> = ({ cwd = "/", shell })
+ 
+     return () => {
+       isDisposedRef.current = true;
++      if (creationTokenRef.current) {
++        creationTokenRef.current.cancel();
++      }
+       resizeObserver.disconnect();
+       dataListener.dispose();
+       resizeListener.dispose();
+@@ -426,6 +438,8 @@ export const TerminalView: React.FC<TerminalViewProps> = ({ cwd = "/", shell })
+     <div
+       className="ocs-terminal__toolbar"
+       style={{
++        display: "flex",
++        alignItems: "center",
+         borderBottom: "none",
+         height: "100%",
+         padding: "0 8px",
+diff --git a/apps/studio/src/renderer/src/components/workbench/Workbench.tsx b/apps/studio/src/renderer/src/components/workbench/Workbench.tsx
+index 5e54d5c..354e149 100644
+--- a/apps/studio/src/renderer/src/components/workbench/Workbench.tsx
++++ b/apps/studio/src/renderer/src/components/workbench/Workbench.tsx
+@@ -59,7 +59,7 @@ const WorkbenchShell: React.FC<WorkbenchProps> = ({ workspaceName }) => {
+         overflow: "hidden"
+       }}
+     >
+-      <TitleBar title={workspaceName || "Open-Code.Studio"} />
++      <TitleBar title={workspaceName || ""} />
+ 
+       <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+         {layout.activityBar.visible && layout.activityBar.position === "left" && (
+diff --git a/apps/studio/src/shared/ipc-channels.ts b/apps/studio/src/shared/ipc-channels.ts
+index b89650b..d215104 100644
+--- a/apps/studio/src/shared/ipc-channels.ts
++++ b/apps/studio/src/shared/ipc-channels.ts
+@@ -59,6 +59,10 @@ export const IpcChannels = {
+   EDITOR_CLOSE: "editor:close",
+   EDITOR_GET_STATE: "editor:get-state",
+   EDITOR_STATE_CHANGED: "editor:state-changed",
++  EDITOR_REQUEST_FLUSH: "editor:request-flush",
++  EDITOR_FLUSH_COMPLETE: "editor:flush-complete",
++  EDITOR_REVEAL: "editor:reveal",
++
+ 
+   // Commands
+   COMMANDS_SEARCH: "commands:search",
+@@ -85,6 +89,7 @@ export const IpcChannels = {
+   SEARCH_START: "search:start",
+   SEARCH_CANCEL: "search:cancel",
+   SEARCH_REPLACE: "search:replace",
++  SEARCH_REPLACE_ALL: "search:replace-all",
+   SEARCH_RESULT_FOUND: "search:result-found",
+   SEARCH_PROGRESS: "search:progress",
+   SEARCH_COMPLETED: "search:completed",
+diff --git a/apps/studio/tests/integration/explorer-refresh.test.ts b/apps/studio/tests/integration/explorer-refresh.test.ts
+index a84130c..c469575 100644
+--- a/apps/studio/tests/integration/explorer-refresh.test.ts
++++ b/apps/studio/tests/integration/explorer-refresh.test.ts
+@@ -1,88 +1,44 @@
+ /* eslint-disable */
+ 
+-import { ExplorerService, TreeModel, ExplorerEventBus } from "@ocs/explorer";
+-import type { ExplorerProvider, ExplorerNode } from "@ocs/explorer";
++import { ExplorerService, VirtualTreeModel } from "@ocs/explorer";
++import { URI } from "@ocs/common";
+ import { describe, expect, it, beforeEach } from "vitest";
+ 
+-// A mock provider for testing
+-class MockExplorerProvider implements ExplorerProvider {
+-  public id = "mock.provider";
++const mockWorkspaceService = {
++  getTree: () => ({ roots: [{ uri: URI.parse("file:///mock/root"), name: "root" }] }),
++};
+ 
+-  async resolveChildren(node: ExplorerNode | null): Promise<ExplorerNode[]> {
+-    if (!node) {
+-      // Root level
+-      return [
+-        {
+-          id: "root-1",
+-          name: "root-1",
+-          isDirectory: true,
+-          type: 2
+-        }
+-      ];
+-    }
+-
+-    if (node.id === "root-1") {
+-      return [
+-        {
+-          id: "child-1",
+-          name: "child-1.txt",
+-          isDirectory: false,
+-          type: 1
+-        }
+-      ];
+-    }
+-
+-    return [];
+-  }
+-}
++const mockResourceService = {
++  getChildren: async () => [{ uri: URI.parse("file:///mock/root/child1"), name: "child1", type: 1 }],
++  canRename: () => true,
++  canDelete: () => true,
++  canMove: () => true,
++  canCopy: () => true,
++};
+ 
+ describe("Integration: Explorer Refresh", () => {
+-  let treeModel: TreeModel;
+-  let eventBus: ExplorerEventBus;
+   let explorerService: ExplorerService;
+-  let provider: MockExplorerProvider;
+ 
+   beforeEach(() => {
+-    treeModel = new TreeModel();
+-    eventBus = new ExplorerEventBus();
+-    explorerService = new ExplorerService(treeModel, eventBus);
+-
+-    provider = new MockExplorerProvider();
+-    explorerService.registerProvider(provider);
++    explorerService = new ExplorerService(mockWorkspaceService as any, mockResourceService as any);
+   });
+ 
+-  it("should successfully refresh the root node", async () => {
+-    const startedEvents: any[] = [];
+-    const completedEvents: any[] = [];
+-
+-    eventBus.on("explorer.refreshStarted", (e) => startedEvents.push(e));
+-    eventBus.on("explorer.refreshCompleted", (e) => completedEvents.push(e));
+-
+-    await explorerService.refresh("mock.provider", null);
++  it("should successfully refresh the root node", () => {
++    explorerService.refreshRoots();
+ 
+-    const rootId = treeModel.getRootId();
+-    expect(rootId).toBe("root-1");
+-
+-    const rootNode = treeModel.getNode("root-1");
+-    expect(rootNode).toBeDefined();
+-    expect(rootNode?.isDirectory).toBe(true);
+-
+-    expect(startedEvents).toHaveLength(1);
+-    expect(completedEvents).toHaveLength(1);
++    const rootNodes = explorerService.treeModel.getRoots();
++    expect(rootNodes).toHaveLength(1);
++    expect(rootNodes[0].name).toBe("root");
+   });
+ 
+   it("should successfully expand a node", async () => {
+-    await explorerService.refresh("mock.provider", null);
+-    await explorerService.expandNode("mock.provider", "root-1");
+-
+-    const rootNode = treeModel.getNode("root-1");
+-    expect(rootNode?.children).toBeDefined();
+-    expect(rootNode?.children).toHaveLength(1);
+-    expect(rootNode?.children?.[0].id).toBe("child-1");
+-
+-    const childNode = treeModel.getNode("child-1");
+-    expect(childNode).toBeDefined();
+-    expect(childNode?.name).toBe("child-1.txt");
+-    expect(treeModel.isExpanded("root-1")).toBe(true);
++    explorerService.refreshRoots();
++    const rootNodes = explorerService.treeModel.getRoots();
++    
++    await explorerService.expandNode(rootNodes[0].uri);
++
++    const updatedNodes = explorerService.treeModel.getVisibleNodes();
++    expect(updatedNodes).toHaveLength(2); // root + child
++    expect(updatedNodes[1].node.name).toBe("child1");
+   });
+ });
+diff --git a/apps/studio/tests/integration/restore-session.test.ts b/apps/studio/tests/integration/restore-session.test.ts
+index 67576d4..773597a 100644
+--- a/apps/studio/tests/integration/restore-session.test.ts
++++ b/apps/studio/tests/integration/restore-session.test.ts
+@@ -7,11 +7,8 @@ import { createContainer, createLogger } from "@ocs/common";
+ import { EventBus } from "@ocs/common/events";
+ import {
+   ExplorerService,
+-  TreeModel,
+-  ExplorerEventBus,
+-  LocalVirtualFileSystem
++  VirtualTreeModel
+ } from "@ocs/explorer";
+-import { WorkspaceProvider } from "@ocs/explorer";
+ import { createLocalFileSystem, createJsonStorageAdapter, uriFromPath } from "@ocs/workspace";
+ import {
+   createWorkspaceService,
+@@ -67,15 +64,16 @@ describe("Integration: Restore Session", () => {
+     container.singleton(Symbol.for("workspace"), () => workspaceService);
+ 
+     // 2. Setup Explorer Service
+-    const treeModel = new TreeModel();
+-    const explorerEventBus = new ExplorerEventBus();
+-    explorerService = new ExplorerService(treeModel, explorerEventBus);
+-
+-    // Register the WorkspaceProvider
+-    const vfs = new LocalVirtualFileSystem();
+-    const provider = new WorkspaceProvider(vfs);
+-    explorerService.registerProvider(provider);
+-
++    // Mock resource service for testing
++    const resourceService = {
++      getChildren: async () => [],
++      canRename: () => true,
++      canDelete: () => true,
++      canMove: () => true,
++      canCopy: () => true,
++    };
++    
++    explorerService = new ExplorerService(workspaceService, resourceService as any);
+     container.singleton(Symbol.for("explorer"), () => explorerService);
+   });
+ 
+@@ -106,7 +104,7 @@ describe("Integration: Restore Session", () => {
+ 
+     expect(restored).toBe(true);
+     expect(workspaceService.getActive()?.uri.toString()).toBe(uriFromPath(workspaceDir).toString());
+-    expect(explorerService.treeModel.getRootId()).toBe(uriFromPath(workspaceDir).toString());
++    expect(explorerService.treeModel.getVisibleNodes()).toHaveLength(1);
+   });
+ 
+   it("should return false if there is no last opened workspace", async () => {
+diff --git a/packages/common/events/src/index.ts b/packages/common/events/src/index.ts
+index 721ece4..8fd1dea 100644
+--- a/packages/common/events/src/index.ts
++++ b/packages/common/events/src/index.ts
+@@ -1,4 +1,13 @@
+-import { randomUUID } from "node:crypto";
++function generateUUID(): string {
++  if (typeof crypto !== "undefined" && crypto.randomUUID) {
++    return crypto.randomUUID();
++  }
++  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
++    const r = (Math.random() * 16) | 0;
++    const v = c === "x" ? r : (r & 0x3) | 0x8;
++    return v.toString(16);
++  });
++}
+ 
+ import { PlatformError } from "../../errors/src/index.js";
+ 
+@@ -54,7 +63,7 @@ export class EventBus {
+     options: { readonly correlationId?: string } = {}
+   ): Promise<PlatformEvent<TPayload>> {
+     const event: PlatformEvent<TPayload> = {
+-      id: randomUUID(),
++      id: generateUUID(),
+       type,
+       payload,
+       occurredAt: new Date(),
+diff --git a/packages/common/logger/src/index.ts b/packages/common/logger/src/index.ts
+index f574b64..43008af 100644
+--- a/packages/common/logger/src/index.ts
++++ b/packages/common/logger/src/index.ts
+@@ -1,5 +1,14 @@
+-import { randomUUID } from "node:crypto";
+-import { appendFileSync, existsSync, renameSync, statSync } from "node:fs";
++function generateUUID(): string {
++  if (typeof crypto !== "undefined" && crypto.randomUUID) {
++    return crypto.randomUUID();
++  }
++  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
++    const r = (Math.random() * 16) | 0;
++    const v = c === "x" ? r : (r & 0x3) | 0x8;
++    return v.toString(16);
++  });
++}
++import * as fs from "node:fs";
+ 
+ export type LogLevel = "debug" | "info" | "warn" | "error";
+ export type LogContext = Record<string, unknown>;
+@@ -100,7 +109,7 @@ export class Logger {
+    * Format: `{domain}-{short-uuid}` when called with a domain, or a raw short ID.
+    */
+   public static correlationId(domain?: string): string {
+-    const short = randomUUID().slice(0, 8);
++    const short = generateUUID().slice(0, 8);
+     return domain ? `${domain}-${short}` : short;
+   }
+ 
+@@ -145,12 +154,12 @@ export class FileSink implements LogSink {
+ 
+   public write(record: LogRecord): void {
+     this.rotateIfNeeded();
+-    appendFileSync(this.filePath, `${JSON.stringify(record)}\n`, "utf8");
++    fs.appendFileSync(this.filePath, `${JSON.stringify(record)}\n`, "utf8");
+   }
+ 
+   private rotateIfNeeded(): void {
+-    if (existsSync(this.filePath) && statSync(this.filePath).size >= this.maxBytes) {
+-      renameSync(this.filePath, `${this.filePath}.${Date.now()}`);
++    if (fs.existsSync(this.filePath) && fs.statSync(this.filePath).size >= this.maxBytes) {
++      fs.renameSync(this.filePath, `${this.filePath}.${Date.now()}`);
+     }
+   }
+ }
+diff --git a/packages/common/src/index.ts b/packages/common/src/index.ts
+index 6b75bcb..4823aab 100644
+--- a/packages/common/src/index.ts
++++ b/packages/common/src/index.ts
+@@ -8,6 +8,22 @@ export * from "./commands/CommandIds.js";
+ export * from "../logger/src/index.js";
+ export * from "../telemetry/src/index.js";
+ 
++// Domain
++export * from "./domain/URI.js";
++export * from "./domain/CancellationToken.js";
++export * from "./domain/Resource.js";
++
++// API
++export * from "./api/IResourceService.js";
++
++// Application Services
++export * from "./application/ContributionRegistry.js";
++export * from "./application/WorkbenchTransactionManager.js";
++export * from "./application/WorkbenchSelectionService.js";
++export * from "./application/DragDropService.js";
++export * from "./application/RenameService.js";
++export * from "./application/WorkbenchDialogService.js";
++
+ export const CommonPackage = {
+   name: "@ocs/common",
+   description: "Shared common types and utilities."
+diff --git a/packages/common/telemetry/src/index.ts b/packages/common/telemetry/src/index.ts
+index 4f1b05a..995e7a4 100644
+--- a/packages/common/telemetry/src/index.ts
++++ b/packages/common/telemetry/src/index.ts
+@@ -1,4 +1,4 @@
+-import { performance } from "node:perf_hooks";
++// use global performance object
+ 
+ import type { EventBus } from "../../events/src/index.js";
+ 
+@@ -23,11 +23,12 @@ export class MetricRegistry {
+   }
+ 
+   public async time<T>(name: string, operation: () => T | Promise<T>): Promise<T> {
+-    const started = performance.now();
++    const perf = typeof performance !== "undefined" ? performance : Date;
++    const started = perf.now();
+     try {
+       return await operation();
+     } finally {
+-      await this.setMetric({ name, type: "timer", value: performance.now() - started });
++      await this.setMetric({ name, type: "timer", value: perf.now() - started });
+     }
+   }
+ 
+diff --git a/packages/document/src/application/DocumentFactory.ts b/packages/document/src/application/DocumentFactory.ts
+index 73c90b0..e803f1d 100644
+--- a/packages/document/src/application/DocumentFactory.ts
++++ b/packages/document/src/application/DocumentFactory.ts
+@@ -14,7 +14,8 @@ export class TextDocumentImpl implements ITextDocument {
+     public readonly languageId: string,
+     public readonly encoding: string,
+     private content: string,
+-    public readonly isReadonly: boolean = false
++    public readonly isReadonly: boolean = false,
++    public diskMtimeMs: number | undefined = undefined
+   ) {}
+ 
+   public get isDirty(): boolean {
+@@ -56,7 +57,8 @@ export class BinaryDocumentImpl implements IBinaryDocument {
+     public readonly uri: WorkspaceUri,
+     public readonly mimeType: string,
+     private content: Uint8Array,
+-    public readonly isReadonly: boolean = false
++    public readonly isReadonly: boolean = false,
++    public diskMtimeMs: number | undefined = undefined
+   ) {}
+ 
+   public get isDirty(): boolean {
+@@ -91,17 +93,19 @@ export class DocumentFactory {
+     content: string,
+     languageId: string = "plaintext",
+     encoding: string = "utf-8",
+-    isReadonly: boolean = false
++    isReadonly: boolean = false,
++    diskMtimeMs?: number
+   ): ITextDocument {
+-    return new TextDocumentImpl(uri.toString(), uri, languageId, encoding, content, isReadonly);
++    return new TextDocumentImpl(uri.toString(), uri, languageId, encoding, content, isReadonly, diskMtimeMs);
+   }
+ 
+   public createBinaryDocument(
+     uri: WorkspaceUri,
+     content: Uint8Array,
+     mimeType: string = "application/octet-stream",
+-    isReadonly: boolean = false
++    isReadonly: boolean = false,
++    diskMtimeMs?: number
+   ): IBinaryDocument {
+-    return new BinaryDocumentImpl(uri.toString(), uri, mimeType, content, isReadonly);
++    return new BinaryDocumentImpl(uri.toString(), uri, mimeType, content, isReadonly, diskMtimeMs);
+   }
+ }
+diff --git a/packages/document/src/application/DocumentResolver.ts b/packages/document/src/application/DocumentResolver.ts
+index e623fbc..cd8c785 100644
+--- a/packages/document/src/application/DocumentResolver.ts
++++ b/packages/document/src/application/DocumentResolver.ts
+@@ -40,7 +40,14 @@ export class FileSystemDocumentResolver implements IDocumentResolver {
+     // Naive language resolution (can be injected via a LanguageRegistry later)
+     const languageId = this.guessLanguageId(uri);
+ 
+-    return this.documentFactory.createTextDocument(uri, content, languageId, "utf-8", false);
++    return this.documentFactory.createTextDocument(
++      uri,
++      content,
++      languageId,
++      "utf-8",
++      false,
++      stat.mtimeMs
++    );
+   }
+ 
+   private guessLanguageId(uri: WorkspaceUri): string {
+diff --git a/packages/document/src/application/DocumentService.ts b/packages/document/src/application/DocumentService.ts
+index 606ffc0..faa6070 100644
+--- a/packages/document/src/application/DocumentService.ts
++++ b/packages/document/src/application/DocumentService.ts
+@@ -109,10 +109,31 @@ export class DocumentService {
+     }
+ 
+     if (doc instanceof TextDocumentImpl) {
++      if (doc.isReadonly) {
++        throw new Error("Cannot save read-only document.");
++      }
+       doc.saveState = SaveState.Saving;
+       try {
+-        await this.fileSystem.writeFile(uriToPath(uri), doc.getText());
++        const path = uriToPath(uri);
++        if (doc.diskMtimeMs) {
++          try {
++            const stat = await this.fileSystem.stat(path);
++            if (stat.mtimeMs > doc.diskMtimeMs) {
++              doc.saveState = SaveState.SaveFailed;
++              throw new Error("Conflict: File has been modified externally since it was opened.");
++            }
++          } catch (statError: any) {
++            // Ignore if file doesn't exist, we are creating it
++          }
++        }
++        await this.fileSystem.writeFile(path, doc.getText());
+         doc.saveState = SaveState.Clean;
++        try {
++          const newStat = await this.fileSystem.stat(path);
++          doc.diskMtimeMs = newStat.mtimeMs;
++        } catch {
++          // Ignore
++        }
+ 
+         this.eventBus.emit(DocumentEventTypes.DOCUMENT_SAVED, { uri });
+         this.eventBus.emit(DocumentEventTypes.DOCUMENT_CHANGED, {
+@@ -124,8 +145,23 @@ export class DocumentService {
+         throw error;
+       }
+     } else if (doc instanceof BinaryDocumentImpl) {
++      if (doc.isReadonly) {
++        throw new Error("Cannot save read-only document.");
++      }
+       doc.saveState = SaveState.Saving;
+       try {
++        const path = uriToPath(uri);
++        if (doc.diskMtimeMs) {
++          try {
++            const stat = await this.fileSystem.stat(path);
++            if (stat.mtimeMs > doc.diskMtimeMs) {
++              doc.saveState = SaveState.SaveFailed;
++              throw new Error("Conflict: File has been modified externally since it was opened.");
++            }
++          } catch (statError: any) {
++            // Ignore if file doesn't exist, we are creating it
++          }
++        }
+         throw new Error("Saving binary documents is not yet supported by FileSystem");
+       } catch (error) {
+         doc.saveState = SaveState.SaveFailed;
+diff --git a/packages/document/src/domain/Document.ts b/packages/document/src/domain/Document.ts
+index bada8cc..22bdb62 100644
+--- a/packages/document/src/domain/Document.ts
++++ b/packages/document/src/domain/Document.ts
+@@ -44,6 +44,11 @@ export interface IDocument {
+    */
+   readonly isReadonly: boolean;
+ 
++  /**
++   * The last known modification time on disk.
++   */
++  readonly diskMtimeMs?: number | undefined;
++
+   /**
+    * Disposes of the document and releases associated resources.
+    */
+diff --git a/packages/editor-monaco/src/MonacoEditorAdapter.ts b/packages/editor-monaco/src/MonacoEditorAdapter.ts
+index 5f6b4f1..ce02977 100644
+--- a/packages/editor-monaco/src/MonacoEditorAdapter.ts
++++ b/packages/editor-monaco/src/MonacoEditorAdapter.ts
+@@ -30,6 +30,7 @@ export class MonacoEditorAdapter implements IEditorAdapter {
+   private model: monaco.editor.ITextModel | null = null;
+   private readonly modelManager = new ModelManager();
+   private debounceTimeout: ReturnType<typeof setTimeout> | null = null;
++  private cleanupFlushListener: (() => void) | undefined = undefined;
+ 
+   public mount(container: HTMLElement): void {
+     this.container = container;
+@@ -41,6 +42,17 @@ export class MonacoEditorAdapter implements IEditorAdapter {
+       minimap: { enabled: false }
+     });
+ 
++    if (typeof window !== "undefined" && (window as any).ocs?.editor?.onRequestFlush) {
++      this.cleanupFlushListener = (window as any).ocs.editor.onRequestFlush(() => {
++        this.flushImmediately();
++        if ((window as any).ocs.editor.sendFlushComplete) {
++          // eslint-disable-next-line @typescript-eslint/no-floating-promises
++          (window as any).ocs.editor.sendFlushComplete();
++        }
++      });
++    }
++
++
+     // Handle document changes and update renderer model immediately
+     this.editor.onDidChangeModelContent(() => {
+       const input = this.currentInput as DuckInput | null;
+@@ -66,6 +78,10 @@ export class MonacoEditorAdapter implements IEditorAdapter {
+ 
+   public unmount(): void {
+     this.flushImmediately();
++    if (this.cleanupFlushListener) {
++      this.cleanupFlushListener();
++      this.cleanupFlushListener = undefined;
++    }
+     if (this.editor) {
+       this.editor.dispose();
+       this.editor = null;
+@@ -121,6 +137,10 @@ export class MonacoEditorAdapter implements IEditorAdapter {
+     }
+   }
+ 
++  public getEditor(): monaco.editor.IStandaloneCodeEditor | null {
++    return this.editor;
++  }
++
+   private scheduleFlush(uriStr: string, content: string): void {
+     if (this.debounceTimeout) {
+       clearTimeout(this.debounceTimeout);
+diff --git a/packages/editor/src/application/index.ts b/packages/editor/src/application/index.ts
+index e0c787e..7c8714f 100644
+--- a/packages/editor/src/application/index.ts
++++ b/packages/editor/src/application/index.ts
+@@ -1,3 +1,4 @@
+ export { EditorService } from "./EditorService.js";
+ export { EditorNavigationService } from "./EditorNavigationService.js";
+ export * from "./EditorCommands.js";
++export { SaveActiveEditorCommand } from "./SaveActiveEditorCommand.js";
+diff --git a/packages/editor/src/domain/DocumentEditorInput.ts b/packages/editor/src/domain/DocumentEditorInput.ts
+index 8e56c2b..85414fb 100644
+--- a/packages/editor/src/domain/DocumentEditorInput.ts
++++ b/packages/editor/src/domain/DocumentEditorInput.ts
+@@ -1,4 +1,5 @@
+ import type { IDocument } from "@ocs/document";
++import type { DocumentService } from "@ocs/document/application";
+ import type { WorkspaceUri } from "@ocs/workspace";
+ import { uriDisplayName, uriToPath } from "@ocs/workspace";
+ 
+@@ -8,7 +9,11 @@ import { EditorInput } from "./EditorInput.js";
+  * An EditorInput that wraps a Document.
+  */
+ export class DocumentEditorInput extends EditorInput {
+-  constructor(public readonly document: IDocument) {
++  constructor(
++    public readonly document: IDocument,
++    private readonly documentService?: DocumentService,
++    private readonly syncProvider?: () => Promise<void>
++  ) {
+     super();
+   }
+ 
+@@ -35,4 +40,19 @@ export class DocumentEditorInput extends EditorInput {
+   public isReadonly(): boolean {
+     return this.document.isReadonly;
+   }
++
++  public override async save(): Promise<void> {
++    if (!this.documentService) {
++      throw new Error("DocumentService not injected into DocumentEditorInput");
++    }
++    
++    // 1. Await IPC roundtrip: Request frontend to flush pending edits
++    if (this.syncProvider) {
++      await this.syncProvider();
++    }
++
++    // 2. Await document save
++    await this.documentService.saveDocument(this.document.uri);
++  }
+ }
++
+diff --git a/packages/editor/src/domain/EditorInput.ts b/packages/editor/src/domain/EditorInput.ts
+index 91aeec4..6e39117 100644
+--- a/packages/editor/src/domain/EditorInput.ts
++++ b/packages/editor/src/domain/EditorInput.ts
+@@ -57,4 +57,12 @@ export abstract class EditorInput {
+   public dispose(): void {
+     // Override if necessary
+   }
++
++  /**
++   * Requests the editor input to synchronize and save its state.
++   */
++  public async save(): Promise<void> {
++    // Override in subclasses to perform specific save logic.
++    // Base implementation is a no-op.
++  }
+ }
+diff --git a/packages/explorer/src/application/ExplorerService.ts b/packages/explorer/src/application/ExplorerService.ts
+index bb509cd..43aa78d 100644
+--- a/packages/explorer/src/application/ExplorerService.ts
++++ b/packages/explorer/src/application/ExplorerService.ts
+@@ -1,140 +1,75 @@
+-import * as path from "node:path";
++import type { WorkspaceService } from "@ocs/workspace";
++import type { IResourceService } from "@ocs/common";
++import { URI } from "@ocs/common";
++import { VirtualTreeModel } from "../domain/VirtualTreeModel.js";
++import type { ExplorerNode } from "../domain/VirtualTreeModel.js";
+ 
+-import type { WorkspaceUri } from "@ocs/workspace";
+-import { uriFromPath, uriToPath } from "@ocs/workspace";
+-
+-import type { TreeModel, ExplorerNode } from "../domain/TreeModel.js";
+-import type { IExplorerEventBus } from "../events/ExplorerEvents.js";
+-import type { ExplorerProvider } from "../providers/ExplorerProvider.js";
+-
+-import type { FileWatchEvent } from "./FileWatcher.js";
+-
+-/**
+- * ExplorerService coordinates the providers, the tree model, and the event bus.
+- */
+ export class ExplorerService {
+-  private providers: Map<string, ExplorerProvider> = new Map();
++  public readonly treeModel: VirtualTreeModel;
+ 
+   constructor(
+-    public readonly treeModel: TreeModel,
+-    public readonly eventBus: IExplorerEventBus
+-  ) {}
+-
+-  public registerProvider(provider: ExplorerProvider) {
+-    this.providers.set(provider.id, provider);
++    private readonly workspaceService: WorkspaceService,
++    private readonly resourceService: IResourceService
++  ) {
++    this.treeModel = new VirtualTreeModel();
++    this.initialize();
+   }
+ 
+-  public getProvider<TProvider extends ExplorerProvider = ExplorerProvider>(
+-    providerId: string
+-  ): TProvider | undefined {
+-    return this.providers.get(providerId) as TProvider | undefined;
++  private initialize(): void {
++    // When a workspace tree changes, we rebuild the Explorer roots
++    // For this simple version, we'll initialize directly.
++    // Real implementation would listen to WorkspaceService events.
++    this.refreshRoots();
+   }
+ 
+-  public unregisterProvider(providerId: string) {
+-    this.providers.delete(providerId);
+-  }
+-
+-  /**
+-   * Triggers a refresh for a specific provider.
+-   * If rootNodeId is not provided, it refreshes the root.
+-   */
+-  public async refresh(providerId: string, nodeId: string | null = null): Promise<void> {
+-    const provider = this.providers.get(providerId);
+-    if (!provider) return;
+-
+-    this.eventBus.emit("explorer.refreshStarted", { providerId });
+-
+-    try {
+-      let node: ExplorerNode | null = null;
+-      if (nodeId) {
+-        node = this.treeModel.getNode(nodeId) || null;
+-      }
+-
+-      if (nodeId && !node) {
+-        return; // Node not found in tree model, nothing to refresh
+-      }
+-
+-      const children = await provider.resolveChildren(node);
+-
+-      if (node === null) {
+-        // If we resolved root and returned multiple, we might need a composite root.
+-        // For simplicity, assume a single root or wrap them.
+-        if (children.length === 1 && children[0]) {
+-          this.treeModel.setRoot(children[0]);
+-        }
+-      } else {
+-        this.treeModel.setChildren(node.id, children);
+-      }
+-    } finally {
+-      this.eventBus.emit("explorer.refreshCompleted", { providerId });
+-    }
++  public refreshRoots(): void {
++    const wsTree = this.workspaceService.getTree();
++    const newRoots = wsTree.roots.map((root: any) => this.createExplorerNode(root.uri, root.name, true));
++    this.treeModel.setRoots(newRoots);
+   }
+ 
+-  /**
+-   * Expands a node and fetches children if necessary.
+-   */
+-  public async expandNode(providerId: string, nodeId: string): Promise<void> {
+-    const node = this.treeModel.getNode(nodeId);
++  public async expandNode(uri: URI): Promise<void> {
++    const node = this.treeModel.getNode(uri);
+     if (!node || !node.isDirectory) return;
+ 
+-    // If children are not loaded, load them
+-    if (node.children === undefined) {
+-      await this.refresh(providerId, nodeId);
++    if (node.state === 'collapsed' || node.state === 'error') {
++      this.treeModel.expandNode(uri);
++      try {
++        const resources = await this.resourceService.getChildren(uri);
++        const children = resources.map(res => 
++          this.createExplorerNode(res.uri, res.name, res.type === 2)
++        );
++        this.treeModel.setChildren(uri, children);
++      } catch (err) {
++        this.treeModel.setNodeState(uri, 'error', err instanceof Error ? err : new Error(String(err)));
++      }
++    } else if (node.state === 'loaded') {
++       // Just mark it as expanded if already loaded
++       this.treeModel.expandNode(uri);
+     }
+-
+-    this.treeModel.expand(nodeId);
+-    this.eventBus.emit("explorer.nodeExpanded", { nodeId });
+-  }
+-
+-  public collapseNode(nodeId: string): void {
+-    this.treeModel.collapse(nodeId);
+-    this.eventBus.emit("explorer.nodeCollapsed", { nodeId });
+   }
+ 
+-  public selectNode(nodeId: string, multi: boolean = false): void {
+-    this.treeModel.select(nodeId, multi);
+-    this.eventBus.emit("explorer.selectionChanged", {
+-      selectedNodeIds: [...this.treeModel.getSelectedNodeIds()]
+-    });
++  public collapseNode(uri: URI): void {
++    this.treeModel.collapseNode(uri);
+   }
+ 
+-  public getProviderId(): string {
+-    return "explorer.provider.workspace";
++  public selectNode(uri: URI, multi: boolean = false): void {
++    this.treeModel.selectNode(uri, multi);
+   }
+ 
+-  public async openWorkspaceRoot(): Promise<void> {
+-    const providerId = this.getProviderId();
+-    await this.refresh(providerId, null);
+-    const rootId = this.treeModel.getRootId();
+-    if (rootId) {
+-      await this.expandNode(providerId, rootId);
+-    }
+-  }
+-
+-  public async handleFileWatchEvents(events: FileWatchEvent[]): Promise<void> {
+-    const providerId = this.getProviderId();
+-    const refreshedParents = new Set<string>();
+-    const rootId = this.treeModel.getRootId();
+-    if (!rootId) return;
+-
+-    const rootPath = uriToPath(rootId as WorkspaceUri);
+-
+-    for (const event of events) {
+-      const fsPath = uriToPath(event.uri);
+-      const parentPath = path.dirname(fsPath);
+-      const parentId = parentPath === rootPath ? rootId : uriFromPath(parentPath).toString();
+-
+-      if (this.treeModel.getNode(parentId) && this.treeModel.isExpanded(parentId)) {
+-        refreshedParents.add(parentId);
++  private createExplorerNode(uri: URI, name: string, isDirectory: boolean): ExplorerNode {
++    return {
++      uri,
++      name,
++      isDirectory,
++      state: 'collapsed',
++      capabilities: {
++        canRename: this.resourceService.canRename(uri),
++        canDelete: this.resourceService.canDelete(uri),
++        canMove: this.resourceService.canMove(uri),
++        canCopy: this.resourceService.canCopy(uri),
++        canDrop: isDirectory // Only folders can accept drops generally
+       }
+-    }
+-
+-    for (const parentId of refreshedParents) {
+-      await this.refresh(providerId, parentId);
+-    }
+-
+-    if (refreshedParents.size > 0) {
+-      this.eventBus.emit("explorer.refreshCompleted", { providerId });
+-    }
++    };
+   }
+ }
+diff --git a/packages/extensions/src/domain/IconThemeService.ts b/packages/extensions/src/domain/IconThemeService.ts
+index 37f976d..862613c 100644
+--- a/packages/extensions/src/domain/IconThemeService.ts
++++ b/packages/extensions/src/domain/IconThemeService.ts
+@@ -51,7 +51,7 @@ export class IconThemeService {
+ 
+       const iconThemes = ext.manifest.contributes?.iconThemes;
+       if (Array.isArray(iconThemes) && iconThemes.length > 0) {
+-        let theme;
++        let theme: any;
+         if (this.activeThemeId) {
+           theme = iconThemes.find(
+             (t: any) => t.id === this.activeThemeId || t.label === this.activeThemeId
+diff --git a/packages/keybindings/src/application/KeybindingRegistry.ts b/packages/keybindings/src/application/KeybindingRegistry.ts
+index f23a997..f2ba997 100644
+--- a/packages/keybindings/src/application/KeybindingRegistry.ts
++++ b/packages/keybindings/src/application/KeybindingRegistry.ts
+@@ -1,8 +1,8 @@
+ import type { Keybinding } from "../domain/Keybinding.js";
+ 
+ const DEFAULT_KEYBINDINGS: Keybinding[] = [
+-  { key: "Meta+s", command: "document.save" },
+-  { key: "Control+s", command: "document.save" },
++  { key: "Meta+s", command: "workbench.action.files.save" },
++  { key: "Control+s", command: "workbench.action.files.save" },
+   { key: "Meta+p", command: "workbench.action.quickOpen" },
+   { key: "Control+p", command: "workbench.action.quickOpen" },
+   { key: "Meta+Shift+p", command: "workbench.action.showCommands" },
+diff --git a/packages/search/src/application/ReplaceService.ts b/packages/search/src/application/ReplaceService.ts
+index f814233..35dd92a 100644
+--- a/packages/search/src/application/ReplaceService.ts
++++ b/packages/search/src/application/ReplaceService.ts
+@@ -1,5 +1,5 @@
+ import * as fs from "fs/promises";
+-import type { ReplaceOperation } from "../domain/SearchQuery.js";
++import type { ReplaceOperation, SearchResult } from "../domain/SearchQuery.js";
+ 
+ export class ReplaceService {
+   /**
+@@ -35,4 +35,25 @@ export class ReplaceService {
+ 
+     await fs.writeFile(operation.file, lines.join("\n"), "utf8");
+   }
++
++  /**
++   * Replaces all matches in all files from a set of search results.
++   */
++  public async executeReplaceAll(queryId: string, results: SearchResult[], replaceText: string): Promise<void> {
++    const promises = results.map(result => {
++      const operation: ReplaceOperation = {
++        searchQueryId: queryId,
++        file: result.file,
++        replacementMatches: result.matches.map(match => ({
++          lineNumber: match.lineNumber,
++          column: match.column,
++          length: match.length,
++          replacementText: replaceText
++        }))
++      };
++      return this.executeReplace(operation);
++    });
++
++    await Promise.all(promises);
++  }
+ }
+diff --git a/packages/search/src/application/SearchService.ts b/packages/search/src/application/SearchService.ts
+index 3caed71..0baeeff 100644
+--- a/packages/search/src/application/SearchService.ts
++++ b/packages/search/src/application/SearchService.ts
+@@ -3,16 +3,29 @@ import type { SearchQuery, SearchResult } from "../domain/SearchQuery.js";
+ import type { SearchProvider } from "../providers/SearchProvider.js";
+ 
+ export class SearchService {
++  private readonly resultCache = new Map<string, SearchResult[]>();
++
+   constructor(
+     private readonly provider: SearchProvider,
+     private readonly eventBus: EventBus
+   ) {}
+ 
++  public getCachedResults(queryId: string): SearchResult[] | undefined {
++    return this.resultCache.get(queryId);
++  }
++
++  public clearCachedResults(queryId: string): void {
++    this.resultCache.delete(queryId);
++  }
++
+   public async executeSearch(query: SearchQuery, cwd: string): Promise<void> {
+     try {
+       this.eventBus.publish("search.started", { queryId: query.id });
+ 
++      this.resultCache.set(query.id, []);
++
+       const onResult = (result: SearchResult) => {
++        this.resultCache.get(query.id)?.push(result);
+         this.eventBus.publish("search.resultFound", { queryId: query.id, result });
+       };
+ 
+@@ -21,9 +34,9 @@ export class SearchService {
+       };
+ 
+       const totalMatches = await this.provider.search(query, cwd, onResult, onProgress);
+-      this.eventBus.publish("search.completed", { queryId: query.id, totalMatches });
++      await this.eventBus.publish("search.completed", { queryId: query.id, totalMatches });
+     } catch (err: any) {
+-      this.eventBus.publish("search.cancelled", { queryId: query.id, error: err.message });
++      await this.eventBus.publish("search.cancelled", { queryId: query.id, error: err.message });
+     }
+   }
+ 
+diff --git a/packages/search/src/providers/RipgrepProvider.ts b/packages/search/src/providers/RipgrepProvider.ts
+index a665b94..be4eb78 100644
+--- a/packages/search/src/providers/RipgrepProvider.ts
++++ b/packages/search/src/providers/RipgrepProvider.ts
+@@ -86,7 +86,7 @@ export class RipgrepProvider implements SearchProvider {
+           if (parsed.type === "begin") {
+             filesScanned++;
+             currentFileResult = {
+-              file: parsed.data.path.text,
++              file: require("path").resolve(cwd, parsed.data.path.text),
+               preview: "",
+               matches: []
+             };
+diff --git a/packages/workspace/src/application/WorkspaceService.ts b/packages/workspace/src/application/WorkspaceService.ts
+index 1cb031d..f2c500a 100644
+--- a/packages/workspace/src/application/WorkspaceService.ts
++++ b/packages/workspace/src/application/WorkspaceService.ts
+@@ -23,6 +23,9 @@ import type { EventBus } from "@ocs/common/events";
+ import type { RecentWorkspace, Workspace } from "../domain/WorkspaceMetadata.js";
+ import { WorkspaceStateMachine } from "../domain/WorkspaceState.js";
+ import { uriDisplayName, uriFromPath, uriToPath } from "../domain/WorkspaceUri.js";
++import { ImmutableWorkspaceTree } from "../domain/WorkspaceTree.js";
++import type { WorkspaceTree } from "../domain/WorkspaceTree.js";
++import { URI } from "@ocs/common";
+ import { WorkspaceEventTypes } from "../events/WorkspaceEvents.js";
+ import type { IFileSystem } from "../infrastructure/IFileSystem.js";
+ 
+@@ -36,6 +39,7 @@ export interface WorkspaceServiceOptions {
+ 
+ export class WorkspaceService {
+   private _workspace: Workspace | null = null;
++  private _tree: WorkspaceTree = new ImmutableWorkspaceTree([]);
+   private readonly state = new WorkspaceStateMachine();
+   private readonly wsConfig: WorkspaceConfiguration;
+ 
+@@ -54,6 +58,27 @@ export class WorkspaceService {
+     return this._workspace;
+   }
+ 
++  public getTree(): WorkspaceTree {
++    return this._tree;
++  }
++
++  public addRoot(uri: URI): void {
++    const newRoots = [...this._tree.roots];
++    if (!newRoots.find(r => r.uri.toString() === uri.toString())) {
++      newRoots.push({
++        uri,
++        name: uri.path.split('/').pop() || '',
++        isDirectory: true
++      });
++      this._tree = new ImmutableWorkspaceTree(newRoots);
++    }
++  }
++
++  public removeRoot(uri: URI): void {
++    const newRoots = this._tree.roots.filter(r => r.uri.toString() !== uri.toString());
++    this._tree = new ImmutableWorkspaceTree(newRoots);
++  }
++
+   public isOpen(): boolean {
+     return this.state.is("open");
+   }
+@@ -166,6 +191,8 @@ export class WorkspaceService {
+       // ── Step 3: Transition → open ─────────────────────────────────────────
+       this.state.transition("open");
+       this._workspace = workspace;
++      this._tree = new ImmutableWorkspaceTree([]);
++      this.addRoot(URI.parse(uri));
+ 
+       await this.publishStateChanged("opening", "open", workspace.id);
+       await this.events?.publish(WorkspaceEventTypes.OPENED, { workspace });
+@@ -207,6 +234,7 @@ export class WorkspaceService {
+     await this.publishStateChanged(previousState, "closing", workspace?.id);
+ 
+     this._workspace = null;
++    this._tree = new ImmutableWorkspaceTree([]);
+     this.state.transition("closed");
+ 
+     await this.publishStateChanged("closing", "closed", workspace?.id);
+diff --git a/packages/workspace/src/index.ts b/packages/workspace/src/index.ts
+index fe0e8c4..8816120 100644
+--- a/packages/workspace/src/index.ts
++++ b/packages/workspace/src/index.ts
+@@ -56,3 +56,7 @@ export {
+ } from "./infrastructure/JsonStorageAdapter.js";
+ 
+ // Application (should be imported directly by main process)
++export { WorkspaceService } from "./application/WorkspaceService.js";
++export { ResourceService } from "./application/ResourceService.js";
++export type { WorkspaceTree, WorkspaceNode } from "./domain/WorkspaceTree.js";
++export { ImmutableWorkspaceTree } from "./domain/WorkspaceTree.js";
+diff --git a/packages/workspace/src/infrastructure/IFileSystem.ts b/packages/workspace/src/infrastructure/IFileSystem.ts
+index a0afcb1..c723624 100644
+--- a/packages/workspace/src/infrastructure/IFileSystem.ts
++++ b/packages/workspace/src/infrastructure/IFileSystem.ts
+@@ -23,6 +23,11 @@ export interface IFileSystem {
+    */
+   stat(path: string): Promise<StatResult>;
+ 
++  /**
++   * Reads directory contents.
++   */
++  readDirectory(path: string): Promise<{ name: string; isDirectory: boolean }[]>;
++
+   /**
+    * Returns true if the path exists and is accessible, false otherwise.
+    * Never throws.
+diff --git a/packages/workspace/src/infrastructure/LocalFileSystem.ts b/packages/workspace/src/infrastructure/LocalFileSystem.ts
+index 12968ec..a5ad1c8 100644
+--- a/packages/workspace/src/infrastructure/LocalFileSystem.ts
++++ b/packages/workspace/src/infrastructure/LocalFileSystem.ts
+@@ -21,6 +21,12 @@ export class LocalFileSystem implements IFileSystem {
+     };
+   }
+ 
++  public async readDirectory(path: string): Promise<{ name: string; isDirectory: boolean }[]> {
++    const { readdir } = await import("node:fs/promises");
++    const entries = await readdir(path, { withFileTypes: true });
++    return entries.map(e => ({ name: e.name, isDirectory: e.isDirectory() }));
++  }
++
+   public async exists(path: string): Promise<boolean> {
+     try {
+       await stat(path);

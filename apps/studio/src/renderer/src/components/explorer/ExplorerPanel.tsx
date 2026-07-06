@@ -75,65 +75,51 @@ export const ExplorerPanel: React.FC = () => {
     }
   };
 
-  const buildContextMenuItems = (visibleNode: VisibleNode): ContextMenuItem[] => {
-    const nodeData = visibleNode.node as { uri?: { toString: () => string }; id: string };
+  const buildContextMenuItems = (visibleNode: any): ContextMenuItem[] => {
+    const nodeData = visibleNode.node as {
+      uri?: { toString: () => string };
+      id: string;
+      capabilities?: any;
+    };
     const uri: string = nodeData.uri ? nodeData.uri.toString() : visibleNode.node.id;
     const isDir = visibleNode.node.isDirectory;
+    const caps = nodeData.capabilities || { canRename: true, canDelete: true };
 
     return [
       {
         label: "New File",
         disabled: !isDir,
         action: () => {
-          const name = window.prompt("New file name:");
-          if (name) {
-            void executeCommand("explorer.command.createFile", {
-              uri: `${uri}/${name}`,
-              isDirectory: false
-            });
-          }
+          void executeCommand("workbench.action.files.newFile", { uri });
         }
       },
       {
         label: "New Folder",
         disabled: !isDir,
         action: () => {
-          const name = window.prompt("New folder name:");
-          if (name) {
-            void executeCommand("explorer.command.createFile", {
-              uri: `${uri}/${name}`,
-              isDirectory: true
-            });
-          }
+          void executeCommand("workbench.action.files.newFolder", { uri });
         }
       },
       { label: "", separator: true, action: () => {} },
       {
         label: "Rename",
+        disabled: !caps.canRename,
         action: () => {
-          const newName = window.prompt("Rename to:", visibleNode.node.name);
-          if (newName && newName !== visibleNode.node.name) {
-            const parentUri = uri.slice(0, uri.lastIndexOf("/"));
-            void executeCommand("explorer.command.renameFile", {
-              uri,
-              targetUri: `${parentUri}/${newName}`
-            });
-          }
+          void executeCommand("workbench.action.files.rename", { uri });
         }
       },
       {
         label: "Delete",
+        disabled: !caps.canDelete,
         action: () => {
-          if (window.confirm(`Delete "${visibleNode.node.name}"?`)) {
-            void executeCommand("explorer.command.deleteFile", { uri });
-          }
+          void executeCommand("workbench.action.files.delete", { uri });
         }
       },
       { label: "", separator: true, action: () => {} },
       {
         label: "Reveal in Finder",
         action: () => {
-          void revealInFinder(uri);
+          void executeCommand("workbench.action.files.revealInFinder", { uri });
         }
       },
       {

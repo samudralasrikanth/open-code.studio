@@ -1,88 +1,46 @@
 /* eslint-disable */
 
-import { ExplorerService, TreeModel, ExplorerEventBus } from "@ocs/explorer";
-import type { ExplorerProvider, ExplorerNode } from "@ocs/explorer";
+import { ExplorerService, VirtualTreeModel } from "@ocs/explorer";
+import { URI } from "@ocs/common";
 import { describe, expect, it, beforeEach } from "vitest";
 
-// A mock provider for testing
-class MockExplorerProvider implements ExplorerProvider {
-  public id = "mock.provider";
+const mockWorkspaceService = {
+  getTree: () => ({ roots: [{ uri: URI.parse("file:///mock/root"), name: "root" }] })
+};
 
-  async resolveChildren(node: ExplorerNode | null): Promise<ExplorerNode[]> {
-    if (!node) {
-      // Root level
-      return [
-        {
-          id: "root-1",
-          name: "root-1",
-          isDirectory: true,
-          type: 2
-        }
-      ];
-    }
-
-    if (node.id === "root-1") {
-      return [
-        {
-          id: "child-1",
-          name: "child-1.txt",
-          isDirectory: false,
-          type: 1
-        }
-      ];
-    }
-
-    return [];
-  }
-}
+const mockResourceService = {
+  getChildren: async () => [
+    { uri: URI.parse("file:///mock/root/child1"), name: "child1", type: 1 }
+  ],
+  canRename: () => true,
+  canDelete: () => true,
+  canMove: () => true,
+  canCopy: () => true
+};
 
 describe("Integration: Explorer Refresh", () => {
-  let treeModel: TreeModel;
-  let eventBus: ExplorerEventBus;
   let explorerService: ExplorerService;
-  let provider: MockExplorerProvider;
 
   beforeEach(() => {
-    treeModel = new TreeModel();
-    eventBus = new ExplorerEventBus();
-    explorerService = new ExplorerService(treeModel, eventBus);
-
-    provider = new MockExplorerProvider();
-    explorerService.registerProvider(provider);
+    explorerService = new ExplorerService(mockWorkspaceService as any, mockResourceService as any);
   });
 
-  it("should successfully refresh the root node", async () => {
-    const startedEvents: any[] = [];
-    const completedEvents: any[] = [];
+  it("should successfully refresh the root node", () => {
+    explorerService.refreshRoots();
 
-    eventBus.on("explorer.refreshStarted", (e) => startedEvents.push(e));
-    eventBus.on("explorer.refreshCompleted", (e) => completedEvents.push(e));
-
-    await explorerService.refresh("mock.provider", null);
-
-    const rootId = treeModel.getRootId();
-    expect(rootId).toBe("root-1");
-
-    const rootNode = treeModel.getNode("root-1");
-    expect(rootNode).toBeDefined();
-    expect(rootNode?.isDirectory).toBe(true);
-
-    expect(startedEvents).toHaveLength(1);
-    expect(completedEvents).toHaveLength(1);
+    const rootNodes = explorerService.treeModel.getRoots();
+    expect(rootNodes).toHaveLength(1);
+    expect(rootNodes[0].name).toBe("root");
   });
 
   it("should successfully expand a node", async () => {
-    await explorerService.refresh("mock.provider", null);
-    await explorerService.expandNode("mock.provider", "root-1");
+    explorerService.refreshRoots();
+    const rootNodes = explorerService.treeModel.getRoots();
 
-    const rootNode = treeModel.getNode("root-1");
-    expect(rootNode?.children).toBeDefined();
-    expect(rootNode?.children).toHaveLength(1);
-    expect(rootNode?.children?.[0].id).toBe("child-1");
+    await explorerService.expandNode(rootNodes[0].uri);
 
-    const childNode = treeModel.getNode("child-1");
-    expect(childNode).toBeDefined();
-    expect(childNode?.name).toBe("child-1.txt");
-    expect(treeModel.isExpanded("root-1")).toBe(true);
+    const updatedNodes = explorerService.treeModel.getVisibleNodes();
+    expect(updatedNodes).toHaveLength(2); // root + child
+    expect(updatedNodes[1].node.name).toBe("child1");
   });
 });

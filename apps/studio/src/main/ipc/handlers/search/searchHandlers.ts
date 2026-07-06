@@ -30,4 +30,64 @@ export function registerSearchHandlers(container: Container): void {
   ipcMain.handle(IpcChannels.SEARCH_REPLACE, async (_, operation: ReplaceOperation) => {
     await replaceService.executeReplace(operation);
   });
+
+  ipcMain.handle(
+    IpcChannels.SEARCH_REPLACE_ALL,
+    async (_, { queryId, replaceText }: { queryId: string; replaceText: string }) => {
+      const results = searchService.getCachedResults(queryId);
+      if (results && results.length > 0) {
+        await replaceService.executeReplaceAll(queryId, results, replaceText);
+      }
+    }
+  );
+
+  ipcMain.handle(
+    IpcChannels.SEARCH_REPLACE_IN_FILE,
+    async (
+      _,
+      { queryId, file, replaceText }: { queryId: string; file: string; replaceText: string }
+    ) => {
+      const results = searchService.getCachedResults(queryId);
+      if (results) {
+        const fileResult = results.find((r) => r.file === file);
+        if (fileResult) {
+          await replaceService.executeReplace({
+            searchQueryId: queryId,
+            file,
+            replacementMatches: fileResult.matches.map((m) => ({
+              ...m,
+              replacementText: replaceText
+            }))
+          });
+        }
+      }
+    }
+  );
+
+  ipcMain.handle(
+    IpcChannels.SEARCH_REPLACE_MATCH,
+    async (
+      _,
+      {
+        queryId,
+        file,
+        matchIndex,
+        replaceText
+      }: { queryId: string; file: string; matchIndex: number; replaceText: string }
+    ) => {
+      const results = searchService.getCachedResults(queryId);
+      if (results) {
+        const fileResult = results.find((r) => r.file === file);
+        if (fileResult && fileResult.matches[matchIndex]) {
+          await replaceService.executeReplace({
+            searchQueryId: queryId,
+            file,
+            replacementMatches: [
+              { ...fileResult.matches[matchIndex], replacementText: replaceText }
+            ]
+          });
+        }
+      }
+    }
+  );
 }

@@ -59,7 +59,7 @@ const WorkbenchShell: React.FC<WorkbenchProps> = ({ workspaceName }) => {
         overflow: "hidden"
       }}
     >
-      <TitleBar title={workspaceName || "Open-Code.Studio"} />
+      <TitleBar title={workspaceName || ""} />
 
       <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
         {layout.activityBar.visible && layout.activityBar.position === "left" && (

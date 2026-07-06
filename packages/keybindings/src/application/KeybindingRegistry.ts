@@ -1,8 +1,8 @@
 import type { Keybinding } from "../domain/Keybinding.js";
 
 const DEFAULT_KEYBINDINGS: Keybinding[] = [
-  { key: "Meta+s", command: "document.save" },
-  { key: "Control+s", command: "document.save" },
+  { key: "Meta+s", command: "workbench.action.files.save" },
+  { key: "Control+s", command: "workbench.action.files.save" },
   { key: "Meta+p", command: "workbench.action.quickOpen" },
   { key: "Control+p", command: "workbench.action.quickOpen" },
   { key: "Meta+Shift+p", command: "workbench.action.showCommands" },

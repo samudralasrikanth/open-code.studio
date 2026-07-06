@@ -17,7 +17,6 @@ export async function bootstrapDesktop(
 ): Promise<WindowManager> {
   logger.flow({ domain: "startup", source: "bootstrap", action: "desktop:start" });
 
-  await createApplicationMenu(container);
   const windowManager = createWindowManager(logger);
   windowManager.createMainWindow();
 

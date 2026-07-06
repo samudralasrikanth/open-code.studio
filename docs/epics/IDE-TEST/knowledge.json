@@ -1,0 +1,11 @@
+{
+  "relevant_documents": [],
+  "dependencies": [],
+  "previous_solutions": [],
+  "affected_epics": [],
+  "affected_packages": [],
+  "risks": [],
+  "summary": "This epic is a mock for testing purposes and does not contain any associated documents or dependencies.",
+  "status": "completed",
+  "next_stage": "architect"
+}

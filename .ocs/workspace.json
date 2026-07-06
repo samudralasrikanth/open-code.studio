@@ -9,7 +9,7 @@
       },
       "primarySidebar": {
         "visible": true,
-        "width": 311,
+        "width": 255,
         "activePanelId": "explorer",
         "panelIds": ["explorer", "search", "source-control"]
       },
@@ -20,7 +20,7 @@
       },
       "bottomPanel": {
         "visible": true,
-        "height": 410,
+        "height": 284,
         "activePanelId": "terminal",
         "panelIds": ["problems", "output", "terminal", "diagnostics"]
       },

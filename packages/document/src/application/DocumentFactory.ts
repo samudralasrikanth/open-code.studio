@@ -14,7 +14,8 @@ export class TextDocumentImpl implements ITextDocument {
     public readonly languageId: string,
     public readonly encoding: string,
     private content: string,
-    public readonly isReadonly: boolean = false
+    public readonly isReadonly: boolean = false,
+    public diskMtimeMs: number | undefined = undefined
   ) {}
 
   public get isDirty(): boolean {
@@ -56,7 +57,8 @@ export class BinaryDocumentImpl implements IBinaryDocument {
     public readonly uri: WorkspaceUri,
     public readonly mimeType: string,
     private content: Uint8Array,
-    public readonly isReadonly: boolean = false
+    public readonly isReadonly: boolean = false,
+    public diskMtimeMs: number | undefined = undefined
   ) {}
 
   public get isDirty(): boolean {
@@ -91,17 +93,27 @@ export class DocumentFactory {
     content: string,
     languageId: string = "plaintext",
     encoding: string = "utf-8",
-    isReadonly: boolean = false
+    isReadonly: boolean = false,
+    diskMtimeMs?: number
   ): ITextDocument {
-    return new TextDocumentImpl(uri.toString(), uri, languageId, encoding, content, isReadonly);
+    return new TextDocumentImpl(
+      uri.toString(),
+      uri,
+      languageId,
+      encoding,
+      content,
+      isReadonly,
+      diskMtimeMs
+    );
   }
 
   public createBinaryDocument(
     uri: WorkspaceUri,
     content: Uint8Array,
     mimeType: string = "application/octet-stream",
-    isReadonly: boolean = false
+    isReadonly: boolean = false,
+    diskMtimeMs?: number
   ): IBinaryDocument {
-    return new BinaryDocumentImpl(uri.toString(), uri, mimeType, content, isReadonly);
+    return new BinaryDocumentImpl(uri.toString(), uri, mimeType, content, isReadonly, diskMtimeMs);
   }
 }

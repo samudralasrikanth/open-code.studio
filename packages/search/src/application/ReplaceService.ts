@@ -1,5 +1,6 @@
 import * as fs from "fs/promises";
-import type { ReplaceOperation } from "../domain/SearchQuery.js";
+
+import type { ReplaceOperation, SearchResult } from "../domain/SearchQuery.js";
 
 export class ReplaceService {
   /**
@@ -34,5 +35,30 @@ export class ReplaceService {
     }
 
     await fs.writeFile(operation.file, lines.join("\n"), "utf8");
+  }
+
+  /**
+   * Replaces all matches in all files from a set of search results.
+   */
+  public async executeReplaceAll(
+    queryId: string,
+    results: SearchResult[],
+    replaceText: string
+  ): Promise<void> {
+    const promises = results.map((result) => {
+      const operation: ReplaceOperation = {
+        searchQueryId: queryId,
+        file: result.file,
+        replacementMatches: result.matches.map((match) => ({
+          lineNumber: match.lineNumber,
+          column: match.column,
+          length: match.length,
+          replacementText: replaceText
+        }))
+      };
+      return this.executeReplace(operation);
+    });
+
+    await Promise.all(promises);
   }
 }

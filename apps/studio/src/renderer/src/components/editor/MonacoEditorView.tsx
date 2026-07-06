@@ -34,6 +34,21 @@ export const MonacoEditorView: React.FC<MonacoEditorViewProps> = ({ input }) => 
   }, []);
 
   useEffect(() => {
+    const unsub = window.ocs.editor.onReveal((payload) => {
+      if (input && payload.uri === input.id && adapterRef.current) {
+        const editor = adapterRef.current.getEditor();
+        if (editor && payload.selection) {
+          editor.revealLineInCenter(payload.selection.startLineNumber);
+          editor.setSelection(payload.selection);
+          editor.focus();
+        }
+      }
+    });
+
+    return () => unsub();
+  }, [input]);
+
+  useEffect(() => {
     if (!input) return;
 
     // Fetch document from main process via IPC

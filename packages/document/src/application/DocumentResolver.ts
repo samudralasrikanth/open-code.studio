@@ -40,7 +40,14 @@ export class FileSystemDocumentResolver implements IDocumentResolver {
     // Naive language resolution (can be injected via a LanguageRegistry later)
     const languageId = this.guessLanguageId(uri);
 
-    return this.documentFactory.createTextDocument(uri, content, languageId, "utf-8", false);
+    return this.documentFactory.createTextDocument(
+      uri,
+      content,
+      languageId,
+      "utf-8",
+      false,
+      stat.mtimeMs
+    );
   }
 
   private guessLanguageId(uri: WorkspaceUri): string {

@@ -30,6 +30,7 @@ export class MonacoEditorAdapter implements IEditorAdapter {
   private model: monaco.editor.ITextModel | null = null;
   private readonly modelManager = new ModelManager();
   private debounceTimeout: ReturnType<typeof setTimeout> | null = null;
+  private cleanupFlushListener: (() => void) | undefined = undefined;
 
   public mount(container: HTMLElement): void {
     this.container = container;
@@ -40,6 +41,16 @@ export class MonacoEditorAdapter implements IEditorAdapter {
       automaticLayout: true,
       minimap: { enabled: false }
     });
+
+    if (typeof window !== "undefined" && (window as any).ocs?.editor?.onRequestFlush) {
+      this.cleanupFlushListener = (window as any).ocs.editor.onRequestFlush(() => {
+        this.flushImmediately();
+        if ((window as any).ocs.editor.sendFlushComplete) {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
+          (window as any).ocs.editor.sendFlushComplete();
+        }
+      });
+    }
 
     // Handle document changes and update renderer model immediately
     this.editor.onDidChangeModelContent(() => {
@@ -66,6 +77,10 @@ export class MonacoEditorAdapter implements IEditorAdapter {
 
   public unmount(): void {
     this.flushImmediately();
+    if (this.cleanupFlushListener) {
+      this.cleanupFlushListener();
+      this.cleanupFlushListener = undefined;
+    }
     if (this.editor) {
       this.editor.dispose();
       this.editor = null;
@@ -119,6 +134,10 @@ export class MonacoEditorAdapter implements IEditorAdapter {
     if (this.editor) {
       this.editor.focus();
     }
+  }
+
+  public getEditor(): monaco.editor.IStandaloneCodeEditor | null {
+    return this.editor;
   }
 
   private scheduleFlush(uriStr: string, content: string): void {

@@ -57,4 +57,12 @@ export abstract class EditorInput {
   public dispose(): void {
     // Override if necessary
   }
+
+  /**
+   * Requests the editor input to synchronize and save its state.
+   */
+  public async save(): Promise<void> {
+    // Override in subclasses to perform specific save logic.
+    // Base implementation is a no-op.
+  }
 }

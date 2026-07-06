@@ -3,16 +3,29 @@ import type { SearchQuery, SearchResult } from "../domain/SearchQuery.js";
 import type { SearchProvider } from "../providers/SearchProvider.js";
 
 export class SearchService {
+  private readonly resultCache = new Map<string, SearchResult[]>();
+
   constructor(
     private readonly provider: SearchProvider,
     private readonly eventBus: EventBus
   ) {}
 
+  public getCachedResults(queryId: string): SearchResult[] | undefined {
+    return this.resultCache.get(queryId);
+  }
+
+  public clearCachedResults(queryId: string): void {
+    this.resultCache.delete(queryId);
+  }
+
   public async executeSearch(query: SearchQuery, cwd: string): Promise<void> {
     try {
       this.eventBus.publish("search.started", { queryId: query.id });
 
+      this.resultCache.set(query.id, []);
+
       const onResult = (result: SearchResult) => {
+        this.resultCache.get(query.id)?.push(result);
         this.eventBus.publish("search.resultFound", { queryId: query.id, result });
       };
 
@@ -21,9 +34,9 @@ export class SearchService {
       };
 
       const totalMatches = await this.provider.search(query, cwd, onResult, onProgress);
-      this.eventBus.publish("search.completed", { queryId: query.id, totalMatches });
+      await this.eventBus.publish("search.completed", { queryId: query.id, totalMatches });
     } catch (err: any) {
-      this.eventBus.publish("search.cancelled", { queryId: query.id, error: err.message });
+      await this.eventBus.publish("search.cancelled", { queryId: query.id, error: err.message });
     }
   }
 

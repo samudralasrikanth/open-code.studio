@@ -21,6 +21,12 @@ export class LocalFileSystem implements IFileSystem {
     };
   }
 
+  public async readDirectory(path: string): Promise<{ name: string; isDirectory: boolean }[]> {
+    const { readdir } = await import("node:fs/promises");
+    const entries = await readdir(path, { withFileTypes: true });
+    return entries.map((e) => ({ name: e.name, isDirectory: e.isDirectory() }));
+  }
+
   public async exists(path: string): Promise<boolean> {
     try {
       await stat(path);

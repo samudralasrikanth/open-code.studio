@@ -19,7 +19,12 @@ export function registerEditorHandlers(container: Container): void {
     async (
       _,
       inputStr: string,
-      options?: { preview?: boolean; active?: boolean; group?: string | EditorGroup }
+      options?: {
+        preview?: boolean;
+        active?: boolean;
+        group?: string | EditorGroup;
+        selection?: any;
+      }
     ) => {
       console.log(`[EDITOR_OPEN] Called with inputStr: ${inputStr}`);
 
@@ -50,7 +55,38 @@ export function registerEditorHandlers(container: Container): void {
       const uri = uriFromString(inputStr);
       const doc = await documentService.openDocument(uri);
       const { DocumentEditorInput } = await import("@ocs/editor");
-      editorService.openEditor(new DocumentEditorInput(doc), options);
+
+      const syncProvider = async (): Promise<void> => {
+        return new Promise<void>((resolve) => {
+          const timeout = setTimeout(() => {
+            console.warn("[EDITOR_REQUEST_FLUSH] Timeout waiting for flush");
+            ipcMain.removeHandler(IpcChannels.EDITOR_FLUSH_COMPLETE);
+            resolve();
+          }, 1000);
+
+          ipcMain.handleOnce(IpcChannels.EDITOR_FLUSH_COMPLETE, () => {
+            clearTimeout(timeout);
+            resolve();
+          });
+
+          webContents.getAllWebContents().forEach((wc) => {
+            wc.send(IpcChannels.EDITOR_REQUEST_FLUSH);
+          });
+        });
+      };
+
+      editorService.openEditor(
+        new DocumentEditorInput(doc, documentService, syncProvider),
+        options
+      );
+
+      if (options?.selection) {
+        webContents.getAllWebContents().forEach((wc) => {
+          wc.send(IpcChannels.EDITOR_REVEAL, { uri: uri.toString(), selection: options.selection });
+        });
+      }
+
+      return { success: true };
     }
   );
 

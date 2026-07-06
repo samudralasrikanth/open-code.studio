@@ -1,0 +1,708 @@
+
+> open-code.studio@0.1.0 lint /Users/srikanthsamudrala/Documents/opencode/open-code.studio
+> eslint .
+
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/main/bootstrap/commands.ts
+    6:9   error    Unsafe assignment of an `any` value                                                @typescript-eslint/no-unsafe-assignment
+    6:36  error    Unexpected any. Specify a different type                                           @typescript-eslint/no-explicit-any
+    7:9   error    Unsafe assignment of an `any` value                                                @typescript-eslint/no-unsafe-assignment
+    7:38  error    Unexpected any. Specify a different type                                           @typescript-eslint/no-explicit-any
+    9:40  error    Unsafe argument of type `any` assigned to a parameter of type `Logger`             @typescript-eslint/no-unsafe-argument
+    9:48  error    Unsafe argument of type `any` assigned to a parameter of type `EventBus`           @typescript-eslint/no-unsafe-argument
+   10:40  error    Unsafe argument of type `any` assigned to a parameter of type `Logger`             @typescript-eslint/no-unsafe-argument
+   10:48  error    Unsafe argument of type `any` assigned to a parameter of type `EventBus`           @typescript-eslint/no-unsafe-argument
+   11:38  error    Unsafe argument of type `any` assigned to a parameter of type `EventBus`           @typescript-eslint/no-unsafe-argument
+   23:11  error    Unsafe assignment of an `any` value                                                @typescript-eslint/no-unsafe-assignment
+   23:38  error    Unexpected any. Specify a different type                                           @typescript-eslint/no-explicit-any
+   24:33  error    Unsafe member access .getCommands on an `any` value                                @typescript-eslint/no-unsafe-member-access
+   25:13  error    Unsafe assignment of an `any` value                                                @typescript-eslint/no-unsafe-assignment
+   25:26  error    Unsafe call of an `any` typed value                                                @typescript-eslint/no-unsafe-call
+   25:33  error    Unsafe member access .getCommands on an `any` value                                @typescript-eslint/no-unsafe-member-access
+   29:13  error    Unsafe assignment of an `any` value                                                @typescript-eslint/no-unsafe-assignment
+   29:27  error    Unsafe member access .id on an `any` value                                         @typescript-eslint/no-unsafe-member-access
+   30:13  error    Unsafe assignment of an `any` value                                                @typescript-eslint/no-unsafe-assignment
+   30:21  error    This assertion is unnecessary since it does not change the type of the expression  @typescript-eslint/no-unnecessary-type-assertion
+   30:34  error    Unexpected any. Specify a different type                                           @typescript-eslint/no-explicit-any
+   30:39  error    Unsafe member access .title on an `any` value                                      @typescript-eslint/no-unsafe-member-access
+   30:58  error    Unsafe member access .id on an `any` value                                         @typescript-eslint/no-unsafe-member-access
+   31:13  error    Unsafe assignment of an `any` value                                                @typescript-eslint/no-unsafe-assignment
+   31:24  error    This assertion is unnecessary since it does not change the type of the expression  @typescript-eslint/no-unnecessary-type-assertion
+   31:37  error    Unexpected any. Specify a different type                                           @typescript-eslint/no-explicit-any
+   31:42  error    Unsafe member access .category on an `any` value                                   @typescript-eslint/no-unsafe-member-access
+   33:36  error    Unexpected any. Specify a different type                                           @typescript-eslint/no-explicit-any
+   34:36  error    Unsafe member access .execute on an `any` value                                    @typescript-eslint/no-unsafe-member-access
+   35:17  error    Unsafe return of a value of type `any`                                             @typescript-eslint/no-unsafe-return
+   35:30  error    Unsafe call of an `any` typed value                                                @typescript-eslint/no-unsafe-call
+   35:40  error    Unsafe member access .execute on an `any` value                                    @typescript-eslint/no-unsafe-member-access
+   39:13  error    Unsafe assignment of an `any` value                                                @typescript-eslint/no-unsafe-assignment
+   39:26  error    This assertion is unnecessary since it does not change the type of the expression  @typescript-eslint/no-unnecessary-type-assertion
+   39:39  error    Unexpected any. Specify a different type                                           @typescript-eslint/no-explicit-any
+   39:44  error    Unsafe member access .enableWhen on an `any` value                                 @typescript-eslint/no-unsafe-member-access
+   40:13  error    Unsafe assignment of an `any` value                                                @typescript-eslint/no-unsafe-assignment
+   40:25  error    This assertion is unnecessary since it does not change the type of the expression  @typescript-eslint/no-unnecessary-type-assertion
+   40:38  error    Unexpected any. Specify a different type                                           @typescript-eslint/no-explicit-any
+   40:43  error    Unsafe member access .isVisible on an `any` value                                  @typescript-eslint/no-unsafe-member-access
+   44:11  warning  Unused eslint-disable directive (no problems were reported from 'no-console')
+   45:69  error    Unsafe member access .id on an `any` value                                         @typescript-eslint/no-unsafe-member-access
+   58:5   error    Async method 'handler' has no 'await' expression                                   @typescript-eslint/require-await
+   67:5   error    Async method 'handler' has no 'await' expression                                   @typescript-eslint/require-await
+   69:7   error    Unsafe call of an `any` typed value                                                @typescript-eslint/no-unsafe-call
+   69:16  error    Unsafe member access .emit on an `any` value                                       @typescript-eslint/no-unsafe-member-access
+   77:5   error    Async method 'handler' has no 'await' expression                                   @typescript-eslint/require-await
+   78:7   error    Unsafe call of an `any` typed value                                                @typescript-eslint/no-unsafe-call
+   78:16  error    Unsafe member access .emit on an `any` value                                       @typescript-eslint/no-unsafe-member-access
+   89:17  error    Unsafe assignment of an `any` value                                                @typescript-eslint/no-unsafe-assignment
+   89:53  error    Unexpected any. Specify a different type                                           @typescript-eslint/no-explicit-any
+   91:17  error    Unsafe call of an `any` typed value                                                @typescript-eslint/no-unsafe-call
+   91:33  error    Unsafe member access .saveDocument on an `any` value                               @typescript-eslint/no-unsafe-member-access
+  101:5   error    Async method 'handler' has no 'await' expression                                   @typescript-eslint/require-await
+  102:13  error    Unsafe assignment of an `any` value                                                @typescript-eslint/no-unsafe-assignment
+  102:49  error    Unexpected any. Specify a different type                                           @typescript-eslint/no-explicit-any
+  103:7   error    Unsafe return of a value of type `any`                                             @typescript-eslint/no-unsafe-return
+  103:14  error    Unsafe call of an `any` typed value                                                @typescript-eslint/no-unsafe-call
+  103:31  error    Unsafe member access .getAllResolved on an `any` value                             @typescript-eslint/no-unsafe-member-access
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/main/bootstrap/explorer.ts
+  57:3  error  Unsafe call of a type that could not be resolved  @typescript-eslint/no-unsafe-call
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/main/bootstrap/extensions.ts
+  26:66  error  Unsafe argument of type `any` assigned to a parameter of type `LogContext`  @typescript-eslint/no-unsafe-argument
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/main/bootstrap/protocol.ts
+   1:1   error  There should be at least one empty line between import groups      import-x/order
+   1:1   error  `electron` import should occur after type import of `@ocs/common`  import-x/order
+   1:20  error  'net' is defined but never used                                    @typescript-eslint/no-unused-vars
+   2:1   error  `path` import should occur after import of `fs`                    import-x/order
+   3:1   error  `os` import should occur after import of `fs`                      import-x/order
+   4:1   error  There should be at least one empty line between import groups      import-x/order
+  39:21  error  Unexpected any. Specify a different type                           @typescript-eslint/no-explicit-any
+  40:64  error  Unsafe member access .message on an `any` value                    @typescript-eslint/no-unsafe-member-access
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/main/bootstrap/search.ts
+  1:1  error  All imports in the declaration are only used as types. Use `import type`  @typescript-eslint/consistent-type-imports
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/main/bootstrap/theme-notification-keybinding-session.ts
+   2:1  error  All imports in the declaration are only used as types. Use `import type`     @typescript-eslint/consistent-type-imports
+   3:1  error  There should be no empty line within import group                            import-x/order
+   3:1  error  `electron` import should occur after import of `@ocs/session`                import-x/order
+   5:1  error  There should be no empty line within import group                            import-x/order
+   5:1  error  `@ocs/theme` import should occur after import of `@ocs/session`              import-x/order
+  14:1  error  There should be no empty line within import group                            import-x/order
+  14:1  error  `@ocs/notifications` import should occur after import of `@ocs/keybindings`  import-x/order
+  21:1  error  There should be no empty line within import group                            import-x/order
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/main/ipc/handlers/commands/commandsHandlers.ts
+  28:5   error  Unsafe return of a value of type `any`                                                           @typescript-eslint/no-unsafe-return
+  28:46  error  Unsafe argument of type `any` assigned to a parameter of type `Record<string, any> | undefined`  @typescript-eslint/no-unsafe-argument
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/main/ipc/handlers/extensions/extensionsHandlers.ts
+  143:52  error  '_event' is defined but never used                      @typescript-eslint/no-unused-vars
+  190:58  error  '_event' is defined but never used                      @typescript-eslint/no-unused-vars
+  192:13  error  Unsafe assignment of an `any` value                     @typescript-eslint/no-unsafe-assignment
+  192:41  error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  193:13  error  Unsafe assignment of an `any` value                     @typescript-eslint/no-unsafe-assignment
+  193:27  error  Unsafe call of an `any` typed value                     @typescript-eslint/no-unsafe-call
+  193:35  error  Unsafe member access .getActiveTheme on an `any` value  @typescript-eslint/no-unsafe-member-access
+  194:31  error  Unsafe assignment of an `any` value                     @typescript-eslint/no-unsafe-assignment
+  195:21  error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  196:41  error  Unsafe assignment of an `any` value                     @typescript-eslint/no-unsafe-assignment
+  196:56  error  Unsafe member access .message on an `any` value         @typescript-eslint/no-unsafe-member-access
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/main/ipc/handlers/keybindings/keybindingHandlers.ts
+   1:1   error  `electron` import should occur after import of `@ocs/keybindings`           import-x/order
+   3:1   error  There should be at least one empty line between import groups               import-x/order
+   3:1   error  All imports in the declaration are only used as types. Use `import type`    @typescript-eslint/consistent-type-imports
+   9:56  error  Async arrow function has no 'await' expression                              @typescript-eslint/require-await
+  13:66  error  Unexpected any. Specify a different type                                    @typescript-eslint/no-explicit-any
+  13:71  error  Async arrow function has no 'await' expression                              @typescript-eslint/require-await
+  14:27  error  Unsafe argument of type `any` assigned to a parameter of type `Keybinding`  @typescript-eslint/no-unsafe-argument
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/main/ipc/handlers/notifications/notificationHandlers.ts
+   1:1   error  `electron` import should occur after import of `@ocs/common/events`                                      import-x/order
+   3:1   error  `@ocs/notifications` import should occur after import of `@ocs/common/events`                            import-x/order
+   3:1   error  All imports in the declaration are only used as types. Use `import type`                                 @typescript-eslint/consistent-type-imports
+   4:1   error  There should be at least one empty line between import groups                                            import-x/order
+   9:9   error  Unsafe assignment of an `any` value                                                                      @typescript-eslint/no-unsafe-assignment
+   9:38  error  Unexpected any. Specify a different type                                                                 @typescript-eslint/no-explicit-any
+  11:67  error  Unexpected any. Specify a different type                                                                 @typescript-eslint/no-explicit-any
+  11:72  error  Async arrow function has no 'await' expression                                                           @typescript-eslint/require-await
+  12:27  error  Unsafe argument of type `any` assigned to a parameter of type `Omit<INotification, "id" | "timestamp">`  @typescript-eslint/no-unsafe-argument
+  15:83  error  Unexpected any. Specify a different type                                                                 @typescript-eslint/no-explicit-any
+  15:88  error  Async arrow function has no 'await' expression                                                           @typescript-eslint/require-await
+  16:24  error  Unsafe argument of type `any` assigned to a parameter of type `Partial<INotification>`                   @typescript-eslint/no-unsafe-argument
+  19:75  error  Async arrow function has no 'await' expression                                                           @typescript-eslint/require-await
+  23:60  error  Async arrow function has no 'await' expression                                                           @typescript-eslint/require-await
+  27:65  error  Async arrow function has no 'await' expression                                                           @typescript-eslint/require-await
+  31:66  error  Async arrow function has no 'await' expression                                                           @typescript-eslint/require-await
+  37:5   error  Unsafe call of an `any` typed value                                                                      @typescript-eslint/no-unsafe-call
+  37:14  error  Unsafe member access .subscribe on an `any` value                                                        @typescript-eslint/no-unsafe-member-access
+  37:38  error  Unexpected any. Specify a different type                                                                 @typescript-eslint/no-explicit-any
+  41:11  error  Unsafe assignment of an `any` value                                                                      @typescript-eslint/no-unsafe-assignment
+  41:26  error  Unsafe member access .payload on an `any` value                                                          @typescript-eslint/no-unsafe-member-access
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/main/ipc/handlers/search/searchHandlers.ts
+   1:1   error  `electron` import should occur after import of `@ocs/workspace`                            import-x/order
+   2:1   error  All imports in the declaration are only used as types. Use `import type`                   @typescript-eslint/consistent-type-imports
+   3:1   error  There should be at least one empty line between import groups                              import-x/order
+   3:1   error  All imports in the declaration are only used as types. Use `import type`                   @typescript-eslint/consistent-type-imports
+   4:1   error  `../../../../shared/ipc-channels.js` import should occur after import of `@ocs/workspace`  import-x/order
+  14:13  error  Unsafe assignment of an `any` value                                                        @typescript-eslint/no-unsafe-assignment
+  15:51  error  Unexpected any. Specify a different type                                                   @typescript-eslint/no-explicit-any
+  15:57  error  Unsafe member access .rootUri on an `any` value                                            @typescript-eslint/no-unsafe-member-access
+  15:78  error  Unexpected any. Specify a different type                                                   @typescript-eslint/no-explicit-any
+  15:84  error  Unsafe member access .cwd on an `any` value                                                @typescript-eslint/no-unsafe-member-access
+  16:13  error  Unsafe assignment of an `any` value                                                        @typescript-eslint/no-unsafe-assignment
+  16:22  error  Unsafe call of an `any` typed value                                                        @typescript-eslint/no-unsafe-call
+  16:30  error  Unsafe member access .startsWith on an `any` value                                         @typescript-eslint/no-unsafe-member-access
+  16:64  error  Unsafe argument of type `any` assigned to a parameter of type `WorkspaceUri`               @typescript-eslint/no-unsafe-argument
+  16:64  error  This assertion is unnecessary since it does not change the type of the expression          @typescript-eslint/no-unnecessary-type-assertion
+  16:75  error  Unexpected any. Specify a different type                                                   @typescript-eslint/no-explicit-any
+  18:50  error  Unsafe argument of type `any` assigned to a parameter of type `string`                     @typescript-eslint/no-unsafe-argument
+  20:19  error  Unexpected any. Specify a different type                                                   @typescript-eslint/no-explicit-any
+  21:54  error  Unsafe member access .message on an `any` value                                            @typescript-eslint/no-unsafe-member-access
+  21:67  error  Unsafe member access .stack on an `any` value                                              @typescript-eslint/no-unsafe-member-access
+  26:72  error  Async arrow function has no 'await' expression                                             @typescript-eslint/require-await
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/main/ipc/handlers/session/sessionHandlers.ts
+   1:1   error  `electron` import should occur after import of `@ocs/common/events`                       import-x/order
+   3:1   error  `@ocs/session` import should occur after import of `@ocs/common/events`                   import-x/order
+   3:1   error  All imports in the declaration are only used as types. Use `import type`                  @typescript-eslint/consistent-type-imports
+   4:1   error  There should be at least one empty line between import groups                             import-x/order
+   9:9   error  Unsafe assignment of an `any` value                                                       @typescript-eslint/no-unsafe-assignment
+   9:38  error  Unexpected any. Specify a different type                                                  @typescript-eslint/no-explicit-any
+  16:64  error  Unexpected any. Specify a different type                                                  @typescript-eslint/no-explicit-any
+  16:90  error  Async arrow function has no 'await' expression                                            @typescript-eslint/require-await
+  17:28  error  Unsafe argument of type `any` assigned to a parameter of type `Partial<SessionSnapshot>`  @typescript-eslint/no-unsafe-argument
+  21:3   error  Unsafe call of an `any` typed value                                                       @typescript-eslint/no-unsafe-call
+  21:12  error  Unsafe member access .subscribe on an `any` value                                         @typescript-eslint/no-unsafe-member-access
+  21:66  error  Unexpected any. Specify a different type                                                  @typescript-eslint/no-explicit-any
+  23:63  error  Unsafe member access .payload on an `any` value                                           @typescript-eslint/no-unsafe-member-access
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/main/ipc/handlers/settings/settingsHandlers.ts
+   1:1   error  `electron` import should occur after import of `@ocs/settings`            import-x/order
+   2:1   error  All imports in the declaration are only used as types. Use `import type`  @typescript-eslint/consistent-type-imports
+   3:1   error  There should be at least one empty line between import groups             import-x/order
+   3:1   error  All imports in the declaration are only used as types. Use `import type`  @typescript-eslint/consistent-type-imports
+   9:66  error  Async arrow function has no 'await' expression                            @typescript-eslint/require-await
+  10:5   error  Unsafe return of a value of type `any`                                    @typescript-eslint/no-unsafe-return
+  13:57  error  Async arrow function has no 'await' expression                            @typescript-eslint/require-await
+  19:34  error  Unexpected any. Specify a different type                                  @typescript-eslint/no-explicit-any
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/main/ipc/handlers/theme/themeHandlers.ts
+   1:1   error  `electron` import should occur after import of `@ocs/common/events`       import-x/order
+   3:1   error  `@ocs/theme` import should occur after import of `@ocs/common/events`     import-x/order
+   3:1   error  All imports in the declaration are only used as types. Use `import type`  @typescript-eslint/consistent-type-imports
+   4:1   error  There should be at least one empty line between import groups             import-x/order
+  10:9   error  Unsafe assignment of an `any` value                                       @typescript-eslint/no-unsafe-assignment
+  10:38  error  Unexpected any. Specify a different type                                  @typescript-eslint/no-explicit-any
+  12:50  error  Async arrow function has no 'await' expression                            @typescript-eslint/require-await
+  21:68  error  Async arrow function has no 'await' expression                            @typescript-eslint/require-await
+  27:3   error  Unsafe call of an `any` typed value                                       @typescript-eslint/no-unsafe-call
+  27:12  error  Unsafe member access .subscribe on an `any` value                         @typescript-eslint/no-unsafe-member-access
+  27:61  error  Unexpected any. Specify a different type                                  @typescript-eslint/no-explicit-any
+  28:11  error  Unsafe assignment of an `any` value                                       @typescript-eslint/no-unsafe-assignment
+  28:31  error  Unsafe member access .payload on an `any` value                           @typescript-eslint/no-unsafe-member-access
+  30:57  error  Unsafe assignment of an `any` value                                       @typescript-eslint/no-unsafe-assignment
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/renderer/src/commands/RendererCommandRegistry.ts
+   7:20  error  Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+   7:36  error  Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+   7:43  error  Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+   7:43  error  'any' overrides all other types in this union type  @typescript-eslint/no-redundant-type-constituents
+  33:66  error  Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/renderer/src/components/commands/CommandPalette.tsx
+   85:13  error  Unsafe assignment of an `any` value                                                   @typescript-eslint/no-unsafe-assignment
+   85:38  error  Unexpected any. Specify a different type                                              @typescript-eslint/no-explicit-any
+   85:43  error  Unsafe member access .ocs on an `any` value                                           @typescript-eslint/no-unsafe-member-access
+   86:17  error  Unsafe call of an `any` typed value                                                   @typescript-eslint/no-unsafe-call
+   86:28  error  Unexpected any. Specify a different type                                              @typescript-eslint/no-explicit-any
+   86:33  error  Unsafe member access .ocs on an `any` value                                           @typescript-eslint/no-unsafe-member-access
+   91:36  error  Unexpected any. Specify a different type                                              @typescript-eslint/no-explicit-any
+   93:13  error  Unsafe assignment of an `any` value                                                   @typescript-eslint/no-unsafe-assignment
+   93:19  error  Unsafe member access .command on an `any` value                                       @typescript-eslint/no-unsafe-member-access
+   94:13  error  Unsafe assignment of an `any` value                                                   @typescript-eslint/no-unsafe-assignment
+   94:22  error  Unsafe member access .command on an `any` value                                       @typescript-eslint/no-unsafe-member-access
+   95:13  error  Unsafe assignment of an `any` value                                                   @typescript-eslint/no-unsafe-assignment
+   95:25  error  Unsafe member access .command on an `any` value                                       @typescript-eslint/no-unsafe-member-access
+   97:11  error  Unsafe assignment of an `any` value                                                   @typescript-eslint/no-unsafe-assignment
+   97:31  error  Unsafe member access .highlightedTitle on an `any` value                              @typescript-eslint/no-unsafe-member-access
+   97:53  error  Unsafe member access .command on an `any` value                                       @typescript-eslint/no-unsafe-member-access
+  100:9   error  Unsafe spread of an `any` value in an array                                           @typescript-eslint/no-unsafe-assignment
+  100:12  error  Unsafe call of an `any` typed value                                                   @typescript-eslint/no-unsafe-call
+  100:24  error  Unsafe member access .map on an `any` value                                           @typescript-eslint/no-unsafe-member-access
+  100:32  error  Unexpected any. Specify a different type                                              @typescript-eslint/no-explicit-any
+  102:13  error  Unsafe assignment of an `any` value                                                   @typescript-eslint/no-unsafe-assignment
+  102:19  error  Unsafe member access .id on an `any` value                                            @typescript-eslint/no-unsafe-member-access
+  103:13  error  Unsafe assignment of an `any` value                                                   @typescript-eslint/no-unsafe-assignment
+  103:22  error  Unsafe member access .title on an `any` value                                         @typescript-eslint/no-unsafe-member-access
+  104:13  error  Unsafe assignment of an `any` value                                                   @typescript-eslint/no-unsafe-assignment
+  104:25  error  Unsafe member access .category on an `any` value                                      @typescript-eslint/no-unsafe-member-access
+  106:11  error  Unsafe assignment of an `any` value                                                   @typescript-eslint/no-unsafe-assignment
+  106:31  error  Unsafe member access .highlightedTitle on an `any` value                              @typescript-eslint/no-unsafe-member-access
+  106:53  error  Unsafe member access .title on an `any` value                                         @typescript-eslint/no-unsafe-member-access
+  115:26  error  Unsafe argument of type `any` assigned to a parameter of type `string`                @typescript-eslint/no-unsafe-argument
+  115:31  error  Unsafe member access .command on an `any` value                                       @typescript-eslint/no-unsafe-member-access
+  116:23  error  Unsafe argument of type `any` assigned to a parameter of type `string`                @typescript-eslint/no-unsafe-argument
+  116:28  error  Unsafe member access .command on an `any` value                                       @typescript-eslint/no-unsafe-member-access
+  117:24  error  Unsafe argument of type `any` assigned to a parameter of type `UnifiedCommandResult`  @typescript-eslint/no-unsafe-argument
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/renderer/src/components/editor/EditorArea.tsx
+  7:1  error  There should be at least one empty line between import groups                                   import-x/order
+  8:1  error  `../extensions/ExtensionEditorView.js` import should occur before import of `./Breadcrumbs.js`  import-x/order
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/renderer/src/components/editor/MonacoEditorView.tsx
+  41:37  error  Unsafe argument of type `any` assigned to a parameter of type `number`  @typescript-eslint/no-unsafe-argument
+  41:55  error  Unsafe member access .startLineNumber on an `any` value                 @typescript-eslint/no-unsafe-member-access
+  42:31  error  Unsafe argument of type `any` assigned to a parameter of type `IRange`  @typescript-eslint/no-unsafe-argument
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/renderer/src/components/explorer/ExplorerPanel.tsx
+   24:72   error  'revealInFinder' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   78:47   error  Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+   79:34   error  Unsafe member access .node on an `any` value         @typescript-eslint/no-unsafe-member-access
+   79:105  error  Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+   80:11   error  Unsafe assignment of an `any` value                  @typescript-eslint/no-unsafe-assignment
+   80:78   error  Unsafe member access .node on an `any` value         @typescript-eslint/no-unsafe-member-access
+   81:11   error  Unsafe assignment of an `any` value                  @typescript-eslint/no-unsafe-assignment
+   81:31   error  Unsafe member access .node on an `any` value         @typescript-eslint/no-unsafe-member-access
+   82:11   error  Unsafe assignment of an `any` value                  @typescript-eslint/no-unsafe-assignment
+  102:25   error  Unsafe member access .canRename on an `any` value    @typescript-eslint/no-unsafe-member-access
+  109:25   error  Unsafe member access .canDelete on an `any` value    @typescript-eslint/no-unsafe-member-access
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/renderer/src/components/extensions/useExtensions.ts
+  61:20  error  Unsafe argument of type `any` assigned to a parameter of type `SetStateAction<{ code: string; message: string; } | null>`  @typescript-eslint/no-unsafe-argument
+  65:15  error  Unsafe assignment of an `any` value                                                                                        @typescript-eslint/no-unsafe-assignment
+  65:43  error  Unsafe member access .results on an `any` value                                                                            @typescript-eslint/no-unsafe-member-access
+  67:34  error  Unsafe return of a value of type `any`                                                                                     @typescript-eslint/no-unsafe-return
+  67:57  error  Unsafe spread of an `any` value in an array                                                                                @typescript-eslint/no-unsafe-assignment
+  69:27  error  Unsafe member access .length on an `any` value                                                                             @typescript-eslint/no-unsafe-member-access
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/renderer/src/components/settings/SettingsEditor.tsx
+   12:65  error  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+   21:21  error  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+   26:5   error  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+   29:41  error  Unsafe assignment of an `any` value                                                                                                                                 @typescript-eslint/no-unsafe-assignment
+   35:50  error  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+   39:19  error  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+   40:16  error  Unsafe argument of type `any` assigned to a parameter of type `SetStateAction<string | null>`                                                                       @typescript-eslint/no-unsafe-argument
+   40:20  error  Unsafe member access .message on an `any` value                                                                                                                     @typescript-eslint/no-unsafe-member-access
+   48:19  error  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+   49:16  error  Unsafe argument of type `any` assigned to a parameter of type `SetStateAction<string | null>`                                                                       @typescript-eslint/no-unsafe-argument
+   49:20  error  Unsafe member access .message on an `any` value                                                                                                                     @typescript-eslint/no-unsafe-member-access
+   98:26  error  Promise-returning function provided to attribute where a void return was expected                                                                                   @typescript-eslint/no-misused-promises
+  104:26  error  Promise-returning function provided to attribute where a void return was expected                                                                                   @typescript-eslint/no-misused-promises
+  115:24  error  Unsafe assignment of an `any` value                                                                                                                                 @typescript-eslint/no-unsafe-assignment
+  116:26  error  Promise-returning function provided to attribute where a void return was expected                                                                                   @typescript-eslint/no-misused-promises
+  127:23  error  Promise-returning function provided to attribute where a void return was expected                                                                                   @typescript-eslint/no-misused-promises
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/renderer/src/components/terminal/TerminalPanel.tsx
+   2:3  error  'ChevronDownIcon' is defined but never used                                                                                                                         @typescript-eslint/no-unused-vars
+   3:3  error  'CloseIcon' is defined but never used                                                                                                                               @typescript-eslint/no-unused-vars
+   4:3  error  'MaximizeIcon' is defined but never used                                                                                                                            @typescript-eslint/no-unused-vars
+   5:3  error  'MoreHorizontalIcon' is defined but never used                                                                                                                      @typescript-eslint/no-unused-vars
+   6:3  error  'PlusIcon' is defined but never used                                                                                                                                @typescript-eslint/no-unused-vars
+   7:3  error  'SplitHorizontalIcon' is defined but never used                                                                                                                     @typescript-eslint/no-unused-vars
+   9:3  error  'TrashIcon' is defined but never used                                                                                                                               @typescript-eslint/no-unused-vars
+  22:7  error  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/renderer/src/components/terminal/TerminalView.tsx
+  18:1  error  There should be at least one empty line between import groups  import-x/order
+  19:1  error  `@ocs/common` import should occur before import of `@ocs/ui`   import-x/order
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/renderer/src/components/workbench/StatusBar.tsx
+  63:23  error  Unsafe argument of type `any` assigned to a parameter of type `SetStateAction<string>`  @typescript-eslint/no-unsafe-argument
+  63:30  error  Unsafe member access .branch on an `any` value                                          @typescript-eslint/no-unsafe-member-access
+  64:31  error  Unsafe member access .files on an `any` value                                           @typescript-eslint/no-unsafe-member-access
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/renderer/src/components/workbench/Workbench.tsx
+   9:1   error  `../../workbench/WorkbenchRegion.js` import should occur before import of `../../workbench/panels/index.js`                                                                                                                                                                                                                                 import-x/order
+  26:35  error  A method that is not declared with `this: void` may cause unintentional scoping of `this` when separated from its object.
+Consider using an arrow function or explicitly `.bind()`ing the method to avoid calling the method with an unintended `this` value. 
+If a function does not access `this`, it can be annotated with `this: void`  @typescript-eslint/unbound-method
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/renderer/src/hooks/useKeybindings.ts
+   1:1   error  There should be at least one empty line between import groups           import-x/order
+   5:30  error  Unexpected any. Specify a different type                                @typescript-eslint/no-explicit-any
+  58:13  error  Unsafe assignment of an `any` value                                     @typescript-eslint/no-unsafe-assignment
+  58:55  error  Unsafe call of an `any` typed value                                     @typescript-eslint/no-unsafe-call
+  58:57  error  Unsafe member access .key on an `any` value                             @typescript-eslint/no-unsafe-member-access
+  64:56  error  Unsafe argument of type `any` assigned to a parameter of type `string`  @typescript-eslint/no-unsafe-argument
+  64:64  error  Unsafe member access .command on an `any` value                         @typescript-eslint/no-unsafe-member-access
+  66:47  error  Unsafe argument of type `any` assigned to a parameter of type `string`  @typescript-eslint/no-unsafe-argument
+  66:55  error  Unsafe member access .command on an `any` value                         @typescript-eslint/no-unsafe-member-access
+  74:9   error  Unsafe call of an `any` typed value                                     @typescript-eslint/no-unsafe-call
+  74:9   error  Unsafe call of an `any` typed value                                     @typescript-eslint/no-unsafe-call
+  74:11  error  Unsafe member access .key on an `any` value                             @typescript-eslint/no-unsafe-member-access
+  74:29  error  Unsafe member access .startsWith on an `any` value                      @typescript-eslint/no-unsafe-member-access
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/renderer/src/hooks/usePlatform.ts
+  34:5   error  Unsafe return of a value of type `any`    @typescript-eslint/no-unsafe-return
+  34:30  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/renderer/src/workbench/panels/NpmScriptsPanel.tsx
+   1:1   error  There should be at least one empty line between import groups           import-x/order
+  23:17  error  Unsafe assignment of an `any` value                                     @typescript-eslint/no-unsafe-assignment
+  24:26  error  Unsafe member access .content on an `any` value                         @typescript-eslint/no-unsafe-member-access
+  25:19  error  Unsafe assignment of an `any` value                                     @typescript-eslint/no-unsafe-assignment
+  25:39  error  Unsafe argument of type `any` assigned to a parameter of type `string`  @typescript-eslint/no-unsafe-argument
+  25:43  error  Unsafe member access .content on an `any` value                         @typescript-eslint/no-unsafe-member-access
+  26:24  error  Unsafe member access .scripts on an `any` value                         @typescript-eslint/no-unsafe-member-access
+  28:40  error  Unsafe argument of type `any` assigned to a parameter of type `{}`      @typescript-eslint/no-unsafe-argument
+  28:47  error  Unsafe member access .scripts on an `any` value                         @typescript-eslint/no-unsafe-member-access
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/renderer/src/workbench/panels/TerminalPanelWrapper.tsx
+  17:7  error  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/renderer/src/workbench/panels/index.tsx
+  17:1  error  There should be no empty line within import group  import-x/order
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/src/shared/ipc-contracts.ts
+   5:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  14:12  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio/tests/integration/search-replace.test.ts
+    1:1   error  `vitest` import should occur after import of `fs/promises`              import-x/order
+    2:1   error  `@ocs/common` import should occur after import of `fs/promises`         import-x/order
+    3:1   error  `@ocs/search` import should occur after import of `fs/promises`         import-x/order
+    4:1   error  `@ocs/search` import should occur after import of `fs/promises`         import-x/order
+    5:1   error  There should be at least one empty line between import groups           import-x/order
+    5:1   error  `@ocs/common/events` import should occur after import of `fs/promises`  import-x/order
+    7:1   error  `os` import should occur after import of `fs/promises`                  import-x/order
+    8:1   error  `path` import should occur after import of `fs/promises`                import-x/order
+   12:7   error  'container' is assigned a value but never used                          @typescript-eslint/no-unused-vars
+   48:52  error  Unexpected any. Specify a different type                                @typescript-eslint/no-explicit-any
+   49:7   error  Unsafe assignment of an `any` value                                     @typescript-eslint/no-unsafe-assignment
+   49:33  error  Unsafe member access .payload on an `any` value                         @typescript-eslint/no-unsafe-member-access
+   90:52  error  Unexpected any. Specify a different type                                @typescript-eslint/no-explicit-any
+   91:7   error  Unsafe assignment of an `any` value                                     @typescript-eslint/no-unsafe-assignment
+   91:33  error  Unsafe member access .payload on an `any` value                         @typescript-eslint/no-unsafe-member-access
+  137:52  error  Unexpected any. Specify a different type                                @typescript-eslint/no-explicit-any
+  138:17  error  Unsafe member access .payload on an `any` value                         @typescript-eslint/no-unsafe-member-access
+  139:9   error  Unsafe assignment of an `any` value                                     @typescript-eslint/no-unsafe-assignment
+  139:35  error  Unsafe member access .payload on an `any` value                         @typescript-eslint/no-unsafe-member-access
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/commands/src/application/CommandExecutor.ts
+  28:9   error  Unsafe assignment of an `any` value                                                                                                                                 @typescript-eslint/no-unsafe-assignment
+  28:31  error  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+  37:5   error  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+  44:13  error  Unsafe assignment of an `any` value                                                                                                                                 @typescript-eslint/no-unsafe-assignment
+  47:7   error  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+  57:55  error  Unsafe argument of type `any` assigned to a parameter of type `LogContext`                                                                                          @typescript-eslint/no-unsafe-argument
+  57:55  error  This assertion is unnecessary since the receiver accepts the original type of the expression                                                                        @typescript-eslint/no-unnecessary-type-assertion
+  57:83  error  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+  59:7   error  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+  67:9   error  Unsafe assignment of an `any` value                                                                                                                                 @typescript-eslint/no-unsafe-assignment
+  67:31  error  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/commands/src/application/CommandHistory.ts
+  16:11  error  Unsafe assignment of an `any` value                                     @typescript-eslint/no-unsafe-assignment
+  18:22  error  Unsafe argument of type `any` assigned to a parameter of type `string`  @typescript-eslint/no-unsafe-argument
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/commands/src/application/CommandRegistry.ts
+  24:9   error  Unsafe assignment of an `any` value                                                                                                                                 @typescript-eslint/no-unsafe-assignment
+  24:31  error  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+  34:5   error  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/commands/src/application/CommandSearch.ts
+  46:13  error  Unsafe assignment of an `any` value                @typescript-eslint/no-unsafe-assignment
+  47:43  error  Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+  47:48  error  Unsafe member access .highlight on an `any` value  @typescript-eslint/no-unsafe-member-access
+  48:13  error  Unsafe call of an `any` typed value                @typescript-eslint/no-unsafe-call
+  48:27  error  Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+  48:32  error  Unsafe member access .highlight on an `any` value  @typescript-eslint/no-unsafe-member-access
+  54:9   error  Unsafe assignment of an `any` value                @typescript-eslint/no-unsafe-assignment
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/commands/src/domain/Command.ts
+  31:59  error  'any' overrides all other types in this union type  @typescript-eslint/no-redundant-type-constituents
+  36:40  error  Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/common/events/src/index.ts
+  181:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  192:13  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/common/src/api/IResourceService.ts
+  2:1  error  `../domain/Resource.js` type import should occur before type import of `../domain/URI.js`           import-x/order
+  3:1  error  `../domain/CancellationToken.js` type import should occur before type import of `../domain/URI.js`  import-x/order
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/common/src/application/DragDropService.ts
+  1:1  error  All imports in the declaration are only used as types. Use `import type`  @typescript-eslint/consistent-type-imports
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/common/src/application/RenameService.ts
+  1:1  error  All imports in the declaration are only used as types. Use `import type`  @typescript-eslint/consistent-type-imports
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/common/src/application/WorkbenchDialogService.ts
+  27:3  error  Async method 'showMessage' has no 'await' expression  @typescript-eslint/require-await
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/common/src/application/WorkbenchSelectionService.ts
+  1:1  error  All imports in the declaration are only used as types. Use `import type`  @typescript-eslint/consistent-type-imports
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/common/src/domain/CancellationToken.ts
+   3:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   3:49  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   9:31  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   9:39  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  17:49  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  17:57  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/common/src/domain/Resource.ts
+  1:1  error  All imports in the declaration are only used as types. Use `import type`  @typescript-eslint/consistent-type-imports
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/common/test/WorkbenchTransactionManager.test.ts
+   1:1  error  There should be at least one empty line between import groups  import-x/order
+  14:7  error  Async method 'commit' has no 'await' expression                @typescript-eslint/require-await
+  15:7  error  Async method 'rollback' has no 'await' expression              @typescript-eslint/require-await
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/document/src/application/DocumentService.ts
+  125:20  error  'statError' is defined but never used     @typescript-eslint/no-unused-vars
+  125:31  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  161:20  error  'statError' is defined but never used     @typescript-eslint/no-unused-vars
+  161:31  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/editor-monaco/src/MonacoEditorAdapter.ts
+  45:53  error    Unexpected any. Specify a different type                                                                    @typescript-eslint/no-explicit-any
+  45:58  error    Unsafe member access .ocs on an `any` value                                                                 @typescript-eslint/no-unsafe-member-access
+  46:7   error    Unsafe assignment of an `any` value                                                                         @typescript-eslint/no-unsafe-assignment
+  46:35  error    Unsafe call of an `any` typed value                                                                         @typescript-eslint/no-unsafe-call
+  46:46  error    Unexpected any. Specify a different type                                                                    @typescript-eslint/no-explicit-any
+  46:51  error    Unsafe member access .ocs on an `any` value                                                                 @typescript-eslint/no-unsafe-member-access
+  48:24  error    Unexpected any. Specify a different type                                                                    @typescript-eslint/no-explicit-any
+  48:29  error    Unsafe member access .ocs on an `any` value                                                                 @typescript-eslint/no-unsafe-member-access
+  49:11  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-floating-promises')
+  50:11  error    Unsafe call of an `any` typed value                                                                         @typescript-eslint/no-unsafe-call
+  50:22  error    Unexpected any. Specify a different type                                                                    @typescript-eslint/no-explicit-any
+  50:27  error    Unsafe member access .ocs on an `any` value                                                                 @typescript-eslint/no-unsafe-member-access
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/editor/src/application/SaveActiveEditorCommand.ts
+   1:1   error  There should be at least one empty line between import groups                                                        import-x/order
+  14:23  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  17:11  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  23:13  error  Unsafe assignment of an `any` value                                                                                  @typescript-eslint/no-unsafe-assignment
+  23:28  error  Unsafe member access .message on an `any` value                                                                      @typescript-eslint/no-unsafe-member-access
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/explorer/src/application/ExplorerService.ts
+   1:1   error  `@ocs/workspace` type import should occur after import of `@ocs/common`   import-x/order
+   3:1   error  There should be at least one empty line between import groups             import-x/order
+   3:1   error  All imports in the declaration are only used as types. Use `import type`  @typescript-eslint/consistent-type-imports
+  27:46  error  Unexpected any. Specify a different type                                  @typescript-eslint/no-explicit-any
+  27:78  error  Unsafe argument of type `any` assigned to a parameter of type `URI`       @typescript-eslint/no-unsafe-argument
+  27:83  error  Unsafe member access .uri on an `any` value                               @typescript-eslint/no-unsafe-member-access
+  27:88  error  Unsafe argument of type `any` assigned to a parameter of type `string`    @typescript-eslint/no-unsafe-argument
+  27:93  error  Unsafe member access .name on an `any` value                              @typescript-eslint/no-unsafe-member-access
+  40:54  error  The two values in this comparison do not have a shared enum type          @typescript-eslint/no-unsafe-enum-comparison
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/explorer/src/domain/VirtualTreeModel.ts
+  1:1  error  All imports in the declaration are only used as types. Use `import type`  @typescript-eslint/consistent-type-imports
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/explorer/test/VirtualTreeModel.perf.test.ts
+  2:1  error  There should be at least one empty line between import groups  import-x/order
+  2:1  error  `@ocs/common` import should occur before import of `vitest`    import-x/order
+  3:1  error  Imports "ExplorerNode" are only used as type                   @typescript-eslint/consistent-type-imports
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/explorer/test/VirtualTreeModel.test.ts
+  2:1  error  There should be at least one empty line between import groups  import-x/order
+  2:1  error  `@ocs/common` import should occur before import of `vitest`    import-x/order
+  3:1  error  Imports "ExplorerNode" are only used as type                   @typescript-eslint/consistent-type-imports
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/extensions/src/domain/ExtensionRegistry.ts
+  3:1  error  There should be at least one empty line between import groups  import-x/order
+  3:1  error  `os` import should occur before import of `path`               import-x/order
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/git/src/application/GitService.ts
+  29:14  error  `import()` type annotations are forbidden  @typescript-eslint/consistent-type-imports
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/git/src/infrastructure/GitCliProvider.ts
+  126:14  error  `import()` type annotations are forbidden  @typescript-eslint/consistent-type-imports
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/git/tests/GitCliProvider.test.ts
+   9:13  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  10:14  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  11:14  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/keybindings/src/application/ContextService.ts
+  12:7  error  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/keybindings/src/application/KeybindingResolver.ts
+  2:1  error  `./ContextService.js` type import should occur before type import of `./KeybindingRegistry.js`  import-x/order
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/notifications/src/application/NotificationQueue.ts
+   2:1  error  There should be at least one empty line between import groups                                                                                                       import-x/order
+  12:5  error  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+  25:5  error  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+  35:7  error  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/notifications/src/application/NotificationService.ts
+  1:1  error  There should be at least one empty line between import groups                                       import-x/order
+  2:1  error  There should be at least one empty line between import groups                                       import-x/order
+  4:1  error  `./NotificationHistory.js` type import should occur before type import of `./NotificationQueue.js`  import-x/order
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/search/src/application/ReplaceService.ts
+  1:1  error  There should be at least one empty line between import groups  import-x/order
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/search/src/application/SearchService.ts
+   1:1   error  There should be at least one empty line between import groups                                                                                                       import-x/order
+  23:7   error  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+  29:9   error  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+  33:9   error  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+  38:19  error  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+  39:76  error  Unsafe assignment of an `any` value                                                                                                                                 @typescript-eslint/no-unsafe-assignment
+  39:87  error  Unsafe member access .message on an `any` value                                                                                                                     @typescript-eslint/no-unsafe-member-access
+  45:5   error  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/search/src/providers/RipgrepProvider.ts
+   18:1   error  There should be at least one empty line between import groups  import-x/order
+   84:17  error  Unsafe assignment of an `any` value                            @typescript-eslint/no-unsafe-assignment
+   86:22  error  Unsafe member access .type on an `any` value                   @typescript-eslint/no-unsafe-member-access
+   89:15  error  Unsafe assignment of an `any` value                            @typescript-eslint/no-unsafe-assignment
+   89:21  error  Unsafe call of an `any` typed value                            @typescript-eslint/no-unsafe-call
+   89:21  error  A `require()` style import is forbidden                        @typescript-eslint/no-require-imports
+   89:37  error  Unsafe member access .resolve on an `any` value                @typescript-eslint/no-unsafe-member-access
+   89:57  error  Unsafe member access .data on an `any` value                   @typescript-eslint/no-unsafe-member-access
+   93:29  error  Unsafe member access .type on an `any` value                   @typescript-eslint/no-unsafe-member-access
+   94:19  error  Unsafe assignment of an `any` value                            @typescript-eslint/no-unsafe-assignment
+   94:38  error  Unsafe member access .data on an `any` value                   @typescript-eslint/no-unsafe-member-access
+   96:19  error  Unsafe assignment of an `any` value                            @typescript-eslint/no-unsafe-assignment
+   96:39  error  Unsafe member access .data on an `any` value                   @typescript-eslint/no-unsafe-member-access
+  100:17  error  Unsafe assignment of an `any` value                            @typescript-eslint/no-unsafe-assignment
+  100:27  error  Unsafe member access .match on an `any` value                  @typescript-eslint/no-unsafe-member-access
+  101:17  error  Unsafe assignment of an `any` value                            @typescript-eslint/no-unsafe-assignment
+  101:36  error  Unsafe member access .data on an `any` value                   @typescript-eslint/no-unsafe-member-access
+  102:17  error  Unsafe assignment of an `any` value                            @typescript-eslint/no-unsafe-assignment
+  102:29  error  Unsafe member access .start on an `any` value                  @typescript-eslint/no-unsafe-member-access
+  103:29  error  Unsafe member access .end on an `any` value                    @typescript-eslint/no-unsafe-member-access
+  103:39  error  Unsafe member access .start on an `any` value                  @typescript-eslint/no-unsafe-member-access
+  111:15  error  Unsafe assignment of an `any` value                            @typescript-eslint/no-unsafe-assignment
+  111:43  error  Unsafe call of an `any` typed value                            @typescript-eslint/no-unsafe-call
+  111:53  error  Unsafe member access .trim on an `any` value                   @typescript-eslint/no-unsafe-member-access
+  117:29  error  Unsafe member access .type on an `any` value                   @typescript-eslint/no-unsafe-member-access
+  123:18  error  'e' is defined but never used                                  @typescript-eslint/no-unused-vars
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/session/src/application/SessionManager.ts
+   1:1   error  There should be at least one empty line between import groups                                                                                                       import-x/order
+   2:1   error  There should be at least one empty line between import groups                                                                                                       import-x/order
+   3:1   error  `@ocs/common` type import should occur before type import of `../domain/SessionSnapshot.js`                                                                         import-x/order
+   4:1   error  `@ocs/common/events` import should occur before type import of `../domain/SessionSnapshot.js`                                                                       import-x/order
+  58:5   error  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+  64:7   error  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+  86:37  error  Promise returned in function argument where a void return was expected                                                                                              @typescript-eslint/no-misused-promises
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/session/src/application/SessionStore.ts
+   3:1   error  There should be at least one empty line between import groups  import-x/order
+   3:1   error  `node:crypto` import should occur before import of `node:fs`   import-x/order
+  60:32  error  Unexpected any. Specify a different type                       @typescript-eslint/no-explicit-any
+  64:7   error  Unsafe assignment of an `any` value                            @typescript-eslint/no-unsafe-assignment
+  64:32  error  Unsafe member access .workspaceId on an `any` value            @typescript-eslint/no-unsafe-member-access
+  65:7   error  Unsafe assignment of an `any` value                            @typescript-eslint/no-unsafe-assignment
+  65:32  error  Unsafe member access .windowState on an `any` value            @typescript-eslint/no-unsafe-member-access
+  74:7   error  Unsafe assignment of an `any` value                            @typescript-eslint/no-unsafe-assignment
+  74:33  error  Unsafe member access .editorLayout on an `any` value           @typescript-eslint/no-unsafe-member-access
+  75:7   error  Unsafe assignment of an `any` value                            @typescript-eslint/no-unsafe-assignment
+  75:34  error  Unsafe member access .terminalState on an `any` value          @typescript-eslint/no-unsafe-member-access
+  76:7   error  Unsafe assignment of an `any` value                            @typescript-eslint/no-unsafe-assignment
+  76:30  error  Unsafe member access .viewState on an `any` value              @typescript-eslint/no-unsafe-member-access
+  77:7   error  Unsafe assignment of an `any` value                            @typescript-eslint/no-unsafe-assignment
+  77:34  error  Unsafe member access .activeThemeId on an `any` value          @typescript-eslint/no-unsafe-member-access
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/settings/src/application/SettingsService.ts
+    1:1   error  There should be at least one empty line between import groups                                                                                                       import-x/order
+    2:1   error  There should be at least one empty line between import groups                                                                                                       import-x/order
+    4:1   error  There should be at least one empty line between import groups                                                                                                       import-x/order
+    5:1   error  `../infrastructure/UserSettingsStore.js` type import should occur before type import of `./SettingsRegistry.js`                                                     import-x/order
+    6:1   error  `../infrastructure/WorkspaceSettingsStore.js` type import should occur before type import of `./SettingsRegistry.js`                                                import-x/order
+    9:45  error  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+   10:50  error  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+   26:5   error  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+   29:27  error  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+   36:11  error  Unsafe assignment of an `any` value                                                                                                                                 @typescript-eslint/no-unsafe-assignment
+   41:11  error  Unsafe assignment of an `any` value                                                                                                                                 @typescript-eslint/no-unsafe-assignment
+   49:39  error  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+   56:7   error  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+   56:64  error  Unsafe assignment of an `any` value                                                                                                                                 @typescript-eslint/no-unsafe-assignment
+   61:7   error  Unsafe assignment of an `any` value                                                                                                                                 @typescript-eslint/no-unsafe-assignment
+   64:7   error  Unsafe assignment of an `any` value                                                                                                                                 @typescript-eslint/no-unsafe-assignment
+   70:5   error  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+   70:53  error  Unsafe assignment of an `any` value                                                                                                                                 @typescript-eslint/no-unsafe-assignment
+   89:5   error  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+   92:11  error  Unsafe assignment of an `any` value                                                                                                                                 @typescript-eslint/no-unsafe-assignment
+   93:5   error  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+   93:53  error  Unsafe assignment of an `any` value                                                                                                                                 @typescript-eslint/no-unsafe-assignment
+   96:43  error  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+   98:34  error  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+  100:7   error  Unsafe assignment of an `any` value                                                                                                                                 @typescript-eslint/no-unsafe-assignment
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/settings/src/application/SettingsValidator.ts
+  4:49  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/settings/src/domain/Setting.ts
+  8:10  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/settings/src/domain/SettingSchema.ts
+  13:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  15:10  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/settings/src/infrastructure/JsonSettingsStore.ts
+   7:47  error  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  10:7   error  Unsafe return of a value of type `any`           @typescript-eslint/no-unsafe-return
+  11:19  error  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  12:15  error  Unsafe member access .code on an `any` value     @typescript-eslint/no-unsafe-member-access
+  15:77  error  Unsafe member access .message on an `any` value  @typescript-eslint/no-unsafe-member-access
+  19:42  error  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  23:19  error  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  24:75  error  Unsafe member access .message on an `any` value  @typescript-eslint/no-unsafe-member-access
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/settings/src/infrastructure/UserSettingsStore.ts
+   2:1   error  There should be at least one empty line between import groups  import-x/order
+   2:1   error  `os` import should occur before import of `path`               import-x/order
+  14:47  error  Unexpected any. Specify a different type                       @typescript-eslint/no-explicit-any
+  18:42  error  Unexpected any. Specify a different type                       @typescript-eslint/no-explicit-any
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/settings/src/infrastructure/WorkspaceSettingsStore.ts
+   1:1   error  There should be at least one empty line between import groups  import-x/order
+  12:47  error  Unexpected any. Specify a different type                       @typescript-eslint/no-explicit-any
+  17:42  error  Unexpected any. Specify a different type                       @typescript-eslint/no-explicit-any
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/settings/tests/SettingsService.test.ts
+   1:1   error  There should be at least one empty line between import groups                                                           import-x/order
+   4:1   error  `../src/application/SettingsService.js` import should occur before import of `../src/application/SettingsValidator.js`  import-x/order
+   7:1   error  `../src/domain/SettingScope.js` import should occur before import of `../src/infrastructure/UserSettingsStore.js`       import-x/order
+  14:21  error  Unexpected any. Specify a different type                                                                                @typescript-eslint/no-explicit-any
+  38:83  error  Unsafe argument of type `any` assigned to a parameter of type `EventBus`                                                @typescript-eslint/no-unsafe-argument
+  42:11  error  Unsafe assignment of an `any` value                                                                                     @typescript-eslint/no-unsafe-assignment
+  47:52  error  Unsafe argument of type error typed assigned to a parameter of type `SettingScope`                                      @typescript-eslint/no-unsafe-argument
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/theme/src/application/ThemeLoader.ts
+  1:1  error  There should be at least one empty line between import groups             import-x/order
+  2:1  error  All imports in the declaration are only used as types. Use `import type`  @typescript-eslint/consistent-type-imports
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/theme/src/application/ThemeSerializer.ts
+   9:11  error  Unsafe assignment of an `any` value             @typescript-eslint/no-unsafe-assignment
+  10:14  error  Unsafe member access .id on an `any` value      @typescript-eslint/no-unsafe-member-access
+  10:25  error  Unsafe member access .name on an `any` value    @typescript-eslint/no-unsafe-member-access
+  10:38  error  Unsafe member access .colors on an `any` value  @typescript-eslint/no-unsafe-member-access
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/theme/src/infrastructure/MonacoThemeAdapter.ts
+   4:58  error  Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
+   5:11  error  Unsafe assignment of an `any` value             @typescript-eslint/no-unsafe-assignment
+   6:69  error  Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
+   6:74  error  Unsafe member access .monaco on an `any` value  @typescript-eslint/no-unsafe-member-access
+  14:5   error  Unsafe call of an `any` typed value             @typescript-eslint/no-unsafe-call
+  14:12  error  Unsafe member access .editor on an `any` value  @typescript-eslint/no-unsafe-member-access
+  27:5   error  Unsafe call of an `any` typed value             @typescript-eslint/no-unsafe-call
+  27:12  error  Unsafe member access .editor on an `any` value  @typescript-eslint/no-unsafe-member-access
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/workspace/src/application/ResourceService.ts
+   2:1   error  There should be at least one empty line between import groups                                    import-x/order
+   3:1   error  There should be at least one empty line between import groups                                    import-x/order
+   4:1   error  `@ocs/common` type import should occur before type import of `../infrastructure/IFileSystem.js`  import-x/order
+  37:13  error  '_uri' is defined but never used                                                                 @typescript-eslint/no-unused-vars
+  41:13  error  '_uri' is defined but never used                                                                 @typescript-eslint/no-unused-vars
+  45:11  error  '_uri' is defined but never used                                                                 @typescript-eslint/no-unused-vars
+  49:11  error  '_uri' is defined but never used                                                                 @typescript-eslint/no-unused-vars
+
+/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/workspace/src/domain/WorkspaceTree.ts
+  1:1  error  All imports in the declaration are only used as types. Use `import type`  @typescript-eslint/consistent-type-imports
+
+✖ 539 problems (537 errors, 2 warnings)
+  110 errors and 2 warnings potentially fixable with the `--fix` option.
+
+ ELIFECYCLE  Command failed with exit code 1.

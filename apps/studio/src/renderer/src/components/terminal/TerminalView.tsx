@@ -16,6 +16,7 @@ import { Terminal } from "xterm";
 import "xterm/css/xterm.css";
 
 import { executeRendererCommand } from "../../commands/RendererCommandRegistry.js";
+import { CancellationTokenSource } from "@ocs/common";
 
 import {
   getDisplayTerminalName,
@@ -75,6 +76,7 @@ export const TerminalView: React.FC<TerminalViewProps> = ({ cwd = "/", shell }) 
   const cleanupFnsRef = useRef<Record<string, Array<() => void>>>({});
   const activeSessionIdRef = useRef<string | null>(null);
   const isDisposedRef = useRef(false);
+  const creationTokenRef = useRef<CancellationTokenSource | null>(null);
 
   const [sessions, setSessions] = useState<TerminalSessionItem[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
@@ -204,16 +206,19 @@ export const TerminalView: React.FC<TerminalViewProps> = ({ cwd = "/", shell }) 
       setOpenMenu(null);
 
       const requestedShell = options?.shell ?? shell;
+      const cts = new CancellationTokenSource();
+      creationTokenRef.current = cts;
 
       try {
         const session = (await terminalApi.create({
           cwd,
           ...(requestedShell ? { shell: requestedShell } : {}),
           cols: term.cols || 80,
-          rows: term.rows || 24
+          rows: term.rows || 24,
+          token: cts.token
         })) as CreatedTerminalSession;
 
-        if (isDisposedRef.current) {
+        if (isDisposedRef.current || cts.token.isCancellationRequested) {
           void terminalApi.close(session.id);
           return;
         }
@@ -274,6 +279,10 @@ export const TerminalView: React.FC<TerminalViewProps> = ({ cwd = "/", shell }) 
           term.write(`\r\n\x1b[31mError spawning terminal: ${err.message}\x1b[0m\r\n`);
         } else {
           term.write("\r\n\x1b[31mError spawning terminal\x1b[0m\r\n");
+        }
+      } finally {
+        if (creationTokenRef.current === cts) {
+          creationTokenRef.current = null;
         }
       }
     },
@@ -395,6 +404,9 @@ export const TerminalView: React.FC<TerminalViewProps> = ({ cwd = "/", shell }) 
 
     return () => {
       isDisposedRef.current = true;
+      if (creationTokenRef.current) {
+        creationTokenRef.current.cancel();
+      }
       resizeObserver.disconnect();
       dataListener.dispose();
       resizeListener.dispose();
@@ -426,6 +438,8 @@ export const TerminalView: React.FC<TerminalViewProps> = ({ cwd = "/", shell }) 
     <div
       className="ocs-terminal__toolbar"
       style={{
+        display: "flex",
+        alignItems: "center",
         borderBottom: "none",
         height: "100%",
         padding: "0 8px",

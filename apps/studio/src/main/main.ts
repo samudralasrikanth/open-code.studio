@@ -29,7 +29,6 @@ import {
   bootstrapThemeNotificationKeybindingSession,
   bootstrapExtensions,
   bootstrapProtocol,
-  wireExplorerProvider,
   StartupCoordinator
 } from "./bootstrap/index.js";
 import { createApplicationMenu } from "./menu.js";
@@ -85,8 +84,6 @@ coordinator.register({
   dependsOn: ["workspace"],
   execute: () => {
     bootstrapExplorer(container, logger);
-    // Wire the provider now that both Explorer and Workspace are ready
-    wireExplorerProvider(container, logger);
   }
 });
 

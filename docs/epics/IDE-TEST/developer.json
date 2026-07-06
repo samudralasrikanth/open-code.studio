@@ -1,0 +1,7 @@
+{
+  "files_modified": ["docs/epic_template.md"],
+  "summary": "Created a documentation template for future epics to include sections for dependencies, affected packages, and related documents. This aims to improve clarity and reduce confusion in implementation and testing of future epics.",
+  "testing_instructions": "Verify the existence of the new epic documentation template in the 'docs' directory. Ensure it includes all specified sections: dependencies, affected packages, and related documents.",
+  "status": "completed",
+  "next_stage": "automation"
+}

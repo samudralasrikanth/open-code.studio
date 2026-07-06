@@ -1,5 +1,14 @@
-import { randomUUID } from "node:crypto";
-import { appendFileSync, existsSync, renameSync, statSync } from "node:fs";
+function generateUUID(): string {
+  if (typeof crypto !== "undefined" && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+import * as fs from "node:fs";
 
 export type LogLevel = "debug" | "info" | "warn" | "error";
 export type LogContext = Record<string, unknown>;
@@ -100,7 +109,7 @@ export class Logger {
    * Format: `{domain}-{short-uuid}` when called with a domain, or a raw short ID.
    */
   public static correlationId(domain?: string): string {
-    const short = randomUUID().slice(0, 8);
+    const short = generateUUID().slice(0, 8);
     return domain ? `${domain}-${short}` : short;
   }
 
@@ -145,12 +154,12 @@ export class FileSink implements LogSink {
 
   public write(record: LogRecord): void {
     this.rotateIfNeeded();
-    appendFileSync(this.filePath, `${JSON.stringify(record)}\n`, "utf8");
+    fs.appendFileSync(this.filePath, `${JSON.stringify(record)}\n`, "utf8");
   }
 
   private rotateIfNeeded(): void {
-    if (existsSync(this.filePath) && statSync(this.filePath).size >= this.maxBytes) {
-      renameSync(this.filePath, `${this.filePath}.${Date.now()}`);
+    if (fs.existsSync(this.filePath) && fs.statSync(this.filePath).size >= this.maxBytes) {
+      fs.renameSync(this.filePath, `${this.filePath}.${Date.now()}`);
     }
   }
 }

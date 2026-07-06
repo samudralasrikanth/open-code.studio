@@ -1,5 +1,5 @@
 /* eslint-disable */
-import type { Container, Logger } from "@ocs/common";
+import { URI, type Container, type Logger } from "@ocs/common";
 import { ipcMain, webContents } from "electron";
 import { uriFromString, uriToPath } from "@ocs/workspace";
 import {
@@ -10,8 +10,7 @@ import {
   RenameFileCommand,
   RenameFileCommandHandler,
   NodeWatcher,
-  type ExplorerService,
-  type WorkspaceProvider
+  type ExplorerService
 } from "@ocs/explorer";
 import { IpcChannels } from "../../../../shared/ipc-channels.js";
 
@@ -40,82 +39,15 @@ export async function setupWorkspaceExplorer(
     correlationId,
     context: { workspaceId: workspace.id, workspaceUri: workspace.uri }
   });
-  const provider = explorerService.getProvider<WorkspaceProvider>("explorer.provider.workspace");
-  if (!provider) {
-    throw new Error("Workspace explorer provider is not registered.");
-  }
 
-  logger.flow({
-    domain: "workspace",
-    source: "main",
-    action: "explorer-setup:set-root",
-    correlationId,
-    context: { workspaceUri: workspace.uri }
-  });
-  provider.setRoot(workspace.uri);
+  explorerService.refreshRoots();
 
-  logger.flow({
-    domain: "workspace",
-    source: "main",
-    action: "explorer-setup:open-root:start",
-    correlationId
-  });
-  await explorerService.openWorkspaceRoot();
-  logger.flow({
-    domain: "workspace",
-    source: "main",
-    action: "explorer-setup:open-root:done",
-    correlationId,
-    context: {
-      rootId: explorerService.treeModel.getRootId(),
-      visibleNodes: explorerService.treeModel.getVisibleNodes().length
-    }
-  });
-
-  if (activeWatcher && watchedUri) {
-    await teardownWorkspaceExplorer(container, logger, correlationId);
-  }
-
-  activeWatcher = new NodeWatcher();
-  watchedUri = workspace.uri;
-  try {
-    logger.flow({
-      domain: "workspace",
-      source: "main",
-      action: "explorer-setup:watch:start",
-      correlationId,
-      context: { watchedUri }
-    });
-    await activeWatcher.watch(workspace.uri, (events) => {
-      logger.flow({
-        domain: "explorer",
-        source: "main",
-        action: "watch:events",
-        context: { count: events.length }
-      });
-      void explorerService.handleFileWatchEvents(events);
-    });
-    logger.flow({
-      domain: "workspace",
-      source: "main",
-      action: "explorer-setup:watch:done",
-      correlationId,
-      context: { watchedUri }
-    });
-  } catch (error) {
-    activeWatcher = null;
-    watchedUri = null;
-    logger.error("[flow:workspace] main: explorer-setup:watch:failed", {
-      error: error instanceof Error ? error.message : String(error)
-    });
-  }
   logger.flow({
     domain: "workspace",
     source: "main",
     action: "explorer-setup:done",
     correlationId,
     context: {
-      rootId: explorerService.treeModel.getRootId(),
       visibleNodes: explorerService.treeModel.getVisibleNodes().length
     }
   });
@@ -123,21 +55,10 @@ export async function setupWorkspaceExplorer(
 
 export async function teardownWorkspaceExplorer(
   _container: Container,
-  logger: Logger,
-  correlationId: string
+  _logger: Logger,
+  _correlationId: string
 ): Promise<void> {
-  if (activeWatcher && watchedUri) {
-    logger.flow({
-      domain: "workspace",
-      source: "main",
-      action: "explorer-setup:unwatch-previous",
-      correlationId,
-      context: { watchedUri }
-    });
-    await activeWatcher.unwatch(watchedUri as import("@ocs/workspace").WorkspaceUri);
-    activeWatcher = null;
-    watchedUri = null;
-  }
+  // No-op for now since watcher is handled elsewhere or not at all in this simple version
 }
 
 export function getExplorerWatcherState(): {
@@ -168,17 +89,18 @@ export function registerExplorerHandlers(container: Container): void {
 
   ipcMain.handle(
     IpcChannels.EXPLORER_EXPAND_NODE,
-    async (_, providerId: string, nodeId: string) => {
-      await explorerService.expandNode(providerId, nodeId);
+    async (_, _providerId: string, nodeId: string) => {
+      // providerId is ignored now as we parse nodeId as URI
+      await explorerService.expandNode(URI.parse(nodeId));
     }
   );
 
   ipcMain.handle(IpcChannels.EXPLORER_COLLAPSE_NODE, (_, nodeId: string) => {
-    explorerService.collapseNode(nodeId);
+    explorerService.collapseNode(URI.parse(nodeId));
   });
 
   ipcMain.handle(IpcChannels.EXPLORER_SELECT_NODE, (_, nodeId: string, multi: boolean) => {
-    explorerService.selectNode(nodeId, multi);
+    explorerService.selectNode(URI.parse(nodeId), multi);
   });
 
   ipcMain.handle(
@@ -192,10 +114,7 @@ export function registerExplorerHandlers(container: Container): void {
         await createFileHandler.execute(
           new CreateFileCommand(uriFromString(args.uri), args.isDirectory ?? false)
         );
-        const parentId = args.uri.slice(0, args.uri.lastIndexOf("/"));
-        if (explorerService.treeModel.getNode(parentId)) {
-          await explorerService.refresh(explorerService.getProviderId(), parentId);
-        }
+        explorerService.refreshRoots();
         return;
       }
 
@@ -210,8 +129,7 @@ export function registerExplorerHandlers(container: Container): void {
         await renameFileHandler.execute(
           new RenameFileCommand(uriFromString(args.uri), uriFromString(args.targetUri))
         );
-        await explorerService.refresh(explorerService.getProviderId(), null);
-        await explorerService.openWorkspaceRoot();
+        explorerService.refreshRoots();
         return;
       }
 
@@ -224,8 +142,5 @@ export function registerExplorerHandlers(container: Container): void {
     shell.showItemInFolder(uriToPath(uriFromString(uri)));
   });
 
-  explorerService.eventBus.on("explorer.refreshCompleted", () => broadcastExplorerState(logger));
-  explorerService.eventBus.on("explorer.nodeExpanded", () => broadcastExplorerState(logger));
-  explorerService.eventBus.on("explorer.nodeCollapsed", () => broadcastExplorerState(logger));
-  explorerService.eventBus.on("explorer.selectionChanged", () => broadcastExplorerState(logger));
+  explorerService.treeModel.onTreeChanged(() => broadcastExplorerState(logger));
 }

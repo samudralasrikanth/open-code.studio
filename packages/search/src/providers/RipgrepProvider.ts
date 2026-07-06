@@ -1,5 +1,6 @@
 import { spawn, type ChildProcess } from "child_process";
 import * as readline from "readline";
+import * as path from "path";
 
 // Inline the logic from @vscode/ripgrep to avoid ESM/CJS mismatch in Electron.
 // The package just resolves the platform-specific rg binary path.
@@ -86,7 +87,7 @@ export class RipgrepProvider implements SearchProvider {
           if (parsed.type === "begin") {
             filesScanned++;
             currentFileResult = {
-              file: parsed.data.path.text,
+              file: path.resolve(cwd, parsed.data.path.text),
               preview: "",
               matches: []
             };
@@ -121,6 +122,7 @@ export class RipgrepProvider implements SearchProvider {
             currentFileResult = null;
           }
         } catch (e) {
+          console.error("Ripgrep JSON parse error on line:", line, e);
           // Ignore parse errors from non-json lines if any
         }
       });

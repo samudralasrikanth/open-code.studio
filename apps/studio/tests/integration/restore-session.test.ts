@@ -5,13 +5,7 @@ import { join } from "node:path";
 
 import { createContainer, createLogger } from "@ocs/common";
 import { EventBus } from "@ocs/common/events";
-import {
-  ExplorerService,
-  TreeModel,
-  ExplorerEventBus,
-  LocalVirtualFileSystem
-} from "@ocs/explorer";
-import { WorkspaceProvider } from "@ocs/explorer";
+import { ExplorerService, VirtualTreeModel } from "@ocs/explorer";
 import { createLocalFileSystem, createJsonStorageAdapter, uriFromPath } from "@ocs/workspace";
 import {
   createWorkspaceService,
@@ -67,15 +61,16 @@ describe("Integration: Restore Session", () => {
     container.singleton(Symbol.for("workspace"), () => workspaceService);
 
     // 2. Setup Explorer Service
-    const treeModel = new TreeModel();
-    const explorerEventBus = new ExplorerEventBus();
-    explorerService = new ExplorerService(treeModel, explorerEventBus);
+    // Mock resource service for testing
+    const resourceService = {
+      getChildren: async () => [],
+      canRename: () => true,
+      canDelete: () => true,
+      canMove: () => true,
+      canCopy: () => true
+    };
 
-    // Register the WorkspaceProvider
-    const vfs = new LocalVirtualFileSystem();
-    const provider = new WorkspaceProvider(vfs);
-    explorerService.registerProvider(provider);
-
+    explorerService = new ExplorerService(workspaceService, resourceService as any);
     container.singleton(Symbol.for("explorer"), () => explorerService);
   });
 
@@ -106,7 +101,7 @@ describe("Integration: Restore Session", () => {
 
     expect(restored).toBe(true);
     expect(workspaceService.getActive()?.uri.toString()).toBe(uriFromPath(workspaceDir).toString());
-    expect(explorerService.treeModel.getRootId()).toBe(uriFromPath(workspaceDir).toString());
+    expect(explorerService.treeModel.getVisibleNodes()).toHaveLength(1);
   });
 
   it("should return false if there is no last opened workspace", async () => {

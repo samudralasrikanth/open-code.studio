@@ -51,7 +51,7 @@ export class IconThemeService {
 
       const iconThemes = ext.manifest.contributes?.iconThemes;
       if (Array.isArray(iconThemes) && iconThemes.length > 0) {
-        let theme;
+        let theme: any;
         if (this.activeThemeId) {
           theme = iconThemes.find(
             (t: any) => t.id === this.activeThemeId || t.label === this.activeThemeId

@@ -56,3 +56,7 @@ export {
 } from "./infrastructure/JsonStorageAdapter.js";
 
 // Application (should be imported directly by main process)
+export { WorkspaceService } from "./application/WorkspaceService.js";
+export { ResourceService } from "./application/ResourceService.js";
+export type { WorkspaceTree, WorkspaceNode } from "./domain/WorkspaceTree.js";
+export { ImmutableWorkspaceTree } from "./domain/WorkspaceTree.js";

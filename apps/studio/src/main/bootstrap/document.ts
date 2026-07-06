@@ -10,7 +10,8 @@ import {
   PinEditorCommand,
   SplitRightCommand,
   SplitDownCommand,
-  RevertDocumentCommand
+  RevertDocumentCommand,
+  SaveActiveEditorCommand
 } from "@ocs/editor/application";
 
 /**
@@ -33,6 +34,7 @@ export function bootstrapDocument(container: Container, logger: Logger): void {
   const editorService = new EditorService();
   const commandRegistry = new CommandRegistry();
   commandRegistry.registerCommand(new SaveDocumentCommand(documentService));
+  commandRegistry.registerCommand(new SaveActiveEditorCommand(editorService));
 
   commandRegistry.registerCommand(new OpenEditorCommand(editorService, documentService));
   commandRegistry.registerCommand(new CloseEditorCommand(editorService));

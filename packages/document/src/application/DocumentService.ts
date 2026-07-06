@@ -109,10 +109,31 @@ export class DocumentService {
     }
 
     if (doc instanceof TextDocumentImpl) {
+      if (doc.isReadonly) {
+        throw new Error("Cannot save read-only document.");
+      }
       doc.saveState = SaveState.Saving;
       try {
-        await this.fileSystem.writeFile(uriToPath(uri), doc.getText());
+        const path = uriToPath(uri);
+        if (doc.diskMtimeMs) {
+          try {
+            const stat = await this.fileSystem.stat(path);
+            if (stat.mtimeMs > doc.diskMtimeMs) {
+              doc.saveState = SaveState.SaveFailed;
+              throw new Error("Conflict: File has been modified externally since it was opened.");
+            }
+          } catch (statError: any) {
+            // Ignore if file doesn't exist, we are creating it
+          }
+        }
+        await this.fileSystem.writeFile(path, doc.getText());
         doc.saveState = SaveState.Clean;
+        try {
+          const newStat = await this.fileSystem.stat(path);
+          doc.diskMtimeMs = newStat.mtimeMs;
+        } catch {
+          // Ignore
+        }
 
         this.eventBus.emit(DocumentEventTypes.DOCUMENT_SAVED, { uri });
         this.eventBus.emit(DocumentEventTypes.DOCUMENT_CHANGED, {
@@ -124,8 +145,23 @@ export class DocumentService {
         throw error;
       }
     } else if (doc instanceof BinaryDocumentImpl) {
+      if (doc.isReadonly) {
+        throw new Error("Cannot save read-only document.");
+      }
       doc.saveState = SaveState.Saving;
       try {
+        const path = uriToPath(uri);
+        if (doc.diskMtimeMs) {
+          try {
+            const stat = await this.fileSystem.stat(path);
+            if (stat.mtimeMs > doc.diskMtimeMs) {
+              doc.saveState = SaveState.SaveFailed;
+              throw new Error("Conflict: File has been modified externally since it was opened.");
+            }
+          } catch (statError: any) {
+            // Ignore if file doesn't exist, we are creating it
+          }
+        }
         throw new Error("Saving binary documents is not yet supported by FileSystem");
       } catch (error) {
         doc.saveState = SaveState.SaveFailed;

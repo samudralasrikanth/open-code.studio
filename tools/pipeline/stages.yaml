@@ -1,0 +1,72 @@
+knowledge:
+  model: openai/gpt-4o
+  prompt: tools/prompts/knowledge.md
+  on_success: architect
+
+architect:
+  model: openai/gpt-4o
+  prompt: tools/prompts/architect.md
+  require_approval: true
+  on_success: developer
+
+developer:
+  is_manual: true
+  on_success: automation
+
+automation:
+  is_automation: true
+  commands:
+    - name: "Git Diff"
+      cmd: "git diff HEAD"
+      output_file: "git_diff.txt"
+    - name: "Build"
+      cmd: "npm run build --if-present"
+      output_file: "build.txt"
+    - name: "Lint"
+      cmd: "npm run lint --if-present"
+      output_file: "lint.txt"
+    - name: "Typecheck"
+      cmd: "npm run typecheck --if-present"
+      output_file: "typecheck.txt"
+    - name: "Test"
+      cmd: "npm run test --if-present"
+      output_file: "test.txt"
+  on_success: code_review
+  on_failure: developer
+
+code_review:
+  model: openai/gpt-4o
+  prompt: tools/prompts/reviewer.md
+  on_success: qa
+  on_failure: developer
+
+qa:
+  model: openai/gpt-4o
+  prompt: tools/prompts/qa.md
+  on_success: runtime
+  on_failure: developer
+
+runtime:
+  model: openai/gpt-4o
+  prompt: tools/prompts/runtime.md
+  on_success: security
+  on_failure: developer
+
+security:
+  model: openai/gpt-4o
+  prompt: tools/prompts/security.md
+  on_success: performance
+  on_failure: developer
+
+performance:
+  model: openai/gpt-4o
+  prompt: tools/prompts/performance.md
+  on_success: release
+  on_failure: developer
+
+release:
+  model: openai/gpt-4o
+  prompt: tools/prompts/release.md
+  require_approval: true
+  on_success: done
+  on_failure: developer

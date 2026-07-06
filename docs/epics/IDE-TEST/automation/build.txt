@@ -1,0 +1,349 @@
+
+> open-code.studio@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio
+> turbo run build
+
+• turbo 2.10.1
+
+   • Packages in scope: @ocs/agents, @ocs/app-browser, @ocs/app-cli, @ocs/app-enterprise-console, @ocs/app-studio, @ocs/commands, @ocs/common, @ocs/configuration, @ocs/document, @ocs/editor, @ocs/editor-monaco, @ocs/event-bus, @ocs/explorer, @ocs/extensions, @ocs/gateway, @ocs/git, @ocs/keybindings, @ocs/knowledge, @ocs/memory, @ocs/notifications, @ocs/policy, @ocs/runtime, @ocs/sdk-agent, @ocs/sdk-plugin, @ocs/sdk-provider, @ocs/sdk-workflow, @ocs/search, @ocs/service-indexing, @ocs/service-model-manager, @ocs/service-update-service, @ocs/session, @ocs/settings, @ocs/telemetry, @ocs/terminal, @ocs/theme, @ocs/tooling-build, @ocs/tooling-codegen, @ocs/tooling-generators, @ocs/tooling-lint, @ocs/tooling-release, @ocs/ui, @ocs/workflow, @ocs/workspace
+   • Running build in 43 packages
+   • Remote caching disabled
+
+@ocs/sdk-provider:build: cache hit, replaying logs ddedbb2c7b8ab518
+@ocs/tooling-generators:build: cache hit, replaying logs 04c1b751d767f0cb
+@ocs/policy:build: cache hit, replaying logs 24bf693a2ed0cdad
+@ocs/sdk-workflow:build: cache hit, replaying logs 5dde9fe9cc4320e8
+@ocs/sdk-provider:build: 
+@ocs/sdk-provider:build: > @ocs/sdk-provider@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/sdk-provider
+@ocs/sdk-provider:build: > tsc -b
+@ocs/sdk-provider:build: 
+@ocs/policy:build: 
+@ocs/policy:build: > @ocs/policy@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/policy
+@ocs/policy:build: > tsc -b
+@ocs/policy:build: 
+@ocs/app-cli:build: cache hit, replaying logs 9fc78f0df843fe28
+@ocs/tooling-lint:build: cache hit, replaying logs 317b2da6911d75ce
+@ocs/sdk-workflow:build: 
+@ocs/sdk-workflow:build: > @ocs/sdk-workflow@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/sdk-workflow
+@ocs/sdk-workflow:build: > tsc -b
+@ocs/sdk-workflow:build: 
+@ocs/tooling-release:build: cache hit, replaying logs 131e4046c7edeeec
+@ocs/ui:build: cache hit, replaying logs 0cfbc7debbe62699
+@ocs/tooling-generators:build: 
+@ocs/app-cli:build: 
+@ocs/tooling-generators:build: > @ocs/tooling-generators@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/tooling/generators
+@ocs/tooling-generators:build: > tsc -b
+@ocs/tooling-generators:build: 
+@ocs/app-cli:build: > @ocs/app-cli@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/cli
+@ocs/app-cli:build: > tsc -b
+@ocs/app-cli:build: 
+@ocs/runtime:build: cache hit, replaying logs f32b9732e81fba99
+@ocs/service-update-service:build: cache hit, replaying logs 23303aaa25ecc626
+@ocs/tooling-release:build: 
+@ocs/tooling-release:build: > @ocs/tooling-release@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/tooling/release
+@ocs/tooling-release:build: > tsc -b
+@ocs/tooling-release:build: 
+@ocs/tooling-lint:build: 
+@ocs/tooling-lint:build: > @ocs/tooling-lint@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/tooling/lint
+@ocs/ui:build: 
+@ocs/ui:build: > @ocs/ui@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/ui
+@ocs/ui:build: > tsc -b
+@ocs/ui:build: 
+@ocs/tooling-lint:build: > tsc -b
+@ocs/runtime:build: 
+@ocs/runtime:build: > @ocs/runtime@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/runtime
+@ocs/runtime:build: > tsc -b
+@ocs/runtime:build: 
+@ocs/tooling-lint:build: 
+@ocs/event-bus:build: cache hit, replaying logs 158b22c78b09e366
+@ocs/service-update-service:build: 
+@ocs/service-update-service:build: > @ocs/service-update-service@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/services/update-service
+@ocs/service-update-service:build: > tsc -b
+@ocs/service-update-service:build: 
+@ocs/event-bus:build: 
+@ocs/event-bus:build: > @ocs/event-bus@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/event-bus
+@ocs/event-bus:build: > tsc -b
+@ocs/event-bus:build: 
+@ocs/configuration:build: cache hit, replaying logs f7ea5d0b6278f2df
+@ocs/tooling-build:build: cache hit, replaying logs f3ec48b9e2f6ea75
+@ocs/configuration:build: 
+@ocs/configuration:build: > @ocs/configuration@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/configuration
+@ocs/configuration:build: > tsc -b
+@ocs/configuration:build: 
+@ocs/tooling-codegen:build: cache hit, replaying logs 293e5d01e8158ad1
+@ocs/tooling-codegen:build: 
+@ocs/tooling-codegen:build: > @ocs/tooling-codegen@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/tooling/codegen
+@ocs/tooling-codegen:build: > tsc -b
+@ocs/tooling-codegen:build: 
+@ocs/tooling-build:build: 
+@ocs/tooling-build:build: > @ocs/tooling-build@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/tooling/build
+@ocs/tooling-build:build: > tsc -b
+@ocs/tooling-build:build: 
+@ocs/common:build: cache hit, replaying logs e15cf475ab9aa4fe
+@ocs/telemetry:build: cache hit, replaying logs d32eedbc274df2a6
+@ocs/common:build: 
+@ocs/common:build: > @ocs/common@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/common
+@ocs/common:build: > tsc -b
+@ocs/common:build: 
+@ocs/gateway:build: cache hit, replaying logs 051bc6ae306c532b
+@ocs/gateway:build: 
+@ocs/gateway:build: > @ocs/gateway@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/gateway
+@ocs/gateway:build: > tsc -b
+@ocs/gateway:build: 
+@ocs/telemetry:build: 
+@ocs/telemetry:build: > @ocs/telemetry@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/telemetry
+@ocs/telemetry:build: > tsc -b
+@ocs/telemetry:build: 
+@ocs/service-indexing:build: cache hit, replaying logs 2b2ac96d2de4ea6b
+@ocs/memory:build: cache hit, replaying logs 53b937f1b1f1c3fe
+@ocs/sdk-agent:build: cache hit, replaying logs 51cab6fff5d4d1c3
+@ocs/app-enterprise-console:build: cache hit, replaying logs bdf8c7a4831e54de
+@ocs/service-indexing:build: 
+@ocs/service-indexing:build: > @ocs/service-indexing@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/services/indexing
+@ocs/service-indexing:build: > tsc -b
+@ocs/service-indexing:build: 
+@ocs/memory:build: 
+@ocs/memory:build: > @ocs/memory@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/memory
+@ocs/memory:build: > tsc -b
+@ocs/memory:build: 
+@ocs/knowledge:build: cache hit, replaying logs f7abd38b52cf9569
+@ocs/sdk-plugin:build: cache hit, replaying logs bc4392dbbf41f291
+@ocs/app-browser:build: cache hit, replaying logs f5041e5131351927
+@ocs/sdk-agent:build: 
+@ocs/sdk-agent:build: > @ocs/sdk-agent@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/sdk-agent
+@ocs/sdk-agent:build: > tsc -b
+@ocs/sdk-agent:build: 
+@ocs/app-enterprise-console:build: 
+@ocs/app-enterprise-console:build: > @ocs/app-enterprise-console@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/enterprise-console
+@ocs/app-enterprise-console:build: > tsc -b
+@ocs/app-enterprise-console:build: 
+@ocs/service-model-manager:build: cache hit, replaying logs 5a04d586e72bff58
+@ocs/workflow:build: cache hit, replaying logs f6db850b9d9c5949
+@ocs/agents:build: cache hit, replaying logs c4cc8a09deaf6dfe
+@ocs/knowledge:build: 
+@ocs/knowledge:build: > @ocs/knowledge@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/knowledge
+@ocs/knowledge:build: > tsc -b
+@ocs/knowledge:build: 
+@ocs/sdk-plugin:build: 
+@ocs/sdk-plugin:build: > @ocs/sdk-plugin@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/sdk-plugin
+@ocs/sdk-plugin:build: > tsc -b
+@ocs/sdk-plugin:build: 
+@ocs/app-browser:build: 
+@ocs/app-browser:build: > @ocs/app-browser@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/browser
+@ocs/app-browser:build: > tsc -b
+@ocs/app-browser:build: 
+@ocs/service-model-manager:build: 
+@ocs/service-model-manager:build: > @ocs/service-model-manager@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/services/model-manager
+@ocs/service-model-manager:build: > tsc -b
+@ocs/service-model-manager:build: 
+@ocs/agents:build: 
+@ocs/workflow:build: 
+@ocs/workflow:build: > @ocs/workflow@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/workflow
+@ocs/workflow:build: > tsc -b
+@ocs/workflow:build: 
+@ocs/agents:build: > @ocs/agents@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/agents
+@ocs/agents:build: > tsc -b
+@ocs/agents:build: 
+@ocs/git:build: cache hit, replaying logs f7bab5d41b105455
+@ocs/git:build: 
+@ocs/git:build: > @ocs/git@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/git
+@ocs/git:build: > tsc -b
+@ocs/git:build: 
+@ocs/search:build: cache miss, executing e8e85b7dd56a9e1d
+@ocs/workspace:build: cache hit, replaying logs cce88bfce2938494
+@ocs/workspace:build: 
+@ocs/workspace:build: > @ocs/workspace@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/workspace
+@ocs/workspace:build: > tsc -b
+@ocs/workspace:build: 
+@ocs/theme:build: cache hit, replaying logs fd2f8b4cabf5ff26
+@ocs/extensions:build: cache hit, replaying logs 90278fe4a27e003d
+@ocs/extensions:build: 
+@ocs/extensions:build: > @ocs/extensions@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/extensions
+@ocs/extensions:build: > tsc -b
+@ocs/extensions:build: 
+@ocs/theme:build: 
+@ocs/theme:build: > @ocs/theme@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/theme
+@ocs/theme:build: > tsc -b
+@ocs/theme:build: 
+@ocs/notifications:build: cache hit, replaying logs 903905d9fb8cc381
+@ocs/notifications:build: 
+@ocs/notifications:build: > @ocs/notifications@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/notifications
+@ocs/notifications:build: > tsc -b
+@ocs/notifications:build: 
+@ocs/commands:build: cache hit, replaying logs 4359cb859bab018e
+@ocs/session:build: cache hit, replaying logs 130a8f2dee03687b
+@ocs/commands:build: 
+@ocs/commands:build: > @ocs/commands@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/commands
+@ocs/commands:build: > tsc -b
+@ocs/commands:build: 
+@ocs/settings:build: cache hit, replaying logs 08b9e218481a11f0
+@ocs/keybindings:build: cache hit, replaying logs e467cc2877e316f9
+@ocs/session:build: 
+@ocs/session:build: > @ocs/session@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/session
+@ocs/session:build: > tsc -b
+@ocs/session:build: 
+@ocs/keybindings:build: 
+@ocs/keybindings:build: > @ocs/keybindings@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/keybindings
+@ocs/keybindings:build: > tsc -b
+@ocs/keybindings:build: 
+@ocs/settings:build: 
+@ocs/settings:build: > @ocs/settings@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/settings
+@ocs/settings:build: > tsc -b
+@ocs/settings:build: 
+@ocs/terminal:build: cache hit, replaying logs 2b9844c5794193f1
+@ocs/terminal:build: 
+@ocs/terminal:build: > @ocs/terminal@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/terminal
+@ocs/terminal:build: > tsc -b
+@ocs/terminal:build: 
+@ocs/document:build: cache hit, replaying logs fe9da64ca6009d1e
+@ocs/document:build: 
+@ocs/document:build: > @ocs/document@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/document
+@ocs/document:build: > tsc -b
+@ocs/document:build: 
+@ocs/explorer:build: cache hit, replaying logs a13e40df4013230d
+@ocs/explorer:build: 
+@ocs/explorer:build: > @ocs/explorer@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/explorer
+@ocs/explorer:build: > tsc -b
+@ocs/explorer:build: 
+@ocs/editor:build: cache hit, replaying logs ae1aa98aa4875e68
+@ocs/editor:build: 
+@ocs/editor:build: > @ocs/editor@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/editor
+@ocs/editor:build: > tsc -b
+@ocs/editor:build: 
+@ocs/editor-monaco:build: cache hit, replaying logs b04bb3f99e694419
+@ocs/editor-monaco:build: 
+@ocs/editor-monaco:build: > @ocs/editor-monaco@0.0.1 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/editor-monaco
+@ocs/editor-monaco:build: > tsc -b
+@ocs/editor-monaco:build: 
+@ocs/search:build: 
+@ocs/search:build: > @ocs/search@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/search
+@ocs/search:build: > tsc -b
+@ocs/search:build: 
+@ocs/app-studio:build: cache miss, executing cbfd01019e2d4f89
+@ocs/app-studio:build: 
+@ocs/app-studio:build: > @ocs/app-studio@0.1.0 build /Users/srikanthsamudrala/Documents/opencode/open-code.studio/apps/studio
+@ocs/app-studio:build: > electron-vite build
+@ocs/app-studio:build: 
+@ocs/app-studio:build: vite v5.4.21 building SSR bundle for production...
+@ocs/app-studio:build: transforming...
+@ocs/app-studio:build: ✓ 219 modules transformed.
+@ocs/app-studio:build: rendering chunks...
+@ocs/app-studio:build: dist/main/chunks/index-DTg4EWDO.js      0.76 kB
+@ocs/app-studio:build: dist/main/chunks/index-DilleVN7.js      1.20 kB
+@ocs/app-studio:build: dist/main/chunks/index-DTfiWQ2t.js      1.27 kB
+@ocs/app-studio:build: dist/main/chunks/adm-zip-DMzuJA5z.js   89.80 kB
+@ocs/app-studio:build: dist/main/index.js                    239.85 kB
+@ocs/app-studio:build: ✓ built in 284ms
+@ocs/app-studio:build: vite v5.4.21 building SSR bundle for production...
+@ocs/app-studio:build: transforming...
+@ocs/app-studio:build: ✓ 2 modules transformed.
+@ocs/app-studio:build: rendering chunks...
+@ocs/app-studio:build: dist/preload/index.js  17.52 kB
+@ocs/app-studio:build: ✓ built in 10ms
+@ocs/app-studio:build: vite v5.4.21 building for production...
+@ocs/app-studio:build: transforming...
+@ocs/app-studio:build: [plugin:vite:resolve] [plugin vite:resolve] Module "node:fs" has been externalized for browser compatibility, imported by "/Users/srikanthsamudrala/Documents/opencode/open-code.studio/packages/common/logger/src/index.ts". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+@ocs/app-studio:build: ../../packages/common/logger/src/index.ts (157:7): "appendFileSync" is not exported by "__vite-browser-external", imported by "../../packages/common/logger/src/index.ts".
+@ocs/app-studio:build: ../../packages/common/logger/src/index.ts (161:11): "existsSync" is not exported by "__vite-browser-external", imported by "../../packages/common/logger/src/index.ts".
+@ocs/app-studio:build: ../../packages/common/logger/src/index.ts (161:43): "statSync" is not exported by "__vite-browser-external", imported by "../../packages/common/logger/src/index.ts".
+@ocs/app-studio:build: ../../packages/common/logger/src/index.ts (162:9): "renameSync" is not exported by "__vite-browser-external", imported by "../../packages/common/logger/src/index.ts".
+@ocs/app-studio:build: ✓ 1393 modules transformed.
+@ocs/app-studio:build: rendering chunks...
+@ocs/app-studio:build: ../../dist/renderer/index.html                                0.68 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/codicon-BA2IlpFX.ttf              79.57 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/editor.worker-CS6HTM_g.js        460.01 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/json.worker-DugrqNYW.js          746.73 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/html.worker-RlhLfl6E.js        1,155.15 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/css.worker-BTaQ5Nze.js         1,781.78 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/ts.worker-kkr4p5fT.js         10,266.54 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/index-BEKrvdZZ.css               206.93 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/azcli-DupZAcoR.js                  1.69 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/javascript-p7qyfvPI.js             1.69 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/ini-C07ZbjS8.js                    2.05 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/csp-Vr652zuH.js                    2.09 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/scheme-BO-HlZaM.js                 2.74 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/bat-BrXFWkW6.js                    3.04 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/flow9-Bp8ru-s5.js                  3.14 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/sb-QrFw5hL3.js                     3.20 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/pla-Cc716ous.js                    3.26 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/dockerfile-BD_YDE2W.js             3.40 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/pascaligo-DpWXuqeZ.js              3.63 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/bicep-BGCmWjnG.js                  3.81 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/lua-DsTry6wJ.js                    3.81 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/objective-c-BjQns6xW.js            3.86 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/cameligo-BAsED3bb.js               3.89 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/xml-IVK1lzFZ.js                    3.97 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/graphql-jqsxtyuU.js                4.15 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/lexon-DseghXAF.js                  4.19 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/sparql-Drm9vHi6.js                 4.32 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/mips-C96pJDuh.js                   4.52 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/m3-CMOC6vQW.js                     4.54 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/sophia-CY-ujTOD.js                 4.65 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/shell-C-xcHmAN.js                  4.87 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/go-D_XUQRin.js                     4.88 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/fsharp-CXYEykfU.js                 4.89 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/pascal-Do7oxUcW.js                 5.10 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/qsharp-yxB4ymWz.js                 5.13 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/r-C_CliWJo.js                      5.18 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/less-CnlL5Sq2.js                   5.38 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/tcl-Df22kL2z.js                    5.43 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/cypher-GLkqhyR8.js                 5.54 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/java-Cct8_g6m.js                   5.54 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/hcl-CRzOwZKw.js                    5.59 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/kotlin-BJuY5YP1.js                 5.63 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/redis-A-07dgTO.js                  5.63 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/restructuredtext-DQE2-r68.js       5.71 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/powershell-y1W67sW-.js             5.77 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/coffee-CmaplPHx.js                 5.90 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/liquid-Cn3TpUsB.js                 6.30 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/css-DiAvNNZY.js                    6.49 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/rust-CFfNZGrV.js                   6.66 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/python-rthZcEut.js                 6.74 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/apex-Z_9k-Q6T.js                   6.77 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/dart-c_DkTF9N.js                   6.87 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/yaml-X20hfZ35.js                   7.00 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/markdown-BHj1DOD3.js               7.03 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/mdx-CePaGwG-.js                    7.13 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/msdax-CIYqtTvZ.js                  7.33 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/csharp-DhVu8Gt4.js                 7.36 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/swift-eiAQoiJy.js                  7.56 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/ecl-Bk3cJ3Jy.js                    8.32 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/pug-DTcFMhxk.js                    8.65 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/vb-B5tZHon5.js                     8.71 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/html-CiSD418g.js                   8.77 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/cpp-CJu__9CD.js                    8.89 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/typescript-C3qXPpl5.js             9.11 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/scss-Ao2B7td-.js                   9.45 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/wgsl-4GnRgB5N.js                  10.14 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/st-B_YPTu6m.js                    10.53 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/twig-BqyLsRt6.js                  10.64 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/julia-DqIBHAwv.js                 10.87 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/scala-Ck_n5iyJ.js                 11.08 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/handlebars-BCf-_IbR.js            11.56 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/systemverilog-B25IQcqD.js         12.01 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/php-BvIoB5vU.js                   12.87 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/protobuf-DHoB3tsJ.js              13.06 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/perl-DPcxDTLi.js                  13.20 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/clojure-CPXz7-JS.js               14.33 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/razor-DLKIyslx.js                 14.48 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/ruby-Dk7WXeQL.js                  15.70 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/sql-C-hxtY6W.js                   15.94 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/mysql-BNIqhT8s.js                 16.54 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/redshift-Bd4Huaqv.js              16.71 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/pgsql-CLOj4NBy.js                 18.63 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/elixir-Dg7tYSP0.js                19.12 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/postiats-9-aZ5e21.js              19.69 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/powerquery-Cu6Jmofs.js            22.03 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/abap-CEI8ftgF.js                  23.36 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/solidity-_mbyctEp.js              26.41 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/tsMode-hUYcE9BN.js                42.74 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/freemarker2-CZfa7m2C.js           43.35 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/cssMode-ZNvYXKkd.js               70.83 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/htmlMode-LX36WAtS.js              71.84 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/jsonMode-B9G4XOMw.js              85.52 kB
+@ocs/app-studio:build: ../../dist/renderer/assets/index-BOFA6-UL.js              7,847.70 kB
+@ocs/app-studio:build: ✓ built in 8.41s
+
+ Tasks:    43 successful, 43 total
+Cached:    41 cached, 43 total
+  Time:    9.846s 
+

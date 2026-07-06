@@ -7,6 +7,7 @@ import {
   WorkspaceProvider,
   LocalVirtualFileSystem
 } from "@ocs/explorer";
+import { ResourceService } from "@ocs/workspace/application";
 
 /**
  * Bootstraps the Explorer infrastructure:
@@ -26,35 +27,19 @@ export function bootstrapExplorer(container: Container, logger: Logger): Explore
   logger.flow({ domain: "startup", source: "bootstrap", action: "explorer:start" });
 
   const explorerEventBus = new ExplorerEventBus();
-  const treeModel = new TreeModel();
-  const explorerService = new ExplorerService(treeModel, explorerEventBus);
+  const workspaceService = container.resolve<any>(Symbol.for("workspace"));
+  const workspaceFs = container.resolve<any>(Symbol.for("workspace.fs"));
+
+  const resourceService = new ResourceService(workspaceFs);
+
+  const explorerService = new ExplorerService(workspaceService, resourceService);
   const explorerFs = new LocalVirtualFileSystem();
 
   container.singleton(Symbol.for("explorer.fs"), () => explorerFs);
   container.singleton(Symbol.for("explorer.events"), () => explorerEventBus);
-  container.singleton(Symbol.for("explorer.tree"), () => treeModel);
+  container.singleton(Symbol.for("explorer.tree"), () => explorerService.treeModel);
   container.singleton(Symbol.for("explorer"), () => explorerService);
 
   logger.flow({ domain: "startup", source: "bootstrap", action: "explorer:done" });
   return explorerService;
-}
-
-/**
- * Wires the WorkspaceProvider into the ExplorerService.
- * This is called after both Explorer and Workspace are bootstrapped.
- *
- * Dependency direction: Explorer → IWorkspaceProvider (provider contract).
- * Explorer does not know about WorkspaceService.
- */
-export function wireExplorerProvider(container: Container, logger: Logger): void {
-  logger.flow({ domain: "startup", source: "bootstrap", action: "explorer:wire-provider:start" });
-
-  const explorerService = container.resolve<ExplorerService>(Symbol.for("explorer"));
-  const explorerFs = container.resolve<LocalVirtualFileSystem>(Symbol.for("explorer.fs"));
-
-  const workspaceProvider = new WorkspaceProvider(explorerFs);
-  container.singleton(Symbol.for("explorer.provider.workspace"), () => workspaceProvider);
-  explorerService.registerProvider(workspaceProvider);
-
-  logger.flow({ domain: "startup", source: "bootstrap", action: "explorer:wire-provider:done" });
 }

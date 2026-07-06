@@ -45,6 +45,11 @@ export interface IDocument {
   readonly isReadonly: boolean;
 
   /**
+   * The last known modification time on disk.
+   */
+  readonly diskMtimeMs?: number | undefined;
+
+  /**
    * Disposes of the document and releases associated resources.
    */
   dispose(): void;

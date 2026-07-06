@@ -1,0 +1,10 @@
+openrouter:
+  api_key_env_var: "OPENROUTER_API_KEY"
+  base_url: "https://openrouter.ai/api/v1/chat/completions"
+  daily_quota_limit: 50
+  usage_file: ".openrouter_usage.json"
+  default_model: "openai/gpt-4o"
+
+pipeline:
+  workspace_dir: "../../"
+  epics_dir: "../../docs/epics"

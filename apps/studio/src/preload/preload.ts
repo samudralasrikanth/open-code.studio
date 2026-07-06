@@ -177,11 +177,35 @@ const ocsAPI = {
     close: (input: any, groupId?: string): Promise<void> =>
       ipcRenderer.invoke(IpcChannels.EDITOR_CLOSE, input, groupId),
     getState: (): Promise<any> => ipcRenderer.invoke(IpcChannels.EDITOR_GET_STATE),
+    onRequestFlush: (callback: () => void): (() => void) => {
+      const handler = () => callback();
+      ipcRenderer.on(IpcChannels.EDITOR_REQUEST_FLUSH, handler);
+      return () => ipcRenderer.off(IpcChannels.EDITOR_REQUEST_FLUSH, handler);
+    },
+    sendFlushComplete: (): Promise<void> => ipcRenderer.invoke(IpcChannels.EDITOR_FLUSH_COMPLETE),
     onStateChanged: (callback: (payload: any) => void): (() => void) => {
       const handler = (_: any, payload: any) => callback(payload);
       ipcRenderer.on(IpcChannels.EDITOR_STATE_CHANGED, handler);
       return () => ipcRenderer.off(IpcChannels.EDITOR_STATE_CHANGED, handler);
-    }
+    },
+    onReveal: (() => {
+      let pendingReveal: any = null;
+      const listeners = new Set<(payload: any) => void>();
+
+      ipcRenderer.on(IpcChannels.EDITOR_REVEAL, (_: any, payload: any) => {
+        pendingReveal = payload;
+        listeners.forEach((cb) => cb(payload));
+      });
+
+      return (callback: (payload: { uri: string; selection: any }) => void): (() => void) => {
+        listeners.add(callback);
+        if (pendingReveal) {
+          // Use setTimeout to ensure the component is fully mounted/rendered
+          setTimeout(() => callback(pendingReveal), 0);
+        }
+        return () => listeners.delete(callback);
+      };
+    })()
   },
 
   // ── Diagnostics ─────────────────────────────────────────────────────────────
@@ -254,6 +278,19 @@ const ocsAPI = {
       ipcRenderer.invoke(IpcChannels.SEARCH_CANCEL, queryId),
     replace: (operation: any): Promise<void> =>
       ipcRenderer.invoke(IpcChannels.SEARCH_REPLACE, operation),
+    replaceAll: (options: { queryId: string; replaceText: string }): Promise<void> =>
+      ipcRenderer.invoke(IpcChannels.SEARCH_REPLACE_ALL, options),
+    replaceInFile: (options: {
+      queryId: string;
+      file: string;
+      replaceText: string;
+    }): Promise<void> => ipcRenderer.invoke(IpcChannels.SEARCH_REPLACE_IN_FILE, options),
+    replaceMatch: (options: {
+      queryId: string;
+      file: string;
+      matchIndex: number;
+      replaceText: string;
+    }): Promise<void> => ipcRenderer.invoke(IpcChannels.SEARCH_REPLACE_MATCH, options),
     onResultFound: (callback: (payload: any) => void): (() => void) => {
       const handler = (_: any, payload: any) => callback(payload);
       ipcRenderer.on(IpcChannels.SEARCH_RESULT_FOUND, handler);

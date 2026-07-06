@@ -157,6 +157,19 @@ export async function createApplicationMenu(container?: Container): Promise<void
           submenu: openRecentSubmenu
         },
         { type: "separator" as const },
+        {
+          label: "Save",
+          accelerator: "CmdOrCtrl+S",
+          click: async (): Promise<void> => {
+            if (container) {
+              const commandRegistry = container.resolve<any>(Symbol.for("commands"));
+              if (commandRegistry) {
+                await commandRegistry.executeCommand("workbench.action.files.save");
+              }
+            }
+          }
+        },
+        { type: "separator" as const },
         isMac ? { role: "close" as const } : { role: "quit" as const }
       ]
     },
